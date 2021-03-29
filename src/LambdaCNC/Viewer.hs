@@ -10,6 +10,8 @@ import           Control.Monad             (unless)
 import           Data.Aeson.Encode.Pretty  (encodePretty)
 import qualified Data.ByteString.Lazy      as LBS
 import qualified Data.Map                  as Map
+import           Data.Vect                 ((&-))
+import qualified Data.Vect                 as Vect
 import qualified Data.Vector               as V
 import           Graphics.Formats.STL      (STL (..))
 import qualified Graphics.Formats.STL      as STL
@@ -153,7 +155,8 @@ toFloat = fromIntegral
 
 
 uploadModel :: GLStorage -> FilePath -> IO Object
-uploadModel storage path =
+uploadModel storage path = do
+    putStrLn $ "Loading model: " ++ path
     STL.mustLoadSTL path
         >>= LGL.uploadMeshToGPU . stlToMesh
         >>= LGL.addMeshToObjectArray storage "objects" ["position"]
@@ -213,16 +216,26 @@ stlToMesh STL{triangles} = Mesh
     , mPrimitive  = P_Triangles
     }
   where
-    uncurry3 f ~(a,b,c) = f a b c
+    uncurry3 f (a,b,c) = f a b c
 
     positions =
-      concatMap (\STL.Triangle{STL.vertices=(v1, v2, v3)} ->
-        [uncurry3 V3 v1, uncurry3 V3 v2, uncurry3 V3 v3]) triangles
+        concatMap (\STL.Triangle{STL.vertices=(v1, v2, v3)} ->
+            [uncurry3 V3 v1, uncurry3 V3 v2, uncurry3 V3 v3]) triangles
 
-    normals =
-      concatMap (\case
+    normal (a, b, c) =
+        let
+            va = uncurry3 Vect.Vec3 a
+            vb = uncurry3 Vect.Vec3 b
+            vc = uncurry3 Vect.Vec3 c
+            edge1 = vb &- va
+            edge2 = vc &- vb
+            Vect.Vec3 x y z = Vect.normalize (Vect.crossprod edge1 edge2)
+        in
+        V3 x y z
+
+    normals = (`concatMap` triangles) $ \case
         STL.Triangle{STL.normal=Just (x, y, z)} -> replicate 3 $ V3 z y x
-        STL.Triangle{STL.normal=Nothing}        -> replicate 3 $ V3 0 0 0) triangles
+        STL.Triangle{STL.vertices=v}            -> replicate 3 $ normal v
 
 
 initWindow :: String -> Int -> Int -> IO GLFW.Window

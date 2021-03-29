@@ -1,25 +1,25 @@
-{-# LANGUAGE CPP #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE ViewPatterns #-}
-{-# LANGUAGE PatternSynonyms #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE CPP                       #-}
+{-# LANGUAGE DeriveFunctor             #-}
+{-# LANGUAGE DeriveGeneric             #-}
+{-# LANGUAGE FlexibleContexts          #-}
+{-# LANGUAGE FlexibleInstances         #-}
+{-# LANGUAGE LambdaCase                #-}
+{-# LANGUAGE MultiParamTypeClasses     #-}
 {-# LANGUAGE NoMonomorphismRestriction #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveFunctor #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings         #-}
+{-# LANGUAGE PatternSynonyms           #-}
+{-# LANGUAGE ScopedTypeVariables       #-}
+{-# LANGUAGE ViewPatterns              #-}
 module LambdaCube.Compiler.DeBruijn where
 
-import Data.Binary
-import GHC.Generics (Generic)
+import           Data.Binary                (Binary)
+import           GHC.Generics               (Generic)
 
-import Data.Bits
-import Control.Arrow hiding ((<+>))
+import           Control.Arrow              (Arrow ((***)), ArrowChoice ((+++)))
+import           Data.Bits                  (Bits (clearBit, popCount, setBit, shift, shiftL, shiftR, testBit, (.&.), (.|.)))
 
-import LambdaCube.Compiler.Utils
-import LambdaCube.Compiler.Pretty
+import           LambdaCube.Compiler.Pretty (PShow (..), pattern DApp)
+import           LambdaCube.Compiler.Utils  (Void, elimVoid)
 
 -------------------------------------------------------------------------------- rearrange De Bruijn indices
 
@@ -32,10 +32,11 @@ data RearrangeFun
     | RFUp Int
     deriving Show
 
+rearrangeFun :: RearrangeFun -> Int -> Int
 rearrangeFun = \case
     RFSubst i j -> \k -> if k == i then j else if k > i then k - 1 else k
-    RFMove i -> \k -> if k == i then 0 else k + 1
-    RFUp n -> \k -> if k >= 0 then k + n else k
+    RFMove i    -> \k -> if k == i then 0 else k + 1
+    RFUp n      -> \k -> if k >= 0 then k + n else k
 
 rSubst :: Rearrange a => Int -> Int -> a -> a
 rSubst i j = rearrange 0 $ RFSubst i j
@@ -50,7 +51,9 @@ rUp n l = rearrange l $ RFUp n
 up1_ :: Rearrange a => Int -> a -> a
 up1_ = rUp 1
 
+up :: Rearrange a => Int -> a -> a
 up n = rUp n 0
+up1 :: Rearrange a => a -> a
 up1 = up1_ 0
 
 instance Rearrange a => Rearrange [a] where
@@ -89,7 +92,7 @@ freeVar i = FreeVars $ 1 `shiftL` i
 
 delVar :: Int -> FreeVars -> FreeVars
 delVar 0 (FreeVars i) = FreeVars $ i `shiftR` 1
-delVar 1 (FreeVars i) = FreeVars $ if testBit i 0 then (i `shiftR` 1) `setBit` 0 else (i `shiftR` 1) `clearBit` 0 
+delVar 1 (FreeVars i) = FreeVars $ if testBit i 0 then (i `shiftR` 1) `setBit` 0 else (i `shiftR` 1) `clearBit` 0
 delVar l (FreeVars i) = FreeVars $ case i `shiftR` (l+1) of
     0 -> i `clearBit` l
     x -> (x `shiftL` l) .|. (i .&. ((1 `shiftL` l)-1))
@@ -106,19 +109,23 @@ freeVars (FreeVars x) = take (popCount x) [i | i <- [0..], testBit x i]
 isClosed :: FreeVars -> Bool
 isClosed (FreeVars x) = x == 0
 
+lowerFreeVars :: FreeVars -> FreeVars
 lowerFreeVars = shiftFreeVars (-1)
 
+rearrangeFreeVars :: RearrangeFun -> Int -> FreeVars -> FreeVars
 rearrangeFreeVars g l (FreeVars i) = FreeVars $ case g of
     RFUp n -> ((i `shiftR` l) `shiftL` (n+l)) .|. (i .&. ((1 `shiftL` l)-1))
-    RFMove n -> (f $ (i `shiftR` l) `shiftL` (l+1)) .|. (i .&. ((1 `shiftL` l)-1))
+    RFMove n -> f ((i `shiftR` l) `shiftL` (l+1)) .|. (i .&. ((1 `shiftL` l)-1))
       where
         f x = if testBit x (n+l+1) then x `clearBit` (n+l+1) `setBit` l else x
     _ -> error $ "rearrangeFreeVars: " ++ show g
 
 
 -- TODO: rename
+dbGE :: HasFreeVars a => Int -> a -> Bool
 dbGE i x = dbGE_ i $ getFreeVars x
 
+dbGE_ :: Int -> FreeVars -> Bool
 dbGE_ i (FreeVars x) = (1 `shiftL` i) > x
 
 -------------------------------------------------------------------------------- type class for getting free variables
@@ -137,6 +144,7 @@ instance HasFreeVars Void where
 class DeBruijnify n a where
     deBruijnify_ :: Int -> [n] -> a -> a
 
+deBruijnify :: DeBruijnify n a => [n] -> a -> a
 deBruijnify = deBruijnify_ 0
 
 instance (DeBruijnify n a, DeBruijnify n b) => DeBruijnify n (a, b) where

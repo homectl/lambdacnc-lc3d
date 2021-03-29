@@ -11,6 +11,10 @@
 {-# LANGUAGE OverloadedStrings         #-}
 {-# LANGUAGE PatternSynonyms           #-}
 {-# LANGUAGE ViewPatterns              #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
+{-# OPTIONS_GHC -Wno-missing-signatures #-}
+{-# OPTIONS_GHC -Wno-unused-matches #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module LambdaCube.Compiler.Pretty
     ( module LambdaCube.Compiler.Pretty
     ) where
@@ -98,6 +102,7 @@ instance IsString Doc where
     fromString = text
 
 
+text :: String -> Doc
 text = DText
 pattern DText s = DAtom (SimpleAtom s)
 
@@ -122,8 +127,8 @@ simpleShow = ($ "") . P.displayS . P.renderPretty 0.4 200 . P.plain . renderDoc 
 mkFreshName :: MonadState (Map.Map String Int, [String]) m => String -> m String
 mkFreshName n = state $ addIndex n
   where
-    addIndex "" (m, (n:ns)) = add n (m, ns)
-    addIndex n (m, ns)      = add n (m, ns)
+    addIndex "" (m, n:ns) = add n (m, ns)
+    addIndex n (m, ns)    = add n (m, ns)
 
     add n (m, ns) = case Map.lookup n m of
         Just i -> (n ++ (toSubscript <$> show (i+1)), (Map.insert n (i+1) m, ns))

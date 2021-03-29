@@ -3,6 +3,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes        #-}
 {-# LANGUAGE RecordWildCards   #-}
+{-# OPTIONS_GHC -Wno-missing-signatures #-}
 module LambdaCube.DDL.Language where
 
 import           Control.Monad.Writer (MonadWriter (tell), Writer, execWriter)

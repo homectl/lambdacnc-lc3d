@@ -3,7 +3,7 @@ version:             0.0.1
 synopsis:            CNC G-Code processor and machine viewer
 description:         CNC G-Code processor and machine viewer
 homepage:            https://homectl.org/lambdacnc
-license:             GPL-3
+license:             BSD3
 license-file:        LICENSE
 author:              pippijn
 maintainer:          pippijn@users.noreply.github.com

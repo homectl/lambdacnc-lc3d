@@ -5,8 +5,7 @@
 {-# LANGUAGE RecordWildCards   #-}
 module LambdaCNC.Viewer where
 
-import           Codec.Picture             as Juicy (readImage)
-import           Control.Concurrent
+import qualified Codec.Picture             as Pic
 import           Control.Monad             (unless)
 import           Data.Aeson.Encode.Pretty  (encodePretty)
 import qualified Data.ByteString.Lazy      as LBS
@@ -14,7 +13,8 @@ import qualified Data.Map                  as Map
 import qualified Data.Vector               as V
 import           Graphics.Formats.STL      (STL (..))
 import qualified Graphics.Formats.STL      as STL
-import           "GLFW-b" Graphics.UI.GLFW
+import           "GLFW-b" Graphics.UI.GLFW (Key (..), KeyState (..),
+                                            OpenGLProfile (..), WindowHint (..))
 import qualified "GLFW-b" Graphics.UI.GLFW as GLFW
 import           System.Directory          (getModificationTime)
 
@@ -72,19 +72,19 @@ data MachinePosition = MachinePosition
 
 
 xMax, yMax, zMax :: Int
-(xMax, yMax, zMax) = (40000, 60000, 5000)
+(xMax, yMax, zMax) = (40000, 61500, 5600)
 
-toFloat :: Int -> Float
-toFloat = fromIntegral
+fps :: Double
+fps = 24
 
-mainLoop :: Window -> GLStorage -> TextureData -> Machine -> GLRenderer -> IO ()
+mainLoop :: GLFW.Window -> GLStorage -> TextureData -> Machine -> GLRenderer -> IO ()
 mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r startPos
   where
     startPos = MachinePosition 0 0 0
 
     lcModificationTime = getModificationTime lcFile
 
-    loop renderer0 pos0@MachinePosition{..} lcTime0 = do
+    loop renderer0 pos0 lcTime0 = do
         -- Possibly reload the rendering pipeline.
         lcTime <- lcModificationTime
         let reload = lcTime /= lcTime0
@@ -97,6 +97,9 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
               LGL.disposeRenderer renderer0
               return newRenderer
 
+        -- Update machine position.
+        pos@MachinePosition{..} <- reposition pos0
+
         -- Update graphics input.
         GLFW.getWindowSize win >>= \(w,h) ->
             LGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
@@ -107,42 +110,58 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
               return (realToFrac t :: Float)
 
         -- Render machine in the current position.
+        let x = toFloat (xPos - (xMax `div` 2))
+            y = toFloat (yPos - (yMax `div` 2))
+            z = toFloat (zPos - (zMax `div` 2))
         LGL.updateObjectUniforms xaxis $ do
-          "position" @= return (V3 (toFloat xPos) 0 0)
+          "position" @= return (V3 x (y + 4000)      24500 )
         LGL.updateObjectUniforms yaxis $ do
-          "position" @= return (V3 0 (toFloat yPos) 0)
+          "position" @= return (V3 0  y               5000 )
         LGL.updateObjectUniforms zaxis $ do
-          "position" @= return (V3 0 0 (toFloat zPos))
-          "time" @= return (0 :: Float)
+          "position" @= return (V3 x (y - 4000) (z + 24500))
 
         -- render
         LGL.renderFrame renderer
         GLFW.swapBuffers win
-        GLFW.pollEvents
+        GLFW.waitEventsTimeout (1/fps)
 
-        threadDelay 100000
-
-        -- Update machine position.
-        let pos = pos0 { xPos = (xPos + 10) `mod` xMax
-                       , yPos = (yPos + 10) `mod` yMax
-                       , zPos = (zPos + 10) `mod` zMax
-                       }
-
-        let keyIsPressed k = (==KeyState'Pressed) <$> GLFW.getKey win k
         escape <- keyIsPressed Key'Escape
         unless escape $ loop renderer pos lcTime
+
+    keyIsPressed :: Key -> IO Bool
+    keyIsPressed k = (==KeyState'Pressed) <$> GLFW.getKey win k
+
+    reposition :: MachinePosition -> IO MachinePosition
+    reposition pos@MachinePosition{..} = do
+      lr <- moveMult <$> keyIsPressed Key'Left <*> keyIsPressed Key'Right
+      fb <- moveMult <$> keyIsPressed Key'Down <*> keyIsPressed Key'Up
+      ud <- moveMult <$> keyIsPressed Key'PageDown <*> keyIsPressed Key'PageUp
+      return pos { xPos = max 0 . min xMax $ (xPos + (xMax `div` 50) * lr)
+                 , yPos = max 0 . min yMax $ (yPos + (yMax `div` 50) * fb)
+                 , zPos = max 0 . min zMax $ (zPos + (zMax `div` 50) * ud)
+                 }
+
+
+moveMult :: Bool -> Bool -> Int
+moveMult True _      = -1
+moveMult _ True      = 1
+moveMult False False = 0
+
+
+toFloat :: Int -> Float
+toFloat = fromIntegral
 
 
 uploadModel :: GLStorage -> FilePath -> IO Object
 uploadModel storage path =
     STL.mustLoadSTL path
         >>= LGL.uploadMeshToGPU . stlToMesh
-        >>= LGL.addMeshToObjectArray storage "objects" []
+        >>= LGL.addMeshToObjectArray storage "objects" ["position"]
 
 
 main :: IO ()
 main = do
-    win <- initWindow "LambdaCNC" 1000 600
+    win <- initWindow "LambdaCNC" 960 540
 
     -- setup render data
     let inputSchema = LGL.makeSchema $ do
@@ -163,13 +182,13 @@ main = do
         <*> uploadModel storage "data/models/YAxis.stl"
         <*> uploadModel storage "data/models/ZAxis.stl"
 
-    LGL.enableObject bed False
-    LGL.enableObject yaxis False
-    LGL.enableObject xaxis False
+    LGL.enableObject bed True
+    LGL.enableObject yaxis True
+    LGL.enableObject xaxis True
     LGL.enableObject zaxis True
 
     -- load image and upload texture
-    Right img <- Juicy.readImage "examples/logo.png"
+    Right img <- Pic.readImage "examples/logo.png"
     textureData <- LGL.uploadTexture2DToGPU img
 
     -- compile hello.lc to graphics pipeline description
@@ -206,7 +225,7 @@ stlToMesh STL{triangles} = Mesh
         STL.Triangle{STL.normal=Nothing}        -> replicate 3 $ V3 0 0 0) triangles
 
 
-initWindow :: String -> Int -> Int -> IO Window
+initWindow :: String -> Int -> Int -> IO GLFW.Window
 initWindow title width height = do
     True <- GLFW.init
     GLFW.defaultWindowHints
@@ -216,7 +235,7 @@ initWindow title width height = do
       , WindowHint'OpenGLProfile OpenGLProfile'Core
       , WindowHint'OpenGLForwardCompat True
       , WindowHint'RefreshRate (Just 10)
-      -- , WindowHint'Samples (Just 4)
+      , WindowHint'Samples (Just 4)
       ]
     Just win <- GLFW.createWindow width height title Nothing Nothing
     GLFW.makeContextCurrent $ Just win

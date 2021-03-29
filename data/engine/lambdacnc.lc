@@ -1,15 +1,17 @@
 cameraTransform =
-        perspective 10000 300000 45 1.8
-    .*. lookat (V3 0 50000 140000) (V3 0 0 0) (V3 0 1 0)
+        perspective 10000 300000 45 1.5
+    .*. lookat (V3 (-50000) 30000 70000) (V3 (34000) (20000) (-50000)) (V3 0 1 0)
 
-projmat time = cameraTransform
-      .*. rotMatrixY time
-      .*. rotMatrixX (-pi/2)
+projmat time =
+        cameraTransform
+    .*. rotMatrixY time
+    .*. rotMatrixX (-pi/2)
+    .*. rotMatrixZ (-pi/2)
 
 vertexPosition time pos vertexPos =
-    let uvw = V4 vertexPos%x vertexPos%y vertexPos%z 0 in
-    let p = V4 pos%x pos%y (pos%z + ((if time > 0 then time % 2 else 0) * 3000)) 0.2 + uvw in
-    (projmat time *. p, uvw + V4 0 0 0 1)
+    let xyz = V4 vertexPos%x vertexPos%y vertexPos%z 0 in
+    let p = V4 pos%x pos%y pos%z 1 + xyz in
+    (projmat time *. p, xyz)
 
 makeFrame (time :: Float)
           (position :: Vec 3 Float)
@@ -28,11 +30,12 @@ makeFrame (time :: Float)
     surfaces = prims
       & mapPrimitives (\((pos,_)) -> vertexPosition time position pos)
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
-      & mapFragments (\((x)) -> ((x *! (0.0004))))
+      -- & mapFragments (\((x)) -> ((texture2D (Sampler PointFilter MirroredRepeat texture) x)))
+      & mapFragments (\((x)) -> ((x *! 0.00004 + V4 0.5 0.5 0.5 1)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
 main = renderFrame $
-   makeFrame (Uniform "time")
+   makeFrame (Uniform "time" / 10)
              (Uniform "position")
              (Texture2DSlot "diffuseTexture")
              (fetch "objects" (Attribute "position", Attribute "normal"))

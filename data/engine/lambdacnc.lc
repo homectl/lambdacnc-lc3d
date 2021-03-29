@@ -1,16 +1,11 @@
 ----------------------------------------
 
-cameraTransform =
-        perspective 10000 300000 45 1.5
-    .*. lookat (V3 (-50000) 30000 70000) (V3 (34000) (20000) (-50000)) (V3 0 1 0)
-
 vert time objPos vertPos n =
     let
         projection = perspective 10000 300000 45 1.5
-        view = lookat (V3 (-50000) 30000 70000) (V3 (34000) (20000) (-50000)) (V3 0 1 0)
+        view = lookat (V3 (-50000) 30000 70000) (V3 0 10000 0) (V3 0 1 0)
         model = rotMatrixY time
             .*. rotMatrixX (-pi/2)
-            .*. rotMatrixZ (-pi/2)
     in
 
     let

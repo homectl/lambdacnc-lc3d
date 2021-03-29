@@ -6,9 +6,10 @@ projmat time = cameraTransform
       .*. rotMatrixY time
       .*. rotMatrixX (-pi/2)
 
-vertexPosition time vertexPos pos =
-    let p = V4 pos%x pos%y (pos%z + ((if time > 0 then time % 2 else 0) * 3000)) 0.2 + V4 vertexPos%x vertexPos%y vertexPos%z 0 in
-    (projmat time *. p, p)
+vertexPosition time pos vertexPos =
+    let uvw = V4 vertexPos%x vertexPos%y vertexPos%z 0 in
+    let p = V4 pos%x pos%y (pos%z + ((if time > 0 then time % 2 else 0) * 3000)) 0.2 + uvw in
+    (projmat time *. p, uvw + V4 0 0 0 1)
 
 makeFrame (time :: Float)
           (position :: Vec 3 Float)

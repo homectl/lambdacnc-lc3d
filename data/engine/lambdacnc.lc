@@ -1,0 +1,37 @@
+cameraTransform =
+        perspective 10000 300000 45 1.8
+    .*. lookat (V3 0 50000 140000) (V3 0 0 0) (V3 0 1 0)
+
+projmat time = cameraTransform
+      .*. rotMatrixY time
+      .*. rotMatrixX (-pi/2)
+
+vertexPosition time p0 position =
+    let p = V4 position%x position%y (position%z + 5000) 1 + V4 p0%x p0%y p0%z 0 in
+    (projmat time *. p, p)
+
+makeFrame (time :: Float)
+          (position :: Vec 3 Float)
+          (texture :: Texture)
+          (prims :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
+    = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))
+  `overlay` wireFrame
+  `overlay` surfaces
+  where
+    wireFrame = prims
+      & mapPrimitives (\((p0,_)) -> vertexPosition time p0 position)
+      & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) ((Smooth))
+      & mapFragments (\((uv)) -> ((black)))
+      & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+
+    surfaces = prims
+      & mapPrimitives (\((p0,_)) -> vertexPosition time p0 position)
+      & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
+      & mapFragments (\((x)) -> ((x *! (0.0004))))
+      & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+
+main = renderFrame $
+   makeFrame (Uniform "time")
+             (Uniform "position")
+             (Texture2DSlot "diffuseTexture")
+             (fetch "objects" (Attribute "position", Attribute "normal"))

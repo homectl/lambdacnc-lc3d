@@ -1,0 +1,29 @@
+// generated file, do not modify!
+// {{ dateTime }}
+
+package {{ moduleName }};
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import RT.*;
+
+{% for m in imports %}
+import {{ m.value }}.*;
+{% endfor %}
+
+{% case def | constType %}
+{% when "DataDef" %}
+public class {{ def.dataName }} {
+  public enum Tag { {% for c in def.constructors %}
+    {{ c.value.name }}{% if !c.last %},{% endif %}{% endfor %}
+  }
+  public Tag tag;
+{% for c in def.constructors %}{% if !(c.value.fields | empty) %}
+  public class {{ c.value.name }}_ extends {{ def.dataName }} { {% for f in c.value.fields %}{% if c.value.fields | hasFieldNames %}
+    public {{ f.value.fieldType | javaType }} {{ f.value.fieldName }};{% else %}
+    public {{ f.value.fieldType | javaType }} _{{ f.index0 }};{% endif %}{% endfor %}
+    public {{ c.value.name }}_() { tag = {{ def.dataName }}.Tag.{{ c.value.name }}; }
+  }{% endif %}{% endfor %}
+}
+
+{% endcase %}

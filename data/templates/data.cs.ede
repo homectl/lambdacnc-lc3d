@@ -1,0 +1,206 @@
+// generated file, do not modify!
+// {{ dateTime }}
+
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+
+{% for m in imports %}
+using {{ m.value }};
+{% endfor %}
+
+namespace {{ moduleName }} {
+  {% for t in dataAndType %}
+  {% case t.value | constType %}
+  {% when "DataDef" %}
+  public class {{ t.value.dataName }} {
+      public enum Tag { {% for c in t.value.constructors %}
+        {{ c.value.name }}{% if !c.last %},{% endif %}{% endfor %}
+      };
+      public Tag tag;
+  };
+
+  namespace data { {% for c in t.value.constructors %}{% if !(c.value.fields | empty) %}
+    public class {{ c.value.name }} : {{ moduleName }}.{{ t.value.dataName }} { {% for f in c.value.fields %}{% if c.value.fields | hasFieldNames %}
+      public {{ f.value.fieldType | csType }} {{ f.value.fieldName }};{% else %}
+      public {{ f.value.fieldType | csType | parens }} _{{ f.index0 }};{% endif %}{% endfor %}
+      public {{ c.value.name }}() { tag = {{ moduleName }}.{{ t.value.dataName }}.Tag.{{ c.value.name }}; }
+    };{% endif %}{% endfor %}
+  }
+  {% endcase %}
+  {% endfor %}
+
+  // JSON deserializer
+  public enum Type { {% for t in usedTypes %}
+    {{ t.value | typeEnum }}{% if !t.last %},{% endif %}{% endfor %}
+  }
+
+  public class Loader {
+    public static object fromJSON(Type type, JToken obj) {
+      switch (type) {
+        {% for t in usedTypes %}
+        {% case t.value.tag %}
+        {% when "Data" %}
+        {% when "V2" %}
+        case Type.{{ t.value | typeEnum }}:
+          return new {{ t.value | csType }}
+            { x = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["x"])
+            , y = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["y"])
+            };
+        {% when "V3" %}
+        case Type.{{ t.value | typeEnum }}:
+          return new {{ t.value | csType }}
+            { x = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["x"])
+            , y = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["y"])
+            , z = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["z"])
+            };
+        {% when "V4" %}
+        case Type.{{ t.value | typeEnum }}:
+          return new {{ t.value | csType }}
+            { x = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["x"])
+            , y = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["y"])
+            , z = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["z"])
+            , w = ({{ t.value.type_ | csType }})fromJSON(Type.{{ t.value.type_ | typeEnum }},obj["w"])
+            };
+        {% when "Map" %}
+        case Type.{{ t.value | typeEnum }}: {
+          var map = new {{ t.value | csType }} ();
+          foreach(var i in (JObject)obj) {
+            map.Add( ({{ t.value.key_ | csType }})fromJSON(Type.{{ t.value.key_ | typeEnum }},i.Key)
+                   , ({{ t.value.value_ | csType }})fromJSON(Type.{{ t.value.value_ | typeEnum }},i.Value));
+          }
+          return map;
+        }
+        {% when "Array" %}
+        case Type.{{ t.value | typeEnum }}: return ((JArray)obj).Select(x => ({{ t.value.type_ | csType }})fromJSON (Type.{{ t.value.type_ | typeEnum }}, x)).ToList();
+        {% when "List" %}
+        case Type.{{ t.value | typeEnum }}: return ((JArray)obj).Select(x => ({{ t.value.type_ | csType }})fromJSON (Type.{{ t.value.type_ | typeEnum }}, x)).ToList();
+        {% when "Maybe" %}
+        case Type.{{ t.value | typeEnum }}: {
+          var m = new {{ t.value | csType }} ();
+          if (obj == null || obj.Type == JTokenType.Null) {
+            m.valid = false;
+          } else {
+            m.valid = true;
+            m.data = ({{ t.value.type_ | csType }})fromJSON (Type.{{ t.value.type_ | typeEnum }},obj);
+          }
+          return m;
+        }
+        {% else %}
+        case Type.{{ t.value | typeEnum }}: return ({{ t.value | csType }})obj;
+        {% endcase %}
+        {% endfor %}
+
+        {% for t in definitions %}
+        case Type.{{ t.value.dataName }}: {
+          string tag = (string)obj["tag"];
+          {% if t.value | hasEnumConstructor %}
+          {{ t.value.dataName }}.Tag tagType;
+          {% endif %}
+          switch (tag) {
+          {% for c in t.value.constructors %}
+            case "{{ c.value.name }}":{% if (c.value.fields | empty) %} tagType = {{ t.value.dataName }}.Tag.{{ c.value.name }}; break;
+{% else %} {
+              data.{{ c.value.name }} tv = new data.{{ c.value.name }}();{% for f in c.value.fields %}{% if c.value.fields | hasFieldNames %}
+              tv.{{ f.value.fieldName }} = ({{ f.value.fieldType | csType }})fromJSON(Type.{{ f.value.fieldType | typeEnum }},obj["{{ f.value.fieldName }}"]);{% else %}
+              tv._{{ f.index0 }} = ({{ f.value.fieldType | csType }})fromJSON(Type.{{ f.value.fieldType | typeEnum }},obj["arg{{ f.index0 }}"]);{% endif %}{% endfor %}
+              return tv;
+            }
+            {% endif %}
+          {% endfor %}
+            default: throw new Exception("unknown constructor: " + tag);
+          }
+          {% if t.value | hasEnumConstructor %}
+          {{ t.value.dataName }} o = new {{ t.value.dataName }}();
+          o.tag = tagType;
+          return o;
+          {% endif %}
+        }
+        {% endfor %}
+      }
+      throw new Exception("unknown type");
+      return null;
+    }
+
+    {% for t in definitions %}
+    public static JToken toJSON({{ t.value.dataName }} v) {
+      var obj = new JObject();
+      switch (v.tag) { {% for c in t.value.constructors %}
+        case {{ t.value.dataName }}.Tag.{{ c.value.name }}:
+          obj["tag"] = "{{ c.value.name }}";{% if !(c.value.fields | empty) %}
+          {
+            var tv = (data.{{ c.value.name }})v;{% for f in c.value.fields %}{% if c.value.fields | hasFieldNames %}
+            obj["{{ f.value.fieldName }}"] = toJSON(tv.{{ f.value.fieldName }});{% else %}
+            obj["arg{{ f.index0 }}"] = toJSON(tv._{{ f.index0 }});{% endif %}{% endfor %}
+          }{% endif %}
+          break;{% endfor %}
+      }
+      return obj;
+    }
+    {% endfor %}
+
+    {% for t in usedCSTypes %}
+    {% case t.value.tag %}
+    {% when "Data" %}
+    {% when "V2" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      var obj = new JObject();
+      obj["x"] = toJSON(v.x);
+      obj["y"] = toJSON(v.y);
+      return obj;
+    }
+    {% when "V3" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      var obj = new JObject();
+      obj["x"] = toJSON(v.x);
+      obj["y"] = toJSON(v.y);
+      obj["z"] = toJSON(v.z);
+      return obj;
+    }
+    {% when "V4" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      var obj = new JObject();
+      obj["x"] = toJSON(v.x);
+      obj["y"] = toJSON(v.y);
+      obj["z"] = toJSON(v.z);
+      obj["w"] = toJSON(v.w);
+      return obj;
+    }
+    {% when "Maybe" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      if (v.valid) {
+        return toJSON(v.data);
+      }
+      return new JValue((string)null);
+    }
+    {% when "Map" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      var obj = new JObject();
+      foreach (var i in v) {
+        obj[i.Key] = toJSON(i.Value);
+      }
+      return obj;
+    }
+    {% when "Array" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      var obj = new JArray();
+      foreach (var i in v) {
+        obj.Add(toJSON(i));
+      }
+      return obj;
+    }
+    {% when "List" %}
+    public static JToken toJSON({{ t.value | csType }} v) {
+      var obj = new JArray();
+      foreach (var i in v) {
+        obj.Add(toJSON(i));
+      }
+      return obj;
+    }
+    {% else %}
+    public static JToken toJSON({{ t.value | csType }} v) { return new JValue(v); }
+    {% endcase %}
+    {% endfor %}
+  }
+}

@@ -1,0 +1,294 @@
+{
+    "programs": [
+        {
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nout vec4 f0;\nvoid main() {\n    f0 = (vo1) * (5.0e-5);\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform float time;\nin vec4 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 rotMatrixX(float z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,cos (z0),sin (z0),0.0)\n                ,vec4 (0.0,(0.0) - (sin (z0)),cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nmat4 rotMatrixY(float z0) {\n    return mat4 (vec4 (cos (z0),0.0,(0.0) - (sin (z0)),0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (sin (z0),0.0,cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nmat4 projmat_UniformFloattime(float z0) {\n    return (((perspective (10000.0,300000.0,45.0,1.8)) * (lookat (vec3 (0.0\n                                                                       ,50000.0\n                                                                       ,140000.0)\n                                                                 ,vec3 ((65000.0) * (z0),0.0,0.0)\n                                                                 ,vec3 (0.0,1.0,0.0)))) * (rotMatrixY (time))) * (rotMatrixX\n        (-1.5707963267948966));\n}\nvoid main() {\n    gl_Position = (projmat_UniformFloattime (1.0)) * (vi1);\n    vo1 = vi1;\n}",
+            "programStreams": {
+                "vi1": {
+                    "name": "position",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                },
+                "vi2": {
+                    "name": "normal",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                }
+            },
+            "programUniforms": {
+                "time": {
+                    "tag": "Float"
+                }
+            },
+            "programInTextures": {},
+            "programOutput": [
+                {
+                    "name": "f0",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                }
+            ],
+            "geometryShader": null,
+            "tag": "Program"
+        },
+        {
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec2 vo1;\nout vec4 f0;\nvec4 black;\nvoid main() {\n    black = vec4 (0.0,0.0,0.0,1.0);\n    f0 = black;\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform float time;\nin vec4 vi1;\nin vec3 vi2;\nsmooth out vec2 vo1;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 rotMatrixX(float z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,cos (z0),sin (z0),0.0)\n                ,vec4 (0.0,(0.0) - (sin (z0)),cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nmat4 rotMatrixY(float z0) {\n    return mat4 (vec4 (cos (z0),0.0,(0.0) - (sin (z0)),0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (sin (z0),0.0,cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nmat4 projmat_UniformFloattime(float z0) {\n    return (((perspective (10000.0,300000.0,45.0,1.8)) * (lookat (vec3 (0.0\n                                                                       ,50000.0\n                                                                       ,140000.0)\n                                                                 ,vec3 ((65000.0) * (z0),0.0,0.0)\n                                                                 ,vec3 (0.0,1.0,0.0)))) * (rotMatrixY (time))) * (rotMatrixX\n        (-1.5707963267948966));\n}\nvoid main() {\n    gl_Position = (projmat_UniformFloattime (1.0)) * (vi1);\n    vo1 = vec2 ((vi1).x,(1.0) - ((vi1).y));\n}",
+            "programStreams": {
+                "vi1": {
+                    "name": "position",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                },
+                "vi2": {
+                    "name": "normal",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                }
+            },
+            "programUniforms": {
+                "time": {
+                    "tag": "Float"
+                }
+            },
+            "programInTextures": {},
+            "programOutput": [
+                {
+                    "name": "f0",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                }
+            ],
+            "geometryShader": null,
+            "tag": "Program"
+        }
+    ],
+    "samplers": [],
+    "streams": [],
+    "backend": {
+        "tag": "OpenGL33"
+    },
+    "textures": [],
+    "commands": [
+        {
+            "arg0": 0,
+            "tag": "SetRenderTarget"
+        },
+        {
+            "arg0": [
+                {
+                    "imageSemantic": {
+                        "tag": "Depth"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": 1,
+                        "tag": "VFloat"
+                    }
+                },
+                {
+                    "imageSemantic": {
+                        "tag": "Color"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": {
+                            "y": 0.7,
+                            "x": 0.7,
+                            "w": 1,
+                            "z": 0.7
+                        },
+                        "tag": "VV4F"
+                    }
+                }
+            ],
+            "tag": "ClearRenderTarget"
+        },
+        {
+            "arg0": 1,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "arg0": 0,
+                    "tag": "PolygonLine"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 0,
+            "tag": "RenderSlot"
+        },
+        {
+            "arg0": 0,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "tag": "PolygonFill"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 0,
+            "tag": "RenderSlot"
+        }
+    ],
+    "info": "generated by lambdacube-compiler 0.0.1",
+    "targets": [
+        {
+            "renderTargets": [
+                {
+                    "targetSemantic": {
+                        "tag": "Depth"
+                    },
+                    "targetRef": {
+                        "arg0": {
+                            "tag": "Depth"
+                        },
+                        "tag": "Framebuffer"
+                    },
+                    "tag": "TargetItem"
+                },
+                {
+                    "targetSemantic": {
+                        "tag": "Color"
+                    },
+                    "targetRef": {
+                        "arg0": {
+                            "tag": "Color"
+                        },
+                        "tag": "Framebuffer"
+                    },
+                    "tag": "TargetItem"
+                }
+            ],
+            "tag": "RenderTarget"
+        }
+    ],
+    "slots": [
+        {
+            "slotName": "objects",
+            "slotPrimitive": {
+                "tag": "Triangles"
+            },
+            "slotPrograms": [
+                0,
+                1
+            ],
+            "slotStreams": {
+                "normal": {
+                    "tag": "V3F"
+                },
+                "position": {
+                    "tag": "V4F"
+                }
+            },
+            "slotUniforms": {
+                "time": {
+                    "tag": "Float"
+                }
+            },
+            "tag": "Slot"
+        }
+    ],
+    "tag": "Pipeline"
+}

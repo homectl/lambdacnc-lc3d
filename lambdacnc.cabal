@@ -1,0 +1,263 @@
+name:                lambdacnc
+version:             0.0.1
+synopsis:            CNC G-Code processor and machine viewer
+description:         CNC G-Code processor and machine viewer
+homepage:            https://homectl.org/lambdacnc
+license:             GPL-3
+license-file:        LICENSE
+author:              pippijn
+maintainer:          pippijn@users.noreply.github.com
+category:            Development
+build-type:          Simple
+cabal-version:       >=1.10
+
+Data-Files:
+  data/lc/Builtins.lc
+  data/lc/Internals.lc
+  data/lc/Prelude.lc
+
+source-repository head
+  type: git
+  location: https://github.com/homectl/lambdacnc
+
+library
+  default-language:    Haskell2010
+  exposed-modules:
+      Codec.Wavefront
+      Codec.Wavefront.Element
+      Codec.Wavefront.Face
+      Codec.Wavefront.IO
+      Codec.Wavefront.Location
+      Codec.Wavefront.Line
+      Codec.Wavefront.Normal
+      Codec.Wavefront.Object
+      Codec.Wavefront.Point
+      Codec.Wavefront.TexCoord
+      Data.Vect
+      Graphics.Formats.STL
+      Graphics.Formats.STL.Types
+      Graphics.Formats.STL.Parser
+      Graphics.Formats.STL.Printer
+      LambdaCNC.Viewer
+      LambdaCube.Compiler.Core
+      LambdaCube.Compiler.CoreToIR
+      LambdaCube.Compiler.DeBruijn
+      LambdaCube.Compiler.DesugaredSource
+      LambdaCube.Compiler.InferMonad
+      LambdaCube.Compiler.Infer
+      LambdaCube.Compiler.Lexer
+      LambdaCube.Compiler.Parser
+      LambdaCube.Compiler.Patterns
+      LambdaCube.Compiler.Pretty
+      LambdaCube.Compiler.Statements
+      LambdaCube.Compiler.Utils
+      LambdaCube.Compiler
+      LambdaCube.DDL.Definitions
+      LambdaCube.DDL.Language
+      LambdaCube.GL
+      LambdaCube.GL.Backend
+      LambdaCube.GL.Data
+      LambdaCube.GL.Input
+      LambdaCube.GL.Mesh
+      LambdaCube.GL.Type
+      LambdaCube.GL.Util
+      LambdaCube.IR
+      LambdaCube.Linear
+      LambdaCube.Mesh
+      LambdaCube.PipelineSchema
+      LambdaCube.PipelineSchemaUtil
+      LambdaCube.MtlParser
+      LambdaCube.OBJ
+      LambdaCube.TypeInfo
+      Paths_lambdacnc
+  other-modules:
+      Codec.Wavefront.Token
+      Codec.Wavefront.Lexer
+      Data.Vect.Float
+      Data.Vect.Float.Base
+      Data.Vect.Float.GramSchmidt
+      Data.Vect.Float.Interpolate
+      Data.Vect.Float.Util.Dim2
+      Data.Vect.Float.Util.Dim3
+      Data.Vect.Float.Util.Dim4
+      Data.Vect.Float.Util.Projective
+      Data.Vect.Float.Util.Quaternion
+      Data.Vect.Float.Instances
+  ghc-options:
+      -Wall
+  hs-source-dirs: src, src-generated
+  build-depends:
+      base              >= 4 && < 5
+    , GLFW-b
+    , JuicyPixels
+    , OpenGLRaw
+    , aeson
+    , aeson-pretty
+    , ansi-wl-pprint
+    , attoparsec
+    , binary
+    , bytestring
+    , cereal
+    , containers
+    , directory
+    , dlist
+    , exceptions
+    , filepath
+    , megaparsec
+    , mtl
+    , pretty-show
+    , semigroups
+    , text
+    , time
+    , transformers
+    , vector
+    , vector-algorithms
+
+executable hello
+  hs-source-dirs:   examples
+  main-is:          Hello.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base < 5
+    , lambdacnc
+    , aeson
+    , containers
+    , bytestring
+    , vector
+    , JuicyPixels
+    , GLFW-b
+
+executable hello-embedded
+  hs-source-dirs:   examples
+  main-is:          HelloEmbedded.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base < 5
+    , lambdacnc
+    , aeson
+    , containers
+    , bytestring
+    , vector
+    , JuicyPixels
+    , GLFW-b
+
+executable hello-obj
+  hs-source-dirs:   examples
+  main-is:          HelloOBJ.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base < 5
+    , lambdacnc
+    , aeson
+    , bytestring
+    , containers
+    , GLFW-b
+    , JuicyPixels
+    , mtl
+    , text
+    , vector
+
+executable lambdacnc
+  hs-source-dirs:   tools
+  main-is:          lambdacnc.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base < 5
+    , lambdacnc
+
+executable pickint
+  hs-source-dirs:   examples
+  main-is:          pickInt.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base < 5
+    , lambdacnc
+    , aeson
+    , containers
+    , bytestring
+    , vector
+    , JuicyPixels
+    , GLFW-b
+    , OpenGLRaw
+
+executable lc
+  hs-source-dirs:   tools
+  main-is:          lc.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base
+    , lambdacnc
+    , aeson
+    , bytestring
+    , filepath
+    , optparse-applicative
+
+executable lc-lsp
+  hs-source-dirs:   tools
+  main-is:          lc-lsp.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base
+    , lambdacnc
+    , aeson
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hslogger
+    , lens
+    , lsp
+    , mtl
+    , stm
+    , text
+    , transformers
+    , unordered-containers
+
+executable irgen
+  hs-source-dirs:   tools
+  main-is:          irgen.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base
+    , lambdacnc
+    , containers
+    , directory
+    , ede
+    , filepath
+    , mtl
+    , text
+    , time
+    , unordered-containers
+
+executable server
+  hs-source-dirs:   tools
+  main-is:          server.hs
+  default-language: Haskell2010
+
+  build-depends:
+      base
+    , lambdacnc
+    , aeson
+    , aeson-pretty
+    , array
+    , bytestring
+    , deepseq
+    , directory
+    , exceptions
+    , process
+    , pureMD5
+    , snap
+    , snap-core
+    , snap-server
+    , utf8-string
+    , vector
+    , websockets
+    , websockets-snap

@@ -23,15 +23,21 @@ vert time objPos vertPos n =
 
 ----------------------------------------
 
-lightPos = V4 30000 30000 70000 1
-lightColor = V3 1.0 1.0 1.0
+diffuseLight fp n lightPos lightColor =
+    let
+      norm = normalize n
+      lightDir = (normalize (lightPos - fp))%xyz
+      diff = max (dot norm lightDir) 0.0
+      diffuse = lightColor *! diff
+    in
+    diffuse
 
 frag time texture uv fp n =
     let
-      norm = normalize n
-      lightDir = (normalize ((rotMatrixZ (-time * 4) *. lightPos) - fp))%xyz
-      diff = max (dot norm lightDir) 0.0
-      diffuse = lightColor *! diff
+      diffuse = diffuseLight fp n (V4 80000 0 10000 1) (V3 1.0 1.0 1.0)
+              + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
+              + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
+              + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
       objectColor = V3 0.8 0.8 0.8
       result = diffuse * objectColor
     in
@@ -44,7 +50,7 @@ makeFrame (time :: Float)
           (texture :: Texture)
           (prims :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
     = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))
-  `overlay` wireFrame
+  -- `overlay` wireFrame
   `overlay` surfaces
   where
     wireFrame = prims

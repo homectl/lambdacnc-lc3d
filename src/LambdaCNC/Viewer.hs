@@ -10,7 +10,7 @@ import           Control.Monad             (unless)
 import           Data.Aeson.Encode.Pretty  (encodePretty)
 import qualified Data.ByteString.Lazy      as LBS
 import qualified Data.Map                  as Map
-import           Data.Vect                 ((&-))
+import           Data.Vect                 (Vec3 (..), (&-))
 import qualified Data.Vect                 as Vect
 import qualified Data.Vector               as V
 import           Graphics.Formats.STL      (STL (..))
@@ -79,8 +79,8 @@ xMax, yMax, zMax :: Int
 fps :: Double
 fps = 24
 
-mainLoop :: GLFW.Window -> GLStorage -> TextureData -> Machine -> GLRenderer -> IO ()
-mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r startPos
+mainLoop :: GLFW.Window -> GLStorage -> TextureData -> TextureData -> TextureData -> Machine -> GLRenderer -> IO ()
+mainLoop win storage textureData1 textureData2 textureData3 Machine{..} r = lcModificationTime >>= loop r startPos
   where
     startPos = MachinePosition 0 0 0
 
@@ -106,7 +106,9 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
         GLFW.getWindowSize win >>= \(w,h) ->
             LGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
         LGL.updateUniforms storage $ do
-          "diffuseTexture" @= return textureData
+          "diffuseTexture" @= return textureData1
+          "OcclusionFieldMin" @= return textureData2
+          "OcclusionFieldMax" @= return textureData3
           "time" @= do
               Just t <- GLFW.getTime
               return (realToFrac t :: Float)
@@ -169,12 +171,14 @@ main = do
     -- setup render data
     let inputSchema = LGL.makeSchema $ do
           LGL.defObjectArray "objects" Triangles $ do
-            "position"  @: Attribute_V3F
-            "normal"    @: Attribute_V3F
+            "position"          @: Attribute_V3F
+            "normal"            @: Attribute_V3F
           LGL.defUniforms $ do
-            "time"           @: Float
-            "position"       @: V3F
-            "diffuseTexture" @: FTexture2D
+            "time"              @: Float
+            "position"          @: V3F
+            "diffuseTexture"    @: FTexture2D
+            "OcclusionFieldMin" @: FTexture2D
+            "OcclusionFieldMax" @: FTexture2D
 
     storage <- LGL.allocStorage inputSchema
 
@@ -191,14 +195,18 @@ main = do
     LGL.enableObject zaxis True
 
     -- load image and upload texture
-    Right img <- Pic.readImage "examples/logo.png"
-    textureData <- LGL.uploadTexture2DToGPU img
+    Right img1 <- Pic.readImage "examples/logo.png"
+    Right img2 <- Pic.readImage "data/textures/OcclusionFieldMin.png"
+    Right img3 <- Pic.readImage "data/textures/OcclusionFieldMax.png"
+    textureData1 <- LGL.uploadTexture2DToGPU img1
+    textureData2 <- LGL.uploadTexture2DToGPU img2
+    textureData3 <- LGL.uploadTexture2DToGPU img3
 
     -- compile hello.lc to graphics pipeline description
     loadRenderer storage >>= \case
       Nothing -> return ()
       Just renderer -> do
-        mainLoop win storage textureData mach renderer
+        mainLoop win storage textureData1 textureData2 textureData3 mach renderer
         LGL.disposeRenderer renderer
 
     LGL.disposeStorage storage
@@ -224,12 +232,12 @@ stlToMesh STL{triangles} = Mesh
 
     normal (a, b, c) =
         let
-            va = uncurry3 Vect.Vec3 a
-            vb = uncurry3 Vect.Vec3 b
-            vc = uncurry3 Vect.Vec3 c
+            va = uncurry3 Vec3 a
+            vb = uncurry3 Vec3 b
+            vc = uncurry3 Vec3 c
             edge1 = vb &- va
             edge2 = vc &- vb
-            Vect.Vec3 x y z = Vect.normalize (Vect.crossprod edge1 edge2)
+            Vec3 x y z = Vect.normalize (Vect.crossprod edge1 edge2)
         in
         V3 x y z
 

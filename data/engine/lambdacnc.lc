@@ -1,17 +1,43 @@
+----------------------------------------
+
 cameraTransform =
         perspective 10000 300000 45 1.5
     .*. lookat (V3 (-50000) 30000 70000) (V3 (34000) (20000) (-50000)) (V3 0 1 0)
 
-projmat time =
-        cameraTransform
-    .*. rotMatrixY time
-    .*. rotMatrixX (-pi/2)
-    .*. rotMatrixZ (-pi/2)
+vert time objPos vertPos n =
+    let
+        projection = perspective 10000 300000 45 1.5
+        view = lookat (V3 (-50000) 30000 70000) (V3 (34000) (20000) (-50000)) (V3 0 1 0)
+        model = rotMatrixY time
+            .*. rotMatrixX (-pi/2)
+            .*. rotMatrixZ (-pi/2)
+    in
 
-vertexPosition time pos vertexPos =
-    let xyz = V4 vertexPos%x vertexPos%y vertexPos%z 0 in
-    let p = V4 pos%x pos%y pos%z 1 + xyz in
-    (projmat time *. p, xyz)
+    let
+      uvw = V4 vertPos%x vertPos%y vertPos%z 0
+      aPos = V4 objPos%x objPos%y objPos%z 1 + uvw
+      pos = projection *. view *. model *. aPos
+      fragPos = model *. aPos
+    in
+    (pos, uvw, fragPos, n)
+
+----------------------------------------
+
+lightPos = V4 30000 30000 70000 1
+lightColor = V3 1.0 1.0 1.0
+
+frag time texture uv fp n =
+    let
+      norm = normalize n
+      lightDir = (normalize ((rotMatrixZ (-time * 4) *. lightPos) - fp))%xyz
+      diff = max (dot norm lightDir) 0.0
+      diffuse = lightColor *! diff
+      objectColor = V3 0.8 0.8 0.8
+      result = diffuse * objectColor
+    in
+    V4 result%x result%y result%z 1
+
+----------------------------------------
 
 makeFrame (time :: Float)
           (position :: Vec 3 Float)
@@ -22,17 +48,17 @@ makeFrame (time :: Float)
   `overlay` surfaces
   where
     wireFrame = prims
-      & mapPrimitives (\((pos,_)) -> vertexPosition time position pos)
-      & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) ((Smooth))
-      & mapFragments (\((uv)) -> ((black)))
+      & mapPrimitives (\((pos,n)) -> vert time position pos n)
+      & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) (Smooth, Smooth, Smooth)
+      & mapFragments (\((uv,_,_)) -> ((black)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     surfaces = prims
-      & mapPrimitives (\((pos,_)) -> vertexPosition time position pos)
-      & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
-      -- & mapFragments (\((x)) -> ((texture2D (Sampler PointFilter MirroredRepeat texture) x)))
-      & mapFragments (\((x)) -> ((x *! 0.00004 + V4 0.5 0.5 0.5 1)))
+      & mapPrimitives (\((pos,n)) -> vert time position pos n)
+      & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth, Smooth)
+      & mapFragments (\((uv,fp,n)) -> ((frag time texture uv fp n)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+
 
 main = renderFrame $
    makeFrame (Uniform "time" / 10)

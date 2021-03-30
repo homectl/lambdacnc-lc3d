@@ -1,8 +1,8 @@
 {
     "programs": [
         {
-            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec4 vo2;\nsmooth in vec3 vo3;\nout vec4 f0;\nvec3 diffuseLight_4_VecSFloat3(vec4 z0,vec3 z1,vec4 z2,vec3 z3) {\n    return (z3) * (max (dot (normalize (z1),(normalize ((z2) - (z0))).xyz),0.0));\n}\nvoid main() {\n    f0 = vec4 ((((((diffuseLight_4_VecSFloat3 (vo2\n                                              ,vo3\n                                              ,vec4 (80000.0,0.0,10000.0,1.0)\n                                              ,vec3 (1.0,1.0,1.0))) + ((diffuseLight_4_VecSFloat3 (vo2\n                                                                                                  ,vo3\n                                                                                                  ,vec4 (0.0,0.0,20000.0,1.0)\n                                                                                                  ,vec3 (1.0,1.0,1.0))) * (0.5))) + ((diffuseLight_4_VecSFloat3 (vo2\n                                                                                                                                                                ,vo3\n                                                                                                                                                                ,vec4 (0.0,50000.0,0.0,1.0)\n                                                                                                                                                                ,vec3 (1.0\n                                                                                                                                                                      ,1.0\n                                                                                                                                                                      ,1.0))) * (0.5))) + ((diffuseLight_4_VecSFloat3\n              (vo2,vo3,vec4 (50000.0,0.0,0.0,1.0),vec3 (1.0,1.0,1.0))) * (0.5))) * (vec3 (0.8\n                                                                                         ,0.8\n                                                                                         ,0.8))).x\n              ,(((((diffuseLight_4_VecSFloat3 (vo2\n                                              ,vo3\n                                              ,vec4 (80000.0,0.0,10000.0,1.0)\n                                              ,vec3 (1.0,1.0,1.0))) + ((diffuseLight_4_VecSFloat3 (vo2\n                                                                                                  ,vo3\n                                                                                                  ,vec4 (0.0,0.0,20000.0,1.0)\n                                                                                                  ,vec3 (1.0,1.0,1.0))) * (0.5))) + ((diffuseLight_4_VecSFloat3 (vo2\n                                                                                                                                                                ,vo3\n                                                                                                                                                                ,vec4 (0.0,50000.0,0.0,1.0)\n                                                                                                                                                                ,vec3 (1.0\n                                                                                                                                                                      ,1.0\n                                                                                                                                                                      ,1.0))) * (0.5))) + ((diffuseLight_4_VecSFloat3\n              (vo2,vo3,vec4 (50000.0,0.0,0.0,1.0),vec3 (1.0,1.0,1.0))) * (0.5))) * (vec3 (0.8\n                                                                                         ,0.8\n                                                                                         ,0.8))).y\n              ,(((((diffuseLight_4_VecSFloat3 (vo2\n                                              ,vo3\n                                              ,vec4 (80000.0,0.0,10000.0,1.0)\n                                              ,vec3 (1.0,1.0,1.0))) + ((diffuseLight_4_VecSFloat3 (vo2\n                                                                                                  ,vo3\n                                                                                                  ,vec4 (0.0,0.0,20000.0,1.0)\n                                                                                                  ,vec3 (1.0,1.0,1.0))) * (0.5))) + ((diffuseLight_4_VecSFloat3 (vo2\n                                                                                                                                                                ,vo3\n                                                                                                                                                                ,vec4 (0.0,50000.0,0.0,1.0)\n                                                                                                                                                                ,vec3 (1.0\n                                                                                                                                                                      ,1.0\n                                                                                                                                                                      ,1.0))) * (0.5))) + ((diffuseLight_4_VecSFloat3\n              (vo2,vo3,vec4 (50000.0,0.0,0.0,1.0),vec3 (1.0,1.0,1.0))) * (0.5))) * (vec3 (0.8\n                                                                                         ,0.8\n                                                                                         ,0.8))).z\n              ,1.0);\n}",
-            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nuniform float time;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec4 vo2;\nsmooth out vec3 vo3;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 rotMatrixX(float z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,cos (z0),sin (z0),0.0)\n                ,vec4 (0.0,(0.0) - (sin (z0)),cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nmat4 rotMatrixY(float z0) {\n    return mat4 (vec4 (cos (z0),0.0,(0.0) - (sin (z0)),0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (sin (z0),0.0,cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvoid main() {\n    gl_Position = (perspective (10000.0,300000.0,45.0,1.5)) * ((lookat (vec3\n                                                                       (-50000.0,30000.0,70000.0)\n                                                                       ,vec3 (0.0,10000.0,0.0)\n                                                                       ,vec3 (0.0,1.0,0.0))) * (((rotMatrixY ((time) / (10.0))) * (rotMatrixX\n        (-1.5707963267948966))) * ((vec4 ((position).x\n                                         ,(position).y\n                                         ,(position).z\n                                         ,1.0)) + (vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))));\n    vo1 = vec4 ((vi1).x,(vi1).y,(vi1).z,0.0);\n    vo2 = ((rotMatrixY ((time) / (10.0))) * (rotMatrixX\n        (-1.5707963267948966))) * ((vec4 ((position).x\n                                         ,(position).y\n                                         ,(position).z\n                                         ,1.0)) + (vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)));\n    vo3 = vi2;\n}",
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec3 vo2;\nout vec4 f0;\nvec3 diffuseLight_4_VecSFloat3(vec4 z0,vec3 z1,vec4 z2,vec3 z3) {\n    return (z3) * (max (dot (normalize (z1),(normalize ((z2) - (z0))).xyz),0.0));\n}\nvec4 lightPos_Float;\nvoid main() {\n    lightPos_Float = vec4 (10000.0,0.0,50000.0,1.0);\n    f0 = vec4 (((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo2\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * (vec3 (0.8,0.8,0.8))).x\n              ,((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo2\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * (vec3 (0.8,0.8,0.8))).y\n              ,((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo2\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * (vec3 (0.8,0.8,0.8))).z\n              ,1.0);\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec3 vo2;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 identity;\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nvoid main() {\n    identity = mat4 (vec4 (1.0,0.0,0.0,0.0)\n                    ,vec4 (0.0,1.0,0.0,0.0)\n                    ,vec4 (0.0,0.0,1.0,0.0)\n                    ,vec4 (0.0,0.0,0.0,1.0));\n    gl_Position = (perspective (10000.0,300000.0,45.0,1.5)) * ((lookat (vec3 (0.0\n                                                                             ,-100000.0\n                                                                             ,50000.0)\n                                                                       ,vec3 (0.0,0.0,0.0)\n                                                                       ,vec3 (0.0,0.0,1.0))) * ((identity) * ((vec4 ((vi1).x\n                                                                                                                    ,(vi1).y\n                                                                                                                    ,(vi1).z\n                                                                                                                    ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)))));\n    vo1 = (identity) * ((vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)) + (vec4 ((position).x\n                                                                     ,(position).y\n                                                                     ,(position).z\n                                                                     ,0.0)));\n    vo2 = vi2;\n}",
             "programStreams": {
                 "vi1": {
                     "name": "position",
@@ -22,9 +22,117 @@
             "programUniforms": {
                 "position": {
                     "tag": "V3F"
+                }
+            },
+            "programInTextures": {},
+            "programOutput": [
+                {
+                    "name": "f0",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                }
+            ],
+            "geometryShader": null,
+            "tag": "Program"
+        },
+        {
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec3 vo2;\nout vec4 f0;\nvec4 black;\nvoid main() {\n    black = vec4 (0.0,0.0,0.0,1.0);\n    f0 = black;\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec3 vo2;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 identity;\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nvoid main() {\n    identity = mat4 (vec4 (1.0,0.0,0.0,0.0)\n                    ,vec4 (0.0,1.0,0.0,0.0)\n                    ,vec4 (0.0,0.0,1.0,0.0)\n                    ,vec4 (0.0,0.0,0.0,1.0));\n    gl_Position = (perspective (10000.0,300000.0,45.0,1.5)) * ((lookat (vec3 (0.0\n                                                                             ,-100000.0\n                                                                             ,50000.0)\n                                                                       ,vec3 (0.0,0.0,0.0)\n                                                                       ,vec3 (0.0,0.0,1.0))) * ((identity) * ((vec4 ((vi1).x\n                                                                                                                    ,(vi1).y\n                                                                                                                    ,(vi1).z\n                                                                                                                    ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)))));\n    vo1 = (identity) * ((vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)) + (vec4 ((position).x\n                                                                     ,(position).y\n                                                                     ,(position).z\n                                                                     ,0.0)));\n    vo2 = vi2;\n}",
+            "programStreams": {
+                "vi1": {
+                    "name": "position",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
                 },
-                "time": {
-                    "tag": "Float"
+                "vi2": {
+                    "name": "normal",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                }
+            },
+            "programUniforms": {
+                "position": {
+                    "tag": "V3F"
+                }
+            },
+            "programInTextures": {},
+            "programOutput": [
+                {
+                    "name": "f0",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                }
+            ],
+            "geometryShader": null,
+            "tag": "Program"
+        },
+        {
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec3 vo2;\nout vec4 f0;\nvec4 white;\nvoid main() {\n    white = vec4 (1.0,1.0,1.0,1.0);\n    f0 = white;\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec3 vo2;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 identity;\nvec4 lightPos_Float;\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 rotMatrixX(float z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,cos (z0),sin (z0),0.0)\n                ,vec4 (0.0,(0.0) - (sin (z0)),cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvec4 scale(float z0,vec4 z1) {\n    return (z1) * (vec4 (z0,z0,z0,1.0));\n}\nvoid main() {\n    identity = mat4 (vec4 (1.0,0.0,0.0,0.0)\n                    ,vec4 (0.0,1.0,0.0,0.0)\n                    ,vec4 (0.0,0.0,1.0,0.0)\n                    ,vec4 (0.0,0.0,0.0,1.0));\n    lightPos_Float = vec4 (10000.0,0.0,50000.0,1.0);\n    gl_Position = (perspective (10000.0,300000.0,45.0,1.5)) * ((lookat (vec3 (0.0\n                                                                             ,-100000.0\n                                                                             ,50000.0)\n                                                                       ,vec3 (0.0,0.0,0.0)\n                                                                       ,vec3 (0.0,0.0,1.0))) * ((identity) * ((vec4 (((((rotMatrixX\n                                                                                                                    (-1.5707963267948966)) * (scale (200.0\n                                                                                                                                                    ,vec4 ((vi1).x\n                                                                                                                                                          ,(vi1).y\n                                                                                                                                                          ,(vi1).z\n                                                                                                                                                          ,1.0)))) + (lightPos_Float)).xyz).x\n                                                                                                                    ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                                                                                                                    ,vec4 ((vi1).x\n                                                                                                                                                                          ,(vi1).y\n                                                                                                                                                                          ,(vi1).z\n                                                                                                                                                                          ,1.0)))) + (lightPos_Float)).xyz).y\n                                                                                                                    ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                                                                                                                    ,vec4 ((vi1).x\n                                                                                                                                                                          ,(vi1).y\n                                                                                                                                                                          ,(vi1).z\n                                                                                                                                                                          ,1.0)))) + (lightPos_Float)).xyz).z\n                                                                                                                    ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)))));\n    vo1 = (identity) * ((vec4 (((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                              ,vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)))) + (lightPos_Float)).xyz).x\n                              ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                              ,vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)))) + (lightPos_Float)).xyz).y\n                              ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                              ,vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)))) + (lightPos_Float)).xyz).z\n                              ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));\n    vo2 = vi2;\n}",
+            "programStreams": {
+                "vi1": {
+                    "name": "position",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                },
+                "vi2": {
+                    "name": "normal",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                }
+            },
+            "programUniforms": {
+                "position": {
+                    "tag": "V3F"
+                }
+            },
+            "programInTextures": {},
+            "programOutput": [
+                {
+                    "name": "f0",
+                    "ty": {
+                        "tag": "V4F"
+                    },
+                    "tag": "Parameter"
+                }
+            ],
+            "geometryShader": null,
+            "tag": "Program"
+        },
+        {
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec3 vo2;\nout vec4 f0;\nvec4 black;\nvoid main() {\n    black = vec4 (0.0,0.0,0.0,1.0);\n    f0 = black;\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec3 vo2;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 identity;\nvec4 lightPos_Float;\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 rotMatrixX(float z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,cos (z0),sin (z0),0.0)\n                ,vec4 (0.0,(0.0) - (sin (z0)),cos (z0),0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvec4 scale(float z0,vec4 z1) {\n    return (z1) * (vec4 (z0,z0,z0,1.0));\n}\nvoid main() {\n    identity = mat4 (vec4 (1.0,0.0,0.0,0.0)\n                    ,vec4 (0.0,1.0,0.0,0.0)\n                    ,vec4 (0.0,0.0,1.0,0.0)\n                    ,vec4 (0.0,0.0,0.0,1.0));\n    lightPos_Float = vec4 (10000.0,0.0,50000.0,1.0);\n    gl_Position = (perspective (10000.0,300000.0,45.0,1.5)) * ((lookat (vec3 (0.0\n                                                                             ,-100000.0\n                                                                             ,50000.0)\n                                                                       ,vec3 (0.0,0.0,0.0)\n                                                                       ,vec3 (0.0,0.0,1.0))) * ((identity) * ((vec4 (((((rotMatrixX\n                                                                                                                    (-1.5707963267948966)) * (scale (200.0\n                                                                                                                                                    ,vec4 ((vi1).x\n                                                                                                                                                          ,(vi1).y\n                                                                                                                                                          ,(vi1).z\n                                                                                                                                                          ,1.0)))) + (lightPos_Float)).xyz).x\n                                                                                                                    ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                                                                                                                    ,vec4 ((vi1).x\n                                                                                                                                                                          ,(vi1).y\n                                                                                                                                                                          ,(vi1).z\n                                                                                                                                                                          ,1.0)))) + (lightPos_Float)).xyz).y\n                                                                                                                    ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                                                                                                                    ,vec4 ((vi1).x\n                                                                                                                                                                          ,(vi1).y\n                                                                                                                                                                          ,(vi1).z\n                                                                                                                                                                          ,1.0)))) + (lightPos_Float)).xyz).z\n                                                                                                                    ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)))));\n    vo1 = (identity) * ((vec4 (((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                              ,vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)))) + (lightPos_Float)).xyz).x\n                              ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                              ,vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)))) + (lightPos_Float)).xyz).y\n                              ,((((rotMatrixX (-1.5707963267948966)) * (scale (200.0\n                                                                              ,vec4 ((vi1).x,(vi1).y,(vi1).z,1.0)))) + (lightPos_Float)).xyz).z\n                              ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));\n    vo2 = vi2;\n}",
+            "programStreams": {
+                "vi1": {
+                    "name": "position",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                },
+                "vi2": {
+                    "name": "normal",
+                    "ty": {
+                        "tag": "V3F"
+                    },
+                    "tag": "Parameter"
+                }
+            },
+            "programUniforms": {
+                "position": {
+                    "tag": "V3F"
                 }
             },
             "programInTextures": {},
@@ -81,6 +189,179 @@
                 }
             ],
             "tag": "ClearRenderTarget"
+        },
+        {
+            "arg0": 3,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "arg0": 0,
+                    "tag": "PolygonLine"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 1,
+            "tag": "RenderSlot"
+        },
+        {
+            "arg0": 2,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "tag": "PolygonFill"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 1,
+            "tag": "RenderSlot"
+        },
+        {
+            "arg0": 1,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "arg0": 0,
+                    "tag": "PolygonLine"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 0,
+            "tag": "RenderSlot"
         },
         {
             "arg0": 0,
@@ -179,7 +460,8 @@
                 "tag": "Triangles"
             },
             "slotPrograms": [
-                0
+                0,
+                1
             ],
             "slotStreams": {
                 "normal": {
@@ -192,9 +474,30 @@
             "slotUniforms": {
                 "position": {
                     "tag": "V3F"
+                }
+            },
+            "tag": "Slot"
+        },
+        {
+            "slotName": "lights",
+            "slotPrimitive": {
+                "tag": "Triangles"
+            },
+            "slotPrograms": [
+                2,
+                3
+            ],
+            "slotStreams": {
+                "normal": {
+                    "tag": "V3F"
                 },
-                "time": {
-                    "tag": "Float"
+                "position": {
+                    "tag": "V3F"
+                }
+            },
+            "slotUniforms": {
+                "position": {
+                    "tag": "V3F"
                 }
             },
             "tag": "Slot"

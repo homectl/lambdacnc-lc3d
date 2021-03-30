@@ -63,6 +63,7 @@ data Machine = Machine
     , xaxis :: LGL.Object
     , yaxis :: LGL.Object
     , zaxis :: LGL.Object
+    , bulb  :: LGL.Object
     }
 
 
@@ -79,8 +80,8 @@ xMax, yMax, zMax :: Int
 fps :: Double
 fps = 24
 
-mainLoop :: GLFW.Window -> GLStorage -> TextureData -> TextureData -> TextureData -> Machine -> GLRenderer -> IO ()
-mainLoop win storage textureData1 textureData2 textureData3 Machine{..} r = lcModificationTime >>= loop r startPos
+mainLoop :: GLFW.Window -> GLStorage -> TextureData -> Machine -> GLRenderer -> IO ()
+mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r startPos
   where
     startPos = MachinePosition 0 0 0
 
@@ -106,9 +107,7 @@ mainLoop win storage textureData1 textureData2 textureData3 Machine{..} r = lcMo
         GLFW.getWindowSize win >>= \(w,h) ->
             LGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
         LGL.updateUniforms storage $ do
-          "diffuseTexture" @= return textureData1
-          "OcclusionFieldMin" @= return textureData2
-          "OcclusionFieldMax" @= return textureData3
+          "diffuseTexture" @= return textureData
           "time" @= do
               Just t <- GLFW.getTime
               return (realToFrac t :: Float)
@@ -156,12 +155,25 @@ toFloat :: Int -> Float
 toFloat = fromIntegral
 
 
-uploadModel :: GLStorage -> FilePath -> IO Object
-uploadModel storage path = do
+uploadModel :: String -> [String] -> GLStorage -> FilePath -> IO Object
+uploadModel slotName uniformNames storage path = do
     putStrLn $ "Loading model: " ++ path
     STL.mustLoadSTL path
         >>= LGL.uploadMeshToGPU . stlToMesh
-        >>= LGL.addMeshToObjectArray storage "objects" ["position"]
+        >>= LGL.addMeshToObjectArray storage slotName uniformNames
+
+uploadObject :: GLStorage -> FilePath -> IO Object
+uploadObject = uploadModel "objects" ["position"]
+
+uploadLight :: GLStorage -> FilePath -> IO Object
+uploadLight = uploadModel "lights" []
+
+
+uploadTexture :: FilePath -> IO TextureData
+uploadTexture path = do
+    putStrLn $ "Loading texture: " ++ path
+    Right img <- Pic.readImage path
+    LGL.uploadTexture2DToGPU img
 
 
 main :: IO ()
@@ -171,6 +183,9 @@ main = do
     -- setup render data
     let inputSchema = LGL.makeSchema $ do
           LGL.defObjectArray "objects" Triangles $ do
+            "position"          @: Attribute_V3F
+            "normal"            @: Attribute_V3F
+          LGL.defObjectArray "lights" Triangles $ do
             "position"          @: Attribute_V3F
             "normal"            @: Attribute_V3F
           LGL.defUniforms $ do
@@ -184,29 +199,26 @@ main = do
 
     -- upload geometry to GPU and add to pipeline input
     mach@Machine{..} <- Machine
-        <$> uploadModel storage "data/models/Bed.stl"
-        <*> uploadModel storage "data/models/XAxis.stl"
-        <*> uploadModel storage "data/models/YAxis.stl"
-        <*> uploadModel storage "data/models/ZAxis.stl"
+        <$> uploadObject storage "data/models/Bed.stl"
+        <*> uploadObject storage "data/models/XAxis.stl"
+        <*> uploadObject storage "data/models/YAxis.stl"
+        <*> uploadObject storage "data/models/ZAxis.stl"
+        <*> uploadLight storage "data/models/lightbulb.stl"
 
     LGL.enableObject bed True
     LGL.enableObject yaxis True
     LGL.enableObject xaxis True
     LGL.enableObject zaxis True
+    LGL.enableObject bulb True
 
     -- load image and upload texture
-    Right img1 <- Pic.readImage "examples/logo.png"
-    Right img2 <- Pic.readImage "data/textures/OcclusionFieldMin.png"
-    Right img3 <- Pic.readImage "data/textures/OcclusionFieldMax.png"
-    textureData1 <- LGL.uploadTexture2DToGPU img1
-    textureData2 <- LGL.uploadTexture2DToGPU img2
-    textureData3 <- LGL.uploadTexture2DToGPU img3
+    textureData <- uploadTexture "examples/logo.png"
 
     -- compile hello.lc to graphics pipeline description
     loadRenderer storage >>= \case
       Nothing -> return ()
       Just renderer -> do
-        mainLoop win storage textureData1 textureData2 textureData3 mach renderer
+        mainLoop win storage textureData mach renderer
         LGL.disposeRenderer renderer
 
     LGL.disposeStorage storage

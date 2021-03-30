@@ -6,6 +6,7 @@
 module LambdaCNC.Viewer where
 
 import qualified Codec.Picture             as Pic
+import           Control.Arrow             ((&&&))
 import           Control.Monad             (unless)
 import           Data.Aeson.Encode.Pretty  (encodePretty)
 import qualified Data.ByteString.Lazy      as LBS
@@ -34,6 +35,8 @@ import           LambdaCube.GL.Mesh        as LGL (Mesh (..),
                                                    MeshAttribute (A_V3F),
                                                    MeshPrimitive (P_Triangles))
 import qualified LambdaCube.GL.Mesh        as LGL
+import qualified LambdaCube.IR             as IR
+import qualified System.IO                 as IO
 
 lcFile :: FilePath
 lcFile = "data/engine/lambdacnc.lc"
@@ -47,6 +50,7 @@ loadRenderer storage = do
       Right pipelineDesc -> do
         let json = encodePretty pipelineDesc
         LBS.writeFile "data/engine/lambdacnc.json" json
+        mapM_ writeShaders (zip [0..] $ map (IR.fragmentShader &&& IR.vertexShader) $ V.toList $ IR.programs pipelineDesc)
         renderer <- LGL.allocRenderer pipelineDesc
         LGL.setStorage renderer storage >>= \case -- check schema compatibility
           Just err -> do
@@ -56,6 +60,11 @@ loadRenderer storage = do
           Nothing -> do
             putStrLn "setStorage ok"
             return $ Just renderer
+
+writeShaders :: (Int, (String, String)) -> IO ()
+writeShaders (n, (frag, vert)) = do
+    IO.writeFile ("data/engine/shaders/" ++ show n ++ ".frag") frag
+    IO.writeFile ("data/engine/shaders/" ++ show n ++ ".vert") vert
 
 
 data Machine = Machine
@@ -254,8 +263,8 @@ stlToMesh STL{triangles} = Mesh
         V3 x y z
 
     normals = (`concatMap` triangles) $ \case
-        STL.Triangle{STL.normal=Just (x, y, z)} -> replicate 3 $ V3 z y x
-        STL.Triangle{STL.vertices=v}            -> replicate 3 $ normal v
+        STL.Triangle{STL.normal=Just n} -> replicate 3 $ uncurry3 V3 n
+        STL.Triangle{STL.vertices=v}    -> replicate 3 $ normal v
 
 
 initWindow :: String -> Int -> Int -> IO GLFW.Window

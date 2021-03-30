@@ -7,22 +7,27 @@ identity = M44F r1 r2 r3 r4
 
 ----------------------------------------
 
-cameraPos = V4 0 (-100000) 50000 1
-lightPos = V4 (10000) 0 50000 1
+lightPos = V4 (10000) (-10000) (14000) 1
+cameraPos = V4 (10000) (-10000) (14000) 1 + V4 0 100 44000 0
+
+projmat = projection .*. view
+  where
+    projection = perspective 10000 300000 45 1.75
+    view = lookat cameraPos%xyz (V3 0 0 0) (V3 0 0 1)
 
 ----------------------------------------
 
 vertObject time objPos vertPos n =
     let
-        projection = perspective 10000 300000 45 1.5
-        view = lookat cameraPos%xyz (V3 0 0 0) (V3 0 0 1)
-        model = identity -- rotMatrixZ time
+        -- model = identity
+        -- model = rotMatrixZ (time * 4)
+        model = rotMatrixZ (pi/4*3)
     in
 
     let
-      aPos = V4 vertPos%x vertPos%y vertPos%z 1 + V4 objPos%x objPos%y objPos%z 0
-      pos = projection *. view *. model *. aPos
-      fragPos = model *. aPos
+        aPos = V4 vertPos%x vertPos%y vertPos%z 1 + V4 objPos%x objPos%y objPos%z 0
+        pos = projmat *. model *. aPos
+        fragPos = model *. aPos
     in
     (pos, fragPos, n)
 
@@ -30,29 +35,35 @@ vertObject time objPos vertPos n =
 
 diffuseLight fp n lightPos lightColor =
     let
-      norm = normalize n
-      lightDir = (normalize (lightPos - fp))%xyz
-      diff = max (dot norm lightDir) 0
-      diffuse = lightColor *! diff
+        norm = normalize n
+        lightDir = (normalize (lightPos - fp))%xyz
+        diff = max (dot norm lightDir) 0
+        diffuse = lightColor *! diff
     in
     diffuse
 
 fragObject time texture fp n =
     let
-      diffuse = diffuseLight fp n lightPos (V3 2.0 2.0 2.0)
-              -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
-              -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
-              -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
-      objectColor = V3 0.8 0.8 0.8
-      result = diffuse * objectColor
+        diffuse = diffuseLight fp n lightPos (V3 2.0 2.0 2.0)
+                -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
+                -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
+                -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
+        objectColor = V3 0.8 0.8 0.8
+        result = diffuse * objectColor
     in
     V4 result%x result%y result%z 1
 
 ----------------------------------------
 
-vertBulb time objPos vertPos n = vertObject time objPos (rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 1) + lightPos)%xyz n
+-- Roughly put the light emitter in the center of the bulb.
+bulbOffset = V4 0 0 4200 0
 
-----------------------------------------
+vertBulb time objPos vertPos n =
+    let
+        aPos = rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 0) + lightPos + bulbOffset
+        pos = projmat *. aPos
+    in
+    (pos, n)
 
 ----------------------------------------
 
@@ -69,14 +80,14 @@ makeFrame (time :: Float)
   where
     bulbsWireFrame = lights
       & mapPrimitives (\((pos,n)) -> vertBulb time position pos n)
-      & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) (Smooth, Smooth)
-      & mapFragments (\((_,_)) -> ((black)))
+      & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) ((Smooth))
+      & mapFragments (\((_)) -> ((black)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     bulbsSurfaces = lights
       & mapPrimitives (\((pos,n)) -> vertBulb time position pos n)
-      & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth)
-      & mapFragments (\((_,_)) -> ((white)))
+      & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
+      & mapFragments (\((_)) -> ((white)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     objectsWireFrame = objects

@@ -69,8 +69,8 @@ void main() {
                                                     ,(vi1).y
                                                     ,(vi1).z
                                                     ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));
-    vo2 = ((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x
-                                                    ,(vi2).y
-                                                    ,(vi2).z
-                                                    ,1.0))).xyz;
+    vo2 = normalize (((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x
+                                                               ,(vi2).y
+                                                               ,(vi2).z
+                                                               ,1.0))).xyz);
 }

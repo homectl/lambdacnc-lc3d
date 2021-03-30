@@ -6,7 +6,7 @@ smooth in vec4 vo1;
 smooth in vec3 vo2;
 out vec4 f0;
 vec3 diffuseLight_4_VecSFloat3(vec4 z0,vec3 z1,vec4 z2,vec3 z3) {
-    return (z3) * (max (dot (normalize (z1),(normalize ((z2) - (z0))).xyz),0.0));
+    return (z3) * (max (dot (z1,(normalize ((z2) - (z0))).xyz),0.0));
 }
 vec4 lightPos_Float;
 void main() {

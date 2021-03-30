@@ -28,15 +28,14 @@ vertObject time objPos vertPos n =
         aPos = V4 vertPos%x vertPos%y vertPos%z 1 + V4 objPos%x objPos%y objPos%z 0
         pos = projmat *. model *. aPos
         fragPos = model *. aPos
-        normal = (model *. (V4 n%x n%y n%z 1))%xyz
+        normal = normalize (model *. (V4 n%x n%y n%z 1))%xyz
     in
     (pos, fragPos, normal)
 
 ----------------------------------------
 
-diffuseLight fp n lightPos lightColor =
+diffuseLight fp norm lightPos lightColor =
     let
-        norm = normalize n
         lightDir = (normalize (lightPos - fp))%xyz
         diff = max (dot norm lightDir) 0
         diffuse = lightColor *! diff

@@ -3,7 +3,7 @@ vec4 texture2D(sampler2D s,vec2 uv) {
     return texture(s,uv);
 }
 smooth in vec4 vo1;
-smooth in vec3 vo2;
+smooth in vec4 vo2;
 out vec4 f0;
 vec4 black;
 void main() {

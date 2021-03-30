@@ -6,7 +6,7 @@ uniform vec3 position;
 in vec3 vi1;
 in vec3 vi2;
 smooth out vec4 vo1;
-smooth out vec3 vo2;
+smooth out vec4 vo2;
 vec4 ext0_Float_3(vec3 z0) {
     return vec4 ((z0).x,(z0).y,(z0).z,0.0);
 }
@@ -69,8 +69,8 @@ void main() {
                                                     ,(vi1).y
                                                     ,(vi1).z
                                                     ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));
-    vo2 = normalize (((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x
-                                                               ,(vi2).y
-                                                               ,(vi2).z
-                                                               ,1.0))).xyz);
+    vo2 = normalize ((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x
+                                                              ,(vi2).y
+                                                              ,(vi2).z
+                                                              ,0.0)));
 }

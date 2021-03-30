@@ -7,8 +7,8 @@ identity = M44F r1 r2 r3 r4
 
 ----------------------------------------
 
-lightPos = V4 (10000) (-10000) (14000) 1
-cameraPos = V4 (10000) (-10000) (14000) 1 + V4 0 100 44000 0
+lightPos = V4 (10000) (10000) (14000) 1
+cameraPos = V4 0 80000 44000 0
 
 projmat = projection .*. view
   where
@@ -28,8 +28,9 @@ vertObject time objPos vertPos n =
         aPos = V4 vertPos%x vertPos%y vertPos%z 1 + V4 objPos%x objPos%y objPos%z 0
         pos = projmat *. model *. aPos
         fragPos = model *. aPos
+        normal = (model *. (V4 n%x n%y n%z 1))%xyz
     in
-    (pos, fragPos, n)
+    (pos, fragPos, normal)
 
 ----------------------------------------
 
@@ -55,7 +56,8 @@ fragObject time texture fp n =
 
 ----------------------------------------
 
--- Roughly put the light emitter in the center of the bulb.
+-- Roughly put the light emitter in the center of the bulb by moving the bulb's
+-- sphere up (in Z direction).
 bulbOffset = V4 0 0 4200 0
 
 vertBulb time objPos vertPos n =

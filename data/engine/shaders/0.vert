@@ -19,7 +19,6 @@ mat4 translateBefore4(vec3 z0) {
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 ((z0).x,(z0).y,(z0).z,1.0));
 }
-vec4 cameraPos_Float;
 mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
     return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
                                                             ,normalize ((z0) - (z1)))))
@@ -57,12 +56,11 @@ mat4 rotMatrixZ(float z0) {
                 ,vec4 (0.0,0.0,0.0,1.0));
 }
 void main() {
-    cameraPos_Float = (vec4 (10000.0,-10000.0,14000.0,1.0)) + (vec4 (0.0
-                                                                    ,100.0
-                                                                    ,44000.0
-                                                                    ,0.0));
-    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat
-        ((cameraPos_Float).xyz,vec3 (0.0,0.0,0.0),vec3 (0.0,0.0,1.0)));
+    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0
+                                                                         ,80000.0
+                                                                         ,44000.0)
+                                                                   ,vec3 (0.0,0.0,0.0)
+                                                                   ,vec3 (0.0,0.0,1.0)));
     gl_Position = (projmat) * ((rotMatrixZ (2.356194490192345)) * ((vec4 ((vi1).x
                                                                          ,(vi1).y
                                                                          ,(vi1).z
@@ -71,5 +69,8 @@ void main() {
                                                     ,(vi1).y
                                                     ,(vi1).z
                                                     ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));
-    vo2 = vi2;
+    vo2 = ((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x
+                                                    ,(vi2).y
+                                                    ,(vi2).z
+                                                    ,1.0))).xyz;
 }

@@ -17,7 +17,6 @@ mat4 translateBefore4(vec3 z0) {
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 ((z0).x,(z0).y,(z0).z,1.0));
 }
-vec4 cameraPos_Float;
 mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
     return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
                                                             ,normalize ((z0) - (z1)))))
@@ -60,14 +59,13 @@ vec4 scale(float z0,vec4 z1) {
     return (z1) * (vec4 (z0,z0,z0,1.0));
 }
 void main() {
-    cameraPos_Float = (vec4 (10000.0,-10000.0,14000.0,1.0)) + (vec4 (0.0
-                                                                    ,100.0
-                                                                    ,44000.0
-                                                                    ,0.0));
     bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
-    lightPos_Float = vec4 (10000.0,-10000.0,14000.0,1.0);
-    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat
-        ((cameraPos_Float).xyz,vec3 (0.0,0.0,0.0),vec3 (0.0,0.0,1.0)));
+    lightPos_Float = vec4 (10000.0,10000.0,14000.0,1.0);
+    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0
+                                                                         ,80000.0
+                                                                         ,44000.0)
+                                                                   ,vec3 (0.0,0.0,0.0)
+                                                                   ,vec3 (0.0,0.0,1.0)));
     gl_Position = (projmat) * ((((rotMatrixX (-1.5707963267948966)) * (scale (200.0
                                                                              ,vec4 ((vi1).x
                                                                                    ,(vi1).y

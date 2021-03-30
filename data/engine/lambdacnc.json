@@ -1,8 +1,8 @@
 {
     "programs": [
         {
-            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec4 vo2;\nout vec4 f0;\nvec3 diffuseLight_4_VecSFloat3(vec4 z0,vec4 z1,vec4 z2,vec3 z3) {\n    return (z3) * (max (dot (z1,normalize ((z2) - (z0))),0.0));\n}\nvec4 lightPos_Float;\nvoid main() {\n    lightPos_Float = vec4 (10000.0,10000.0,14000.0,1.0);\n    f0 = vec4 (((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo2\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * (vec3 (0.8,0.8,0.8))).x\n              ,((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo2\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * (vec3 (0.8,0.8,0.8))).y\n              ,((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo2\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * (vec3 (0.8,0.8,0.8))).z\n              ,1.0);\n}",
-            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec4 vo2;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 projmat;\nmat4 rotMatrixZ(float z0) {\n    return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)\n                ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvoid main() {\n    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0\n                                                                         ,80000.0\n                                                                         ,44000.0)\n                                                                   ,vec3 (0.0,0.0,0.0)\n                                                                   ,vec3 (0.0,0.0,1.0)));\n    gl_Position = (projmat) * ((rotMatrixZ (2.356194490192345)) * ((vec4 ((vi1).x\n                                                                         ,(vi1).y\n                                                                         ,(vi1).z\n                                                                         ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0))));\n    vo1 = (rotMatrixZ (2.356194490192345)) * ((vec4 ((vi1).x\n                                                    ,(vi1).y\n                                                    ,(vi1).z\n                                                    ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));\n    vo2 = normalize ((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x\n                                                              ,(vi2).y\n                                                              ,(vi2).z\n                                                              ,0.0)));\n}",
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec3 vo2;\nsmooth in vec4 vo3;\nout vec4 f0;\nvec4 black;\nvoid main() {\n    black = vec4 (0.0,0.0,0.0,1.0);\n    f0 = black;\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nuniform float time;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec3 vo2;\nsmooth out vec4 vo3;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 modelMat_Float(float z0) {\n    return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)\n                ,vec4 ((0.0) - (sin (2.356194490192345)),cos (2.356194490192345),0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {\n    return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4_3_Float (z1,0.0));\n}\nmat4 projmat;\nvec4 vec4_3_Float(vec3 z0,float z1) {\n    return vec4 ((z0).x,(z0).y,(z0).z,z1);\n}\nvoid main() {\n    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0\n                                                                         ,80000.0\n                                                                         ,44000.0)\n                                                                   ,vec3 (0.0,0.0,0.0)\n                                                                   ,vec3 (0.0,0.0,1.0)));\n    gl_Position = (projmat) * ((modelMat_Float\n        ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)\n                                                             ,position\n                                                             ,vi1)));\n    vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float\n        ((time) / (10.0),position,vi1));\n    vo2 = vi1;\n    vo3 = normalize ((modelMat_Float ((time) / (10.0))) * (vec4_3_Float (vi2,0.0)));\n}",
             "programStreams": {
                 "vi1": {
                     "name": "position",
@@ -22,6 +22,9 @@
             "programUniforms": {
                 "position": {
                     "tag": "V3F"
+                },
+                "time": {
+                    "tag": "Float"
                 }
             },
             "programInTextures": {},
@@ -38,8 +41,8 @@
             "tag": "Program"
         },
         {
-            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nsmooth in vec4 vo1;\nsmooth in vec4 vo2;\nout vec4 f0;\nvec4 black;\nvoid main() {\n    black = vec4 (0.0,0.0,0.0,1.0);\n    f0 = black;\n}",
-            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec4 vo2;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 projmat;\nmat4 rotMatrixZ(float z0) {\n    return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)\n                ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvoid main() {\n    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0\n                                                                         ,80000.0\n                                                                         ,44000.0)\n                                                                   ,vec3 (0.0,0.0,0.0)\n                                                                   ,vec3 (0.0,0.0,1.0)));\n    gl_Position = (projmat) * ((rotMatrixZ (2.356194490192345)) * ((vec4 ((vi1).x\n                                                                         ,(vi1).y\n                                                                         ,(vi1).z\n                                                                         ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0))));\n    vo1 = (rotMatrixZ (2.356194490192345)) * ((vec4 ((vi1).x\n                                                    ,(vi1).y\n                                                    ,(vi1).z\n                                                    ,1.0)) + (vec4 ((position).x,(position).y,(position).z,0.0)));\n    vo2 = normalize ((rotMatrixZ (2.356194490192345)) * (vec4 ((vi2).x\n                                                              ,(vi2).y\n                                                              ,(vi2).z\n                                                              ,0.0)));\n}",
+            "fragmentShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform sampler2D s0;\nuniform sampler2D s1;\nuniform sampler2D s2;\nsmooth in vec4 vo1;\nsmooth in vec3 vo2;\nsmooth in vec4 vo3;\nout vec4 f0;\nvec3 diffuseLight_4_VecSFloat3(vec4 z0,vec4 z1,vec4 z2,vec3 z3) {\n    return (z3) * (max (dot (z1,normalize ((z2) - (z0))),0.0));\n}\nvec4 lightPos_Float;\nvoid main() {\n    lightPos_Float = vec4 (10000.0,10000.0,14000.0,1.0);\n    f0 = vec4 (((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo3\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s0,((vo2).xy) * (5.0e-5))).xyz)).x\n              ,((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo3\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s1,((vo2).xy) * (5.0e-5))).xyz)).y\n              ,((diffuseLight_4_VecSFloat3 (vo1\n                                           ,vo3\n                                           ,lightPos_Float\n                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s2,((vo2).xy) * (5.0e-5))).xyz)).z\n              ,1.0);\n}",
+            "vertexShader": "#version 330 core\nvec4 texture2D(sampler2D s,vec2 uv) {\n    return texture(s,uv);\n}\nuniform vec3 position;\nuniform float time;\nin vec3 vi1;\nin vec3 vi2;\nsmooth out vec4 vo1;\nsmooth out vec3 vo2;\nsmooth out vec4 vo3;\nvec4 ext0_Float_3(vec3 z0) {\n    return vec4 ((z0).x,(z0).y,(z0).z,0.0);\n}\nvec3 neg_VecSFloat3(vec3 z0) {\n    return - (z0);\n}\nmat4 translateBefore4(vec3 z0) {\n    return mat4 (vec4 (1.0,0.0,0.0,0.0)\n                ,vec4 (0.0,1.0,0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 ((z0).x,(z0).y,(z0).z,1.0));\n}\nmat4 lookat(vec3 z0,vec3 z1,vec3 z2) {\n    return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2\n                                                            ,normalize ((z0) - (z1)))))\n                            ,ext0_Float_3 (cross (normalize ((z0) - (z1))\n                                                 ,normalize (cross (z2,normalize ((z0) - (z1))))))\n                            ,ext0_Float_3 (normalize ((z0) - (z1)))\n                            ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));\n}\nmat4 perspective(float z0,float z1,float z2,float z3) {\n    return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,0.0\n                      ,0.0\n                      ,0.0)\n                ,vec4 (0.0\n                      ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,0.0\n                      ,0.0)\n                ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan\n                      ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))\n                      ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan\n                      ((z2) / (2.0))))))\n                      ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))\n                      ,-1.0)\n                ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));\n}\nmat4 modelMat_Float(float z0) {\n    return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)\n                ,vec4 ((0.0) - (sin (2.356194490192345)),cos (2.356194490192345),0.0,0.0)\n                ,vec4 (0.0,0.0,1.0,0.0)\n                ,vec4 (0.0,0.0,0.0,1.0));\n}\nvec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {\n    return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4_3_Float (z1,0.0));\n}\nmat4 projmat;\nvec4 vec4_3_Float(vec3 z0,float z1) {\n    return vec4 ((z0).x,(z0).y,(z0).z,z1);\n}\nvoid main() {\n    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0\n                                                                         ,80000.0\n                                                                         ,44000.0)\n                                                                   ,vec3 (0.0,0.0,0.0)\n                                                                   ,vec3 (0.0,0.0,1.0)));\n    gl_Position = (projmat) * ((modelMat_Float\n        ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)\n                                                             ,position\n                                                             ,vi1)));\n    vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float\n        ((time) / (10.0),position,vi1));\n    vo2 = vi1;\n    vo3 = normalize ((modelMat_Float ((time) / (10.0))) * (vec4_3_Float (vi2,0.0)));\n}",
             "programStreams": {
                 "vi1": {
                     "name": "position",
@@ -59,9 +62,22 @@
             "programUniforms": {
                 "position": {
                     "tag": "V3F"
+                },
+                "time": {
+                    "tag": "Float"
                 }
             },
-            "programInTextures": {},
+            "programInTextures": {
+                "s0": {
+                    "tag": "FTexture2D"
+                },
+                "s1": {
+                    "tag": "FTexture2D"
+                },
+                "s2": {
+                    "tag": "FTexture2D"
+                }
+            },
             "programOutput": [
                 {
                     "name": "f0",
@@ -146,8 +162,609 @@
     "backend": {
         "tag": "OpenGL33"
     },
-    "textures": [],
+    "textures": [
+        {
+            "textureType": {
+                "arg1": 1,
+                "arg0": {
+                    "arg0": {
+                        "tag": "Red"
+                    },
+                    "tag": "FloatT"
+                },
+                "tag": "Texture2D"
+            },
+            "textureBaseLevel": 0,
+            "textureSampler": {
+                "samplerMinLod": null,
+                "samplerCompareFunc": null,
+                "samplerLodBias": 0,
+                "samplerMagFilter": {
+                    "tag": "Linear"
+                },
+                "samplerMaxLod": null,
+                "samplerWrapT": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerMinFilter": {
+                    "tag": "Linear"
+                },
+                "samplerWrapS": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerBorderColor": {
+                    "arg0": {
+                        "y": 0,
+                        "x": 0,
+                        "w": 1,
+                        "z": 0
+                    },
+                    "tag": "VV4F"
+                },
+                "tag": "SamplerDescriptor",
+                "samplerWrapR": null
+            },
+            "textureMaxLevel": 0,
+            "textureSemantic": {
+                "tag": "Depth"
+            },
+            "tag": "TextureDescriptor",
+            "textureSize": {
+                "arg0": {
+                    "y": 1000,
+                    "x": 1000
+                },
+                "tag": "VV2U"
+            }
+        },
+        {
+            "textureType": {
+                "arg1": 1,
+                "arg0": {
+                    "arg0": {
+                        "tag": "RGBA"
+                    },
+                    "tag": "FloatT"
+                },
+                "tag": "Texture2D"
+            },
+            "textureBaseLevel": 0,
+            "textureSampler": {
+                "samplerMinLod": null,
+                "samplerCompareFunc": null,
+                "samplerLodBias": 0,
+                "samplerMagFilter": {
+                    "tag": "Linear"
+                },
+                "samplerMaxLod": null,
+                "samplerWrapT": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerMinFilter": {
+                    "tag": "Linear"
+                },
+                "samplerWrapS": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerBorderColor": {
+                    "arg0": {
+                        "y": 0,
+                        "x": 0,
+                        "w": 1,
+                        "z": 0
+                    },
+                    "tag": "VV4F"
+                },
+                "tag": "SamplerDescriptor",
+                "samplerWrapR": null
+            },
+            "textureMaxLevel": 0,
+            "textureSemantic": {
+                "tag": "Color"
+            },
+            "tag": "TextureDescriptor",
+            "textureSize": {
+                "arg0": {
+                    "y": 1000,
+                    "x": 1000
+                },
+                "tag": "VV2U"
+            }
+        },
+        {
+            "textureType": {
+                "arg1": 1,
+                "arg0": {
+                    "arg0": {
+                        "tag": "Red"
+                    },
+                    "tag": "FloatT"
+                },
+                "tag": "Texture2D"
+            },
+            "textureBaseLevel": 0,
+            "textureSampler": {
+                "samplerMinLod": null,
+                "samplerCompareFunc": null,
+                "samplerLodBias": 0,
+                "samplerMagFilter": {
+                    "tag": "Linear"
+                },
+                "samplerMaxLod": null,
+                "samplerWrapT": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerMinFilter": {
+                    "tag": "Linear"
+                },
+                "samplerWrapS": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerBorderColor": {
+                    "arg0": {
+                        "y": 0,
+                        "x": 0,
+                        "w": 1,
+                        "z": 0
+                    },
+                    "tag": "VV4F"
+                },
+                "tag": "SamplerDescriptor",
+                "samplerWrapR": null
+            },
+            "textureMaxLevel": 0,
+            "textureSemantic": {
+                "tag": "Depth"
+            },
+            "tag": "TextureDescriptor",
+            "textureSize": {
+                "arg0": {
+                    "y": 1000,
+                    "x": 1000
+                },
+                "tag": "VV2U"
+            }
+        },
+        {
+            "textureType": {
+                "arg1": 1,
+                "arg0": {
+                    "arg0": {
+                        "tag": "RGBA"
+                    },
+                    "tag": "FloatT"
+                },
+                "tag": "Texture2D"
+            },
+            "textureBaseLevel": 0,
+            "textureSampler": {
+                "samplerMinLod": null,
+                "samplerCompareFunc": null,
+                "samplerLodBias": 0,
+                "samplerMagFilter": {
+                    "tag": "Linear"
+                },
+                "samplerMaxLod": null,
+                "samplerWrapT": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerMinFilter": {
+                    "tag": "Linear"
+                },
+                "samplerWrapS": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerBorderColor": {
+                    "arg0": {
+                        "y": 0,
+                        "x": 0,
+                        "w": 1,
+                        "z": 0
+                    },
+                    "tag": "VV4F"
+                },
+                "tag": "SamplerDescriptor",
+                "samplerWrapR": null
+            },
+            "textureMaxLevel": 0,
+            "textureSemantic": {
+                "tag": "Color"
+            },
+            "tag": "TextureDescriptor",
+            "textureSize": {
+                "arg0": {
+                    "y": 1000,
+                    "x": 1000
+                },
+                "tag": "VV2U"
+            }
+        },
+        {
+            "textureType": {
+                "arg1": 1,
+                "arg0": {
+                    "arg0": {
+                        "tag": "Red"
+                    },
+                    "tag": "FloatT"
+                },
+                "tag": "Texture2D"
+            },
+            "textureBaseLevel": 0,
+            "textureSampler": {
+                "samplerMinLod": null,
+                "samplerCompareFunc": null,
+                "samplerLodBias": 0,
+                "samplerMagFilter": {
+                    "tag": "Linear"
+                },
+                "samplerMaxLod": null,
+                "samplerWrapT": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerMinFilter": {
+                    "tag": "Linear"
+                },
+                "samplerWrapS": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerBorderColor": {
+                    "arg0": {
+                        "y": 0,
+                        "x": 0,
+                        "w": 1,
+                        "z": 0
+                    },
+                    "tag": "VV4F"
+                },
+                "tag": "SamplerDescriptor",
+                "samplerWrapR": null
+            },
+            "textureMaxLevel": 0,
+            "textureSemantic": {
+                "tag": "Depth"
+            },
+            "tag": "TextureDescriptor",
+            "textureSize": {
+                "arg0": {
+                    "y": 1000,
+                    "x": 1000
+                },
+                "tag": "VV2U"
+            }
+        },
+        {
+            "textureType": {
+                "arg1": 1,
+                "arg0": {
+                    "arg0": {
+                        "tag": "RGBA"
+                    },
+                    "tag": "FloatT"
+                },
+                "tag": "Texture2D"
+            },
+            "textureBaseLevel": 0,
+            "textureSampler": {
+                "samplerMinLod": null,
+                "samplerCompareFunc": null,
+                "samplerLodBias": 0,
+                "samplerMagFilter": {
+                    "tag": "Linear"
+                },
+                "samplerMaxLod": null,
+                "samplerWrapT": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerMinFilter": {
+                    "tag": "Linear"
+                },
+                "samplerWrapS": {
+                    "tag": "MirroredRepeat"
+                },
+                "samplerBorderColor": {
+                    "arg0": {
+                        "y": 0,
+                        "x": 0,
+                        "w": 1,
+                        "z": 0
+                    },
+                    "tag": "VV4F"
+                },
+                "tag": "SamplerDescriptor",
+                "samplerWrapR": null
+            },
+            "textureMaxLevel": 0,
+            "textureSemantic": {
+                "tag": "Color"
+            },
+            "tag": "TextureDescriptor",
+            "textureSize": {
+                "arg0": {
+                    "y": 1000,
+                    "x": 1000
+                },
+                "tag": "VV2U"
+            }
+        }
+    ],
     "commands": [
+        {
+            "arg0": 1,
+            "tag": "SetRenderTarget"
+        },
+        {
+            "arg0": [
+                {
+                    "imageSemantic": {
+                        "tag": "Depth"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": 1,
+                        "tag": "VFloat"
+                    }
+                },
+                {
+                    "imageSemantic": {
+                        "tag": "Color"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": {
+                            "y": 0.7,
+                            "x": 0.7,
+                            "w": 1,
+                            "z": 0.7
+                        },
+                        "tag": "VV4F"
+                    }
+                }
+            ],
+            "tag": "ClearRenderTarget"
+        },
+        {
+            "arg0": 0,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "arg0": 0,
+                    "tag": "PolygonLine"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 0,
+            "tag": "RenderSlot"
+        },
+        {
+            "arg0": 2,
+            "tag": "SetRenderTarget"
+        },
+        {
+            "arg0": [
+                {
+                    "imageSemantic": {
+                        "tag": "Depth"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": 1,
+                        "tag": "VFloat"
+                    }
+                },
+                {
+                    "imageSemantic": {
+                        "tag": "Color"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": {
+                            "y": 0.7,
+                            "x": 0.7,
+                            "w": 1,
+                            "z": 0.7
+                        },
+                        "tag": "VV4F"
+                    }
+                }
+            ],
+            "tag": "ClearRenderTarget"
+        },
+        {
+            "arg0": 0,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "arg0": 0,
+                    "tag": "PolygonLine"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 0,
+            "tag": "RenderSlot"
+        },
+        {
+            "arg0": 3,
+            "tag": "SetRenderTarget"
+        },
+        {
+            "arg0": [
+                {
+                    "imageSemantic": {
+                        "tag": "Depth"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": 1,
+                        "tag": "VFloat"
+                    }
+                },
+                {
+                    "imageSemantic": {
+                        "tag": "Color"
+                    },
+                    "tag": "ClearImage",
+                    "clearValue": {
+                        "arg0": {
+                            "y": 0.7,
+                            "x": 0.7,
+                            "w": 1,
+                            "z": 0.7
+                        },
+                        "tag": "VV4F"
+                    }
+                }
+            ],
+            "tag": "ClearRenderTarget"
+        },
+        {
+            "arg0": 0,
+            "tag": "SetProgram"
+        },
+        {
+            "arg0": {
+                "arg3": {
+                    "tag": "LastVertex"
+                },
+                "arg2": {
+                    "tag": "NoOffset"
+                },
+                "arg1": {
+                    "arg0": 0,
+                    "tag": "PolygonLine"
+                },
+                "arg0": {
+                    "tag": "CullNone"
+                },
+                "tag": "TriangleCtx"
+            },
+            "tag": "SetRasterContext"
+        },
+        {
+            "arg0": {
+                "accOperations": [
+                    {
+                        "arg1": true,
+                        "arg0": {
+                            "tag": "Less"
+                        },
+                        "tag": "DepthOp"
+                    },
+                    {
+                        "arg1": {
+                            "arg0": {
+                                "y": true,
+                                "x": true,
+                                "w": true,
+                                "z": true
+                            },
+                            "tag": "VV4B"
+                        },
+                        "arg0": {
+                            "tag": "NoBlending"
+                        },
+                        "tag": "ColorOp"
+                    }
+                ],
+                "tag": "AccumulationContext",
+                "accViewportName": null
+            },
+            "tag": "SetAccumulationContext"
+        },
+        {
+            "arg0": 0,
+            "tag": "RenderSlot"
+        },
         {
             "arg0": 0,
             "tag": "SetRenderTarget"
@@ -298,7 +915,7 @@
             "tag": "RenderSlot"
         },
         {
-            "arg0": 1,
+            "arg0": 0,
             "tag": "SetProgram"
         },
         {
@@ -356,8 +973,38 @@
             "tag": "RenderSlot"
         },
         {
-            "arg0": 0,
+            "arg0": 1,
             "tag": "SetProgram"
+        },
+        {
+            "arg1": 1,
+            "arg0": 0,
+            "tag": "SetTexture"
+        },
+        {
+            "arg1": 0,
+            "arg0": "s0",
+            "tag": "SetSamplerUniform"
+        },
+        {
+            "arg1": 3,
+            "arg0": 1,
+            "tag": "SetTexture"
+        },
+        {
+            "arg1": 1,
+            "arg0": "s1",
+            "tag": "SetSamplerUniform"
+        },
+        {
+            "arg1": 5,
+            "arg0": 2,
+            "tag": "SetTexture"
+        },
+        {
+            "arg1": 2,
+            "arg0": "s2",
+            "tag": "SetSamplerUniform"
         },
         {
             "arg0": {
@@ -443,6 +1090,93 @@
                 }
             ],
             "tag": "RenderTarget"
+        },
+        {
+            "renderTargets": [
+                {
+                    "targetSemantic": {
+                        "tag": "Depth"
+                    },
+                    "targetRef": {
+                        "arg2": null,
+                        "arg1": 0,
+                        "arg0": 0,
+                        "tag": "TextureImage"
+                    },
+                    "tag": "TargetItem"
+                },
+                {
+                    "targetSemantic": {
+                        "tag": "Color"
+                    },
+                    "targetRef": {
+                        "arg2": null,
+                        "arg1": 0,
+                        "arg0": 1,
+                        "tag": "TextureImage"
+                    },
+                    "tag": "TargetItem"
+                }
+            ],
+            "tag": "RenderTarget"
+        },
+        {
+            "renderTargets": [
+                {
+                    "targetSemantic": {
+                        "tag": "Depth"
+                    },
+                    "targetRef": {
+                        "arg2": null,
+                        "arg1": 0,
+                        "arg0": 2,
+                        "tag": "TextureImage"
+                    },
+                    "tag": "TargetItem"
+                },
+                {
+                    "targetSemantic": {
+                        "tag": "Color"
+                    },
+                    "targetRef": {
+                        "arg2": null,
+                        "arg1": 0,
+                        "arg0": 3,
+                        "tag": "TextureImage"
+                    },
+                    "tag": "TargetItem"
+                }
+            ],
+            "tag": "RenderTarget"
+        },
+        {
+            "renderTargets": [
+                {
+                    "targetSemantic": {
+                        "tag": "Depth"
+                    },
+                    "targetRef": {
+                        "arg2": null,
+                        "arg1": 0,
+                        "arg0": 4,
+                        "tag": "TextureImage"
+                    },
+                    "tag": "TargetItem"
+                },
+                {
+                    "targetSemantic": {
+                        "tag": "Color"
+                    },
+                    "targetRef": {
+                        "arg2": null,
+                        "arg1": 0,
+                        "arg0": 5,
+                        "tag": "TextureImage"
+                    },
+                    "tag": "TargetItem"
+                }
+            ],
+            "tag": "RenderTarget"
         }
     ],
     "slots": [
@@ -453,7 +1187,10 @@
             },
             "slotPrograms": [
                 0,
-                1
+                0,
+                0,
+                1,
+                0
             ],
             "slotStreams": {
                 "normal": {
@@ -466,6 +1203,9 @@
             "slotUniforms": {
                 "position": {
                     "tag": "V3F"
+                },
+                "time": {
+                    "tag": "Float"
                 }
             },
             "tag": "Slot"

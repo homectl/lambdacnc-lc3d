@@ -25,8 +25,8 @@ mat4 translateBefore4(vec3 z0) {
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 ((z0).x,(z0).y,(z0).z,1.0));
 }
-vec4 lightPos(float z0) {
-    return (rotMatrixZ ((z0) * (4.0))) * (vec4 (60000.0,10000.0,30000.0,1.0));
+vec4 lightPos_Float(float z0) {
+    return (rotMatrixZ (2.356194490192345)) * (vec4 (60000.0,10000.0,50000.0,1.0));
 }
 mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
     return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
@@ -49,8 +49,8 @@ mat4 orthographic(float z0,float z1,float z2,float z3) {
                 ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))
                 ,1.0));
 }
-mat4 lightMat(float z0) {
-    return (orthographic (10000.0,300000.0,40000.0,2.0)) * (lookat ((lightPos
+mat4 lightMat_Float(float z0) {
+    return (orthographic (10000.0,300000.0,70000.0,0.5)) * (lookat ((lightPos_Float
                                                                    (z0)).xyz
                                                                    ,vec3 (0.0,0.0,0.0)
                                                                    ,vec3 (0.0,0.0,1.0)));
@@ -65,11 +65,11 @@ vec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {
     return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
 }
 void main() {
-    gl_Position = (lightMat ((time) / (10.0))) * ((modelMat_Float
+    gl_Position = (lightMat_Float ((time) / (10.0))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));
-    vo1 = ((((lightMat ((time) / (10.0))) * ((modelMat_Float
+    vo1 = ((((lightMat_Float ((time) / (10.0))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)))).z) * (0.5)) + (0.5);

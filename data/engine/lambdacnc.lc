@@ -7,12 +7,11 @@ identity = M44F r1 r2 r3 r4
 
 ----------------------------------------
 
-screenSize = V2 1500 750
 depthMapSize = V2 1500 750
 
-aspectRatio = screenSize%x / screenSize%y
+aspectRatio screenSize = screenSize%x / screenSize%y
 
-lightPos time = rotMatrixZ (time * 4) *. V4 (60000) (10000) (30000) 1
+lightPos time = rotMatrixZ (pi / 4 * 3) *. V4 (60000) (10000) (50000) 1
 cameraPos time = V4 0 150000 60000 0
 
 nearPlane = 10000
@@ -22,14 +21,29 @@ linearizeDepth depth =
     let z = depth * 2.0 - 1.0 in -- Back to NDC 
     (2.0 * nearPlane * farPlane) / (farPlane + nearPlane - z * (farPlane - nearPlane))
 
-cameraMat time = projection .*. view
+cameraMat screenSize time = projection .*. view
   where
-    projection = perspective nearPlane farPlane 44.5 aspectRatio
+    projection = perspective nearPlane farPlane 44.5 (aspectRatio screenSize)
     view = lookat (cameraPos time)%xyz (V3 0 0 10000) (V3 0 0 1)
+
+orthographic :: Float
+             -> Float
+             -> Float
+             -> Float
+             -> Mat 4 4 Float
+orthographic n f t aspect =
+    M44F (V4 (2/(r-l))      0              0              0)
+         (V4 0              (2/(t-b))      0              0)
+         (V4 0              0              (-2/(f-n))     0)
+         (V4 (-(r+l)/(r-l)) (-(t+b)/(t-b)) (-(f+n)/(f-n)) 1)
+  where
+    b = -t
+    r = aspect*t
+    l = -r
 
 lightMat time = projection .*. view
   where
-    projection = orthographic nearPlane farPlane 40000 (depthMapSize%x / depthMapSize%y)
+    projection = orthographic nearPlane farPlane 70000 (depthMapSize%y / depthMapSize%x)
     -- projection = perspective nearPlane farPlane 44.5 (depthMapSize%x / depthMapSize%y)
     view = lookat (lightPos time)%xyz (V3 0 0 0) (V3 0 0 1)
 
@@ -45,14 +59,14 @@ positionObject time origPos vertPos =
     V4 vertPos%x vertPos%y vertPos%z 1 + V4 origPos%x origPos%y origPos%z 0
 
 
-vertObject time origPos vertPos n =
+vertObject screenSize time origPos vertPos n =
     (pos, fragPos, fragPosLightSpace, uvw, normal)
   where
     model = modelMat time
 
     objPos = positionObject time origPos vertPos
 
-    pos = cameraMat time *. model *. objPos
+    pos = cameraMat screenSize time *. model *. objPos
     fragPos = model *. objPos
     fragPosLightSpace = lightMat time *. fragPos
     uvw = vertPos + V3 24000 0 0
@@ -109,10 +123,10 @@ fragObject time texture depth fp lsfp uv normal =
 -- sphere up (in Z direction).
 bulbOffset = V4 0 0 4200 0
 
-vertBulb time vertPos n =
+vertBulb screenSize time vertPos n =
     let
         objPos = rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 0) + lightPos time + bulbOffset
-        pos = cameraMat time *. objPos
+        pos = cameraMat screenSize time *. objPos
     in
     (pos, n)
 
@@ -120,6 +134,7 @@ vertBulb time vertPos n =
 
 makeFrame (time :: Float)
           (position :: Vec 3 Float)
+          (screenSize :: Vec 2 Float)
           (texture :: Texture)
           (depth :: Image 1 Depth)
           (objects :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
@@ -131,25 +146,25 @@ makeFrame (time :: Float)
   `overlay` objectsSurfaces
   where
     bulbsWireFrame = lights
-      & mapPrimitives (\((pos,n)) -> vertBulb time pos n)
+      & mapPrimitives (\((pos,n)) -> vertBulb screenSize time pos n)
       & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) ((Smooth))
       & mapFragments (\((_)) -> ((black)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     bulbsSurfaces = lights
-      & mapPrimitives (\((pos,n)) -> vertBulb time pos n)
+      & mapPrimitives (\((pos,n)) -> vertBulb screenSize time pos n)
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
       & mapFragments (\((_)) -> ((white)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     objectsWireFrame = objects
-      & mapPrimitives (\((pos,n)) -> vertObject time position pos n)
+      & mapPrimitives (\((pos,n)) -> vertObject screenSize time position pos n)
       & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth)
       & mapFragments (\((_,_,_,_)) -> ((V4 0 0 0 0.5)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     objectsSurfaces = objects
-      & mapPrimitives (\((pos,n)) -> vertObject time position pos n)
+      & mapPrimitives (\((pos,n)) -> vertObject screenSize time position pos n)
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth)
       & mapFragments (\((fp,lsfp,uv,n)) -> ((fragObject time texture depth fp lsfp uv n)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
@@ -202,6 +217,7 @@ main = renderFrame
     frame = makeFrame
         (Uniform "time" / 10)
         (Uniform "position")
+        (Uniform "screenSize")
         -- (Texture2DSlot "diffuseTexture")
         shadowMapTexture
         (PrjImageDepth shadowMap)

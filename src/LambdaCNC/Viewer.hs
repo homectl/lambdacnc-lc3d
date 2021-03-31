@@ -25,24 +25,25 @@ import qualified LambdaCube.Compiler       as L (Backend (OpenGL33),
                                                  compileMain, ppShow)
 import           LambdaCube.GL             as LGL (FetchPrimitive (Triangles),
                                                    GLRenderer, GLStorage,
-                                                   InputType (FTexture2D, Float, V3F),
+                                                   InputType (FTexture2D, Float, V2F, V3F),
                                                    Object,
                                                    StreamType (Attribute_V3F),
-                                                   TextureData, V3 (V3), (@:),
-                                                   (@=))
+                                                   TextureData, V2 (V2),
+                                                   V3 (V3), (@:), (@=))
 import qualified LambdaCube.GL             as LGL
 import           LambdaCube.GL.Mesh        as LGL (Mesh (..),
                                                    MeshAttribute (A_V3F),
                                                    MeshPrimitive (P_Triangles))
 import qualified LambdaCube.GL.Mesh        as LGL
 import qualified LambdaCube.IR             as IR
+import           LambdaCube.Linear         (V2F)
 import qualified System.IO                 as IO
 
 xMax, yMax, zMax :: Int
 (xMax, yMax, zMax) = (40000, 61500, 5600)
 
 fps :: Double
-fps = 24
+fps = 1
 
 screenSize :: (Int, Int)
 screenSize = (1500, 750)
@@ -119,13 +120,14 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
         pos@MachinePosition{..} <- reposition pos0
 
         -- Update graphics input.
-        GLFW.getWindowSize win >>= \(w,h) ->
+        GLFW.getWindowSize win >>= \(w, h) -> do
             LGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
-        LGL.updateUniforms storage $ do
-          "diffuseTexture" @= return textureData
-          "time" @= do
-              Just t <- GLFW.getTime
-              return (realToFrac t :: Float)
+            LGL.updateUniforms storage $ do
+              "screenSize" @= return (V2 (fromIntegral w) (fromIntegral h) :: V2F)
+              "diffuseTexture" @= return textureData
+              "time" @= do
+                  Just t <- GLFW.getTime
+                  return (realToFrac t :: Float)
 
         -- Render machine in the current position.
         let x = toFloat (xPos - (xMax `div` 2))
@@ -206,9 +208,8 @@ main = do
           LGL.defUniforms $ do
             "time"              @: Float
             "position"          @: V3F
+            "screenSize"        @: V2F
             "diffuseTexture"    @: FTexture2D
-            "OcclusionFieldMin" @: FTexture2D
-            "OcclusionFieldMax" @: FTexture2D
 
     storage <- LGL.allocStorage inputSchema
 

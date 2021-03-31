@@ -50,10 +50,10 @@ mat4 orthographic(float z0,float z1,float z2,float z3) {
                 ,1.0));
 }
 mat4 lightMat(float z0) {
-    return (orthographic (10000.0,300000.0,100000.0,1.0)) * (lookat ((lightPos
-                                                                    (z0)).xyz
-                                                                    ,vec3 (0.0,0.0,0.0)
-                                                                    ,vec3 (0.0,0.0,1.0)));
+    return (orthographic (10000.0,300000.0,40000.0,2.0)) * (lookat ((lightPos
+                                                                   (z0)).xyz
+                                                                   ,vec3 (0.0,0.0,0.0)
+                                                                   ,vec3 (0.0,0.0,1.0)));
 }
 mat4 modelMat_Float(float z0) {
     return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)

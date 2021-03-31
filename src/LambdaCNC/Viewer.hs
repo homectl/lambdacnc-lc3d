@@ -45,7 +45,7 @@ fps :: Double
 fps = 24
 
 screenSize :: (Int, Int)
-screenSize = (1000, 1000)
+screenSize = (1500, 750)
 
 ---------------------------------------------
 

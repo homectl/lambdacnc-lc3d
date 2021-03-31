@@ -7,14 +7,13 @@ identity = M44F r1 r2 r3 r4
 
 ----------------------------------------
 
-sz = 1000
-screenSize = V2 sz sz
-depthMapSize = V2 sz sz
+screenSize = V2 1500 750
+depthMapSize = V2 1500 750
 
 aspectRatio = screenSize%x / screenSize%y
 
 lightPos time = rotMatrixZ (time * 4) *. V4 (60000) (10000) (30000) 1
-cameraPos time = V4 0 150000 30000 0
+cameraPos time = V4 0 150000 60000 0
 
 nearPlane = 10000
 farPlane = 300000
@@ -25,12 +24,13 @@ linearizeDepth depth =
 
 cameraMat time = projection .*. view
   where
-    projection = perspective nearPlane farPlane 45 aspectRatio
-    view = lookat (cameraPos time)%xyz (V3 0 0 0) (V3 0 0 1)
+    projection = perspective nearPlane farPlane 44.5 aspectRatio
+    view = lookat (cameraPos time)%xyz (V3 0 0 10000) (V3 0 0 1)
 
 lightMat time = projection .*. view
   where
-    projection = orthographic nearPlane farPlane 100000 (depthMapSize%x / depthMapSize%y)
+    projection = orthographic nearPlane farPlane 40000 (depthMapSize%x / depthMapSize%y)
+    -- projection = perspective nearPlane farPlane 44.5 (depthMapSize%x / depthMapSize%y)
     view = lookat (lightPos time)%xyz (V3 0 0 0) (V3 0 0 1)
 
 ----------------------------------------
@@ -195,8 +195,8 @@ showTexture = showTextureOn quad
 
 
 main = renderFrame
-    frame
-    -- (showTexture shadowMapTexture)
+    -- frame
+    (showTexture shadowMapTexture)
     -- shadowMap
   where
     frame = makeFrame

@@ -55,10 +55,10 @@ mat4 rotMatrixZ(float z0) {
 }
 vec4 bulbOffset_Float;
 mat4 cameraMat_Float(float z0) {
-    return (perspective (10000.0,300000.0,45.0,1.0)) * (lookat (vec3 (0.0
+    return (perspective (10000.0,300000.0,44.5,2.0)) * (lookat (vec3 (0.0
                                                                      ,150000.0
-                                                                     ,30000.0)
-                                                               ,vec3 (0.0,0.0,0.0)
+                                                                     ,60000.0)
+                                                               ,vec3 (0.0,0.0,10000.0)
                                                                ,vec3 (0.0,0.0,1.0)));
 }
 vec4 lightPos(float z0) {

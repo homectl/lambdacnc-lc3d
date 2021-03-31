@@ -47,8 +47,8 @@ mat4 perspective(float z0,float z1,float z2,float z3) {
                 ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));
 }
 vec4 bulbOffset_Float;
+mat4 cameraMat;
 vec4 lightPos_Float;
-mat4 projmat;
 mat4 rotMatrixX(float z0) {
     return mat4 (vec4 (1.0,0.0,0.0,0.0)
                 ,vec4 (0.0,cos (z0),sin (z0),0.0)
@@ -60,16 +60,17 @@ vec4 scale(float z0,vec4 z1) {
 }
 void main() {
     bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
-    lightPos_Float = vec4 (10000.0,10000.0,14000.0,1.0);
-    projmat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0
-                                                                         ,80000.0
-                                                                         ,44000.0)
-                                                                   ,vec3 (0.0,0.0,0.0)
-                                                                   ,vec3 (0.0,0.0,1.0)));
-    gl_Position = (projmat) * ((((rotMatrixX (-1.5707963267948966)) * (scale (200.0
-                                                                             ,vec4 ((vi1).x
-                                                                                   ,(vi1).y
-                                                                                   ,(vi1).z
-                                                                                   ,0.0)))) + (lightPos_Float)) + (bulbOffset_Float));
+    cameraMat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0
+                                                                           ,80000.0
+                                                                           ,44000.0)
+                                                                     ,vec3 (0.0,0.0,0.0)
+                                                                     ,vec3 (0.0,0.0,1.0)));
+    lightPos_Float = vec4 (60000.0,10000.0,34000.0,1.0);
+    gl_Position = (cameraMat) * ((((rotMatrixX (-1.5707963267948966)) * (scale
+        (200.0
+        ,vec4 ((vi1).x
+              ,(vi1).y
+              ,(vi1).z
+              ,0.0)))) + (lightPos_Float)) + (bulbOffset_Float));
     vo1 = vi2;
 }

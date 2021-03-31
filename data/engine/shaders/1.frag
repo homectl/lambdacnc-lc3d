@@ -14,7 +14,7 @@ vec3 diffuseLight_4_VecSFloat3(vec4 z0,vec4 z1,vec4 z2,vec3 z3) {
 }
 vec4 lightPos_Float;
 void main() {
-    lightPos_Float = vec4 (10000.0,10000.0,14000.0,1.0);
+    lightPos_Float = vec4 (60000.0,10000.0,34000.0,1.0);
     f0 = vec4 (((diffuseLight_4_VecSFloat3 (vo1
                                            ,vo3
                                            ,lightPos_Float

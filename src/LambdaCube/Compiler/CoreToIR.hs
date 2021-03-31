@@ -205,6 +205,7 @@ getCommands backend e = case e of
 
             let (a, tf) = case img of
                     A1 "PrjImageColor" a -> (,) a $ \[_, x] -> x
+                    A1 "PrjImageDepth" a -> (,) a $ \[x, _] -> x
                     A1 "PrjImage" a      -> (,) a $ \[x] -> x
                     x -> error $ "Unexpected image: " <> ppShow x
             tl <- forM (getSemantics a) $ \semantic -> do

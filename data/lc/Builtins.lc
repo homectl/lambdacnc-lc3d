@@ -527,7 +527,7 @@ type family GetImageKind a :: ImageKind where GetImageKind (Image n t) = t
 --instance ValidFrameBuffer a -- TODO
 
 -- todo: rename to imageFrame
-FrameBuffer  :: forall (a :: [Type]) . (sameLayerCounts a) => HList a -> FrameBuffer (ImageLC (head a)) (map GetImageKind a)
+FrameBuffer :: forall (a :: [Type]) . (sameLayerCounts a) => HList a -> FrameBuffer (ImageLC (head a)) (map GetImageKind a)
 
 imageFrame = FrameBuffer
 
@@ -536,6 +536,7 @@ accumulate ctx fshader fstr fb = Accumulate ctx (mapFragments fshader fstr) fb
 -- texture support
 PrjImage            :: FrameBuffer 1 '[a] -> Image 1 a
 PrjImageColor       :: FrameBuffer 1 '[ 'Depth, 'Color (Vec 4 Float)] -> Image 1 (Color (Vec 4 Float))
+PrjImageDepth       :: FrameBuffer 1 '[ 'Depth, 'Color (Vec 4 Float)] -> Image 1 Depth
 
 data Output where
   ScreenOut           :: FrameBuffer a b -> Output

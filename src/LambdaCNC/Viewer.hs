@@ -38,6 +38,17 @@ import qualified LambdaCube.GL.Mesh        as LGL
 import qualified LambdaCube.IR             as IR
 import qualified System.IO                 as IO
 
+xMax, yMax, zMax :: Int
+(xMax, yMax, zMax) = (40000, 61500, 5600)
+
+fps :: Double
+fps = 24
+
+screenSize :: (Int, Int)
+screenSize = (1000, 1000)
+
+---------------------------------------------
+
 lcFile :: FilePath
 lcFile = "data/engine/lambdacnc.lc"
 
@@ -66,6 +77,7 @@ writeShaders (n, (frag, vert)) = do
     IO.writeFile ("data/engine/shaders/" ++ show n ++ ".frag") frag
     IO.writeFile ("data/engine/shaders/" ++ show n ++ ".vert") vert
 
+---------------------------------------------
 
 data Machine = Machine
     { bed   :: LGL.Object
@@ -82,12 +94,6 @@ data MachinePosition = MachinePosition
     , zPos :: Int
     }
 
-
-xMax, yMax, zMax :: Int
-(xMax, yMax, zMax) = (40000, 61500, 5600)
-
-fps :: Double
-fps = 24
 
 mainLoop :: GLFW.Window -> GLStorage -> TextureData -> Machine -> GLRenderer -> IO ()
 mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r startPos
@@ -163,6 +169,7 @@ moveMult False False = 0
 toFloat :: Int -> Float
 toFloat = fromIntegral
 
+---------------------------------------------
 
 uploadModel :: String -> [String] -> GLStorage -> FilePath -> IO Object
 uploadModel slotName uniformNames storage path = do
@@ -177,7 +184,6 @@ uploadObject = uploadModel "objects" ["position"]
 uploadLight :: GLStorage -> FilePath -> IO Object
 uploadLight = uploadModel "lights" []
 
-
 uploadTexture :: FilePath -> IO TextureData
 uploadTexture path = do
     putStrLn $ "Loading texture: " ++ path
@@ -187,7 +193,7 @@ uploadTexture path = do
 
 main :: IO ()
 main = do
-    win <- initWindow "LambdaCNC" 960 540
+    win <- uncurry (initWindow "LambdaCNC") screenSize
 
     -- setup render data
     let inputSchema = LGL.makeSchema $ do

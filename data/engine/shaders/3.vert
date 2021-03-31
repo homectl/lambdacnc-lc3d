@@ -2,6 +2,7 @@
 vec4 texture2D(sampler2D s,vec2 uv) {
     return texture(s,uv);
 }
+uniform float time;
 in vec3 vi1;
 in vec3 vi2;
 smooth out vec3 vo1;
@@ -46,9 +47,23 @@ mat4 perspective(float z0,float z1,float z2,float z3) {
                       ,-1.0)
                 ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));
 }
+mat4 rotMatrixZ(float z0) {
+    return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
+                ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
+                ,vec4 (0.0,0.0,1.0,0.0)
+                ,vec4 (0.0,0.0,0.0,1.0));
+}
 vec4 bulbOffset_Float;
-mat4 cameraMat;
-vec4 lightPos_Float;
+mat4 cameraMat_Float(float z0) {
+    return (perspective (10000.0,300000.0,45.0,1.0)) * (lookat (vec3 (0.0
+                                                                     ,150000.0
+                                                                     ,30000.0)
+                                                               ,vec3 (0.0,0.0,0.0)
+                                                               ,vec3 (0.0,0.0,1.0)));
+}
+vec4 lightPos(float z0) {
+    return (rotMatrixZ ((z0) * (4.0))) * (vec4 (60000.0,10000.0,30000.0,1.0));
+}
 mat4 rotMatrixX(float z0) {
     return mat4 (vec4 (1.0,0.0,0.0,0.0)
                 ,vec4 (0.0,cos (z0),sin (z0),0.0)
@@ -60,17 +75,9 @@ vec4 scale(float z0,vec4 z1) {
 }
 void main() {
     bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
-    cameraMat = (perspective (10000.0,300000.0,45.0,1.75)) * (lookat (vec3 (0.0
-                                                                           ,80000.0
-                                                                           ,44000.0)
-                                                                     ,vec3 (0.0,0.0,0.0)
-                                                                     ,vec3 (0.0,0.0,1.0)));
-    lightPos_Float = vec4 (60000.0,10000.0,34000.0,1.0);
-    gl_Position = (cameraMat) * ((((rotMatrixX (-1.5707963267948966)) * (scale
-        (200.0
-        ,vec4 ((vi1).x
-              ,(vi1).y
-              ,(vi1).z
-              ,0.0)))) + (lightPos_Float)) + (bulbOffset_Float));
+    gl_Position = (cameraMat_Float ((time) / (10.0))) * ((((rotMatrixX
+        (-1.5707963267948966)) * (scale (200.0
+                                        ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (lightPos
+        ((time) / (10.0)))) + (bulbOffset_Float));
     vo1 = vi2;
 }

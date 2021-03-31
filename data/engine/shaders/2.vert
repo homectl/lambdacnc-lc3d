@@ -85,11 +85,9 @@ mat4 cameraMat_2_Float(vec2 z0,float z1) {
                                                                 ,vec3 (0.0,0.0,10000.0)
                                                                 ,vec3 (0.0,0.0,1.0)));
 }
-mat4 lightMat_Float(float z0) {
-    return (orthographic (10000.0,300000.0,70000.0,1.0)) * (lookat ((lightPos_Float
-                                                                   (z0)).xyz
-                                                                   ,vec3 (0.0,0.0,0.0)
-                                                                   ,vec3 (0.0,0.0,1.0)));
+mat4 lightMat_2_Float(vec2 z0,float z1) {
+    return (orthographic (10000.0,300000.0,70000.0,((z0).y) / ((z0).x))) * (lookat
+        ((lightPos_Float (z1)).xyz,vec3 (0.0,0.0,0.0),vec3 (0.0,0.0,1.0)));
 }
 mat4 modelMat_Float(float z0) {
     return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
@@ -108,7 +106,7 @@ void main() {
                                                              ,vi1)));
     vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
         ((time) / (10.0),position,vi1));
-    vo2 = (lightMat_Float ((time) / (10.0))) * ((modelMat_Float
+    vo2 = (lightMat_2_Float (vec2 (750.0,750.0),(time) / (10.0))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));

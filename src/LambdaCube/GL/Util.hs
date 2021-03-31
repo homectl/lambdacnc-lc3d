@@ -1,5 +1,4 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -Wno-type-defaults #-}
 module LambdaCube.GL.Util (
     queryUniforms,
     queryStreams,
@@ -32,33 +31,30 @@ module LambdaCube.GL.Util (
     inputTypeToTextureTarget
 ) where
 
-import           Control.Monad             (forM, forM_, unless, when)
-import           Data.IORef                (IORef, newIORef, readIORef,
-                                            writeIORef)
-import qualified Data.List                 as L
-import           Data.Map                  (Map)
-import qualified Data.Map                  as Map
-import qualified Data.Vector               as V
-import           Foreign                   (Int32, Ptr, Storable (peek), alloca,
-                                            allocaArray, castPtr, nullPtr, with,
-                                            withArray, withMany)
-import           Foreign.C.String          (peekCString, peekCStringLen,
-                                            withCString)
+import Control.Applicative
+import Control.Exception
+import Control.Monad
+import Data.IORef
+import Data.List as L
+import Foreign
+import Foreign.C.String
+import qualified Data.Vector as V
+import Data.Vector.Unboxed.Mutable (IOVector)
+import qualified Data.Vector.Unboxed.Mutable as MV
+import Data.Map (Map)
+import qualified Data.Map as Map
 
-import           Graphics.GL.Core33
-import           LambdaCube.GL.Type
-import           LambdaCube.IR
-import           LambdaCube.Linear
-import           LambdaCube.PipelineSchema
+import Graphics.GL.Core33
+import LambdaCube.Linear
+import LambdaCube.IR
+import LambdaCube.PipelineSchema
+import LambdaCube.GL.Type
 
 setSampler :: GLint -> Int32 -> IO ()
 setSampler i v = glUniform1i i $ fromIntegral v
 
-z2 :: V2F
 z2 = V2 0 0 :: V2F
-z3 :: V3F
 z3 = V3 0 0 0 :: V3F
-z4 :: V4F
 z4 = V4 0 0 0 0 :: V4F
 
 -- uniform functions
@@ -71,7 +67,7 @@ queryUniforms po = do
     return $! (Map.fromList $! zip uNames uLocation, Map.fromList $! zip uNames uTypes)
 
 b2w :: Bool -> GLuint
-b2w True  = 1
+b2w True = 1
 b2w False = 0
 
 mkUniformSetter :: InputType -> IO (GLUniform, InputSetter)
@@ -101,7 +97,6 @@ mkUniformSetter t@M42F  = do {r <- newIORef (V2 z4 z4);                   return
 mkUniformSetter t@M43F  = do {r <- newIORef (V3 z4 z4 z4);                return $! (GLUniform t r, SM43F $!  writeIORef r)}
 mkUniformSetter t@M44F  = do {r <- newIORef (V4 z4 z4 z4 z4);             return $! (GLUniform t r, SM44F $!  writeIORef r)}
 mkUniformSetter t@FTexture2D = do {r <- newIORef (TextureData 0);         return $! (GLUniform t r, SFTexture2D $! writeIORef r)}
-mkUniformSetter t = fail $ show t
 
 -- sets value based uniforms only (does not handle textures)
 setUniform :: Storable a => GLint -> InputType -> IORef a -> IO ()
@@ -109,33 +104,33 @@ setUniform i ty ref = do
     v <- readIORef ref
     let false = fromIntegral GL_FALSE
     with v $ \p -> case ty of
-        Bool       -> glUniform1uiv i 1 (castPtr p)
-        V2B        -> glUniform2uiv i 1 (castPtr p)
-        V3B        -> glUniform3uiv i 1 (castPtr p)
-        V4B        -> glUniform4uiv i 1 (castPtr p)
-        Word       -> glUniform1uiv i 1 (castPtr p)
-        V2U        -> glUniform2uiv i 1 (castPtr p)
-        V3U        -> glUniform3uiv i 1 (castPtr p)
-        V4U        -> glUniform4uiv i 1 (castPtr p)
-        Int        -> glUniform1iv i 1 (castPtr p)
-        V2I        -> glUniform2iv i 1 (castPtr p)
-        V3I        -> glUniform3iv i 1 (castPtr p)
-        V4I        -> glUniform4iv i 1 (castPtr p)
-        Float      -> glUniform1fv i 1 (castPtr p)
-        V2F        -> glUniform2fv i 1 (castPtr p)
-        V3F        -> glUniform3fv i 1 (castPtr p)
-        V4F        -> glUniform4fv i 1 (castPtr p)
-        M22F       -> glUniformMatrix2fv   i 1 false (castPtr p)
-        M23F       -> glUniformMatrix2x3fv i 1 false (castPtr p)
-        M24F       -> glUniformMatrix2x4fv i 1 false (castPtr p)
-        M32F       -> glUniformMatrix3x2fv i 1 false (castPtr p)
-        M33F       -> glUniformMatrix3fv   i 1 false (castPtr p)
-        M34F       -> glUniformMatrix3x4fv i 1 false (castPtr p)
-        M42F       -> glUniformMatrix4x2fv i 1 false (castPtr p)
-        M43F       -> glUniformMatrix4x3fv i 1 false (castPtr p)
-        M44F       -> glUniformMatrix4fv   i 1 false (castPtr p)
-        FTexture2D -> return () --putStrLn $ "TODO: setUniform FTexture2D"
-        _          -> fail $ "internal error (setUniform)! - " ++ show ty
+        Bool        -> glUniform1uiv i 1 (castPtr p)
+        V2B         -> glUniform2uiv i 1 (castPtr p)
+        V3B         -> glUniform3uiv i 1 (castPtr p)
+        V4B         -> glUniform4uiv i 1 (castPtr p)
+        Word        -> glUniform1uiv i 1 (castPtr p)
+        V2U         -> glUniform2uiv i 1 (castPtr p)
+        V3U         -> glUniform3uiv i 1 (castPtr p)
+        V4U         -> glUniform4uiv i 1 (castPtr p)
+        Int         -> glUniform1iv i 1 (castPtr p)
+        V2I         -> glUniform2iv i 1 (castPtr p)
+        V3I         -> glUniform3iv i 1 (castPtr p)
+        V4I         -> glUniform4iv i 1 (castPtr p)
+        Float       -> glUniform1fv i 1 (castPtr p)
+        V2F         -> glUniform2fv i 1 (castPtr p)
+        V3F         -> glUniform3fv i 1 (castPtr p)
+        V4F         -> glUniform4fv i 1 (castPtr p)
+        M22F        -> glUniformMatrix2fv   i 1 false (castPtr p)
+        M23F        -> glUniformMatrix2x3fv i 1 false (castPtr p)
+        M24F        -> glUniformMatrix2x4fv i 1 false (castPtr p)
+        M32F        -> glUniformMatrix3x2fv i 1 false (castPtr p)
+        M33F        -> glUniformMatrix3fv   i 1 false (castPtr p)
+        M34F        -> glUniformMatrix3x4fv i 1 false (castPtr p)
+        M42F        -> glUniformMatrix4x2fv i 1 false (castPtr p)
+        M43F        -> glUniformMatrix4x3fv i 1 false (castPtr p)
+        M44F        -> glUniformMatrix4fv   i 1 false (castPtr p)
+        FTexture2D  -> return () --putStrLn $ "TODO: setUniform FTexture2D"
+        _   -> fail $ "internal error (setUniform)! - " ++ show ty
 
 -- attribute functions
 queryStreams :: GLuint -> IO (Map String GLuint, Map String InputType)
@@ -148,14 +143,14 @@ queryStreams po = do
 
 arrayTypeToGLType :: ArrayType -> GLenum
 arrayTypeToGLType a = case a of
-    ArrWord8  -> GL_UNSIGNED_BYTE
-    ArrWord16 -> GL_UNSIGNED_SHORT
-    ArrWord32 -> GL_UNSIGNED_INT
-    ArrInt8   -> GL_BYTE
-    ArrInt16  -> GL_SHORT
-    ArrInt32  -> GL_INT
-    ArrFloat  -> GL_FLOAT
-    ArrHalf   -> GL_HALF_FLOAT
+    ArrWord8    -> GL_UNSIGNED_BYTE
+    ArrWord16   -> GL_UNSIGNED_SHORT
+    ArrWord32   -> GL_UNSIGNED_INT
+    ArrInt8     -> GL_BYTE
+    ArrInt16    -> GL_SHORT
+    ArrInt32    -> GL_INT
+    ArrFloat    -> GL_FLOAT
+    ArrHalf     -> GL_HALF_FLOAT
 
 setVertexAttrib :: GLuint -> Stream Buffer -> IO ()
 setVertexAttrib i val = case val of
@@ -265,26 +260,26 @@ fromGLType (t,1)
     | t == GL_UNSIGNED_INT_SAMPLER_BUFFER               = UTextureBuffer
     | t == GL_UNSIGNED_INT_SAMPLER_CUBE                 = UTextureCube
     | otherwise = error "Failed fromGLType"
-fromGLType _ = error "Failed fromGLType"
+fromGLUniformType _ = error "Failed fromGLType"
 
 printShaderLog :: GLuint -> IO String
 printShaderLog o = do
   i <- glGetShaderiv1 GL_INFO_LOG_LENGTH o
-  if i <= 0
-    then return ""
-    else do
-      alloca $ \sizePtr -> allocaArray (fromIntegral i) $ \ps -> do
+  case (i > 0) of
+    False -> return ""
+    True -> do
+      alloca $ \sizePtr -> allocaArray (fromIntegral i) $! \ps -> do
         glGetShaderInfoLog o (fromIntegral i) sizePtr ps
         size <- peek sizePtr
-        slog <- peekCStringLen (castPtr ps, fromIntegral size)
-        putStrLn slog
-        return slog
+        log <- peekCStringLen (castPtr ps, fromIntegral size)
+        putStrLn log
+        return log
 
 glGetShaderiv1 :: GLenum -> GLuint -> IO GLint
-glGetShaderiv1 pname o = alloca $ \piPtr -> glGetShaderiv o pname piPtr >> peek piPtr
+glGetShaderiv1 pname o = alloca $! \pi -> glGetShaderiv o pname pi >> peek pi
 
 glGetProgramiv1 :: GLenum -> GLuint -> IO GLint
-glGetProgramiv1 pname o = alloca $ \piPtr -> glGetProgramiv o pname piPtr >> peek piPtr
+glGetProgramiv1 pname o = alloca $! \pi -> glGetProgramiv o pname pi >> peek pi
 
 printProgramLog :: GLuint -> IO String
 printProgramLog o = do
@@ -295,17 +290,17 @@ printProgramLog o = do
       alloca $ \sizePtr -> allocaArray (fromIntegral i) $! \ps -> do
         glGetProgramInfoLog o (fromIntegral i) sizePtr ps
         size <- peek sizePtr
-        plog <- peekCStringLen (castPtr ps, fromIntegral size)
-        unless (null plog) $ putStrLn plog
-        return plog
+        log <- peekCStringLen (castPtr ps, fromIntegral size)
+        unless (null log) $ putStrLn log
+        return log
 
 compileShader :: GLuint -> [String] -> IO ()
 compileShader o srcl = withMany withCString srcl $! \l -> withArray l $! \p -> do
     glShaderSource o (fromIntegral $! length srcl) (castPtr p) nullPtr
     glCompileShader o
-    slog <- printShaderLog o
+    log <- printShaderLog o
     status <- glGetShaderiv1 GL_COMPILE_STATUS o
-    when (status /= fromIntegral GL_TRUE) $ fail $ unlines ["compileShader failed:",slog]
+    when (status /= fromIntegral GL_TRUE) $ fail $ unlines ["compileShader failed:",log]
 
 checkGL :: IO String
 checkGL = do
@@ -354,33 +349,33 @@ streamToInputType s = case s of
 
 comparisonFunctionToGLType :: ComparisonFunction -> GLenum
 comparisonFunctionToGLType a = case a of
-    Always   -> GL_ALWAYS
-    Equal    -> GL_EQUAL
-    Gequal   -> GL_GEQUAL
-    Greater  -> GL_GREATER
-    Lequal   -> GL_LEQUAL
-    Less     -> GL_LESS
-    Never    -> GL_NEVER
-    Notequal -> GL_NOTEQUAL
+    Always      -> GL_ALWAYS
+    Equal       -> GL_EQUAL
+    Gequal      -> GL_GEQUAL
+    Greater     -> GL_GREATER
+    Lequal      -> GL_LEQUAL
+    Less        -> GL_LESS
+    Never       -> GL_NEVER
+    Notequal    -> GL_NOTEQUAL
 
 logicOperationToGLType :: LogicOperation -> GLenum
 logicOperationToGLType a = case a of
-    And          -> GL_AND
-    AndInverted  -> GL_AND_INVERTED
-    AndReverse   -> GL_AND_REVERSE
-    Clear        -> GL_CLEAR
-    Copy         -> GL_COPY
-    CopyInverted -> GL_COPY_INVERTED
-    Equiv        -> GL_EQUIV
-    Invert       -> GL_INVERT
-    Nand         -> GL_NAND
-    Noop         -> GL_NOOP
-    Nor          -> GL_NOR
-    Or           -> GL_OR
-    OrInverted   -> GL_OR_INVERTED
-    OrReverse    -> GL_OR_REVERSE
-    Set          -> GL_SET
-    Xor          -> GL_XOR
+    And             -> GL_AND
+    AndInverted     -> GL_AND_INVERTED
+    AndReverse      -> GL_AND_REVERSE
+    Clear           -> GL_CLEAR
+    Copy            -> GL_COPY
+    CopyInverted    -> GL_COPY_INVERTED
+    Equiv           -> GL_EQUIV
+    Invert          -> GL_INVERT
+    Nand            -> GL_NAND
+    Noop            -> GL_NOOP
+    Nor             -> GL_NOR
+    Or              -> GL_OR
+    OrInverted      -> GL_OR_INVERTED
+    OrReverse       -> GL_OR_REVERSE
+    Set             -> GL_SET
+    Xor             -> GL_XOR
 
 blendEquationToGLType :: BlendEquation -> GLenum
 blendEquationToGLType a = case a of
@@ -392,21 +387,21 @@ blendEquationToGLType a = case a of
 
 blendingFactorToGLType :: BlendingFactor -> GLenum
 blendingFactorToGLType a = case a of
-    ConstantAlpha         -> GL_CONSTANT_ALPHA
-    ConstantColor         -> GL_CONSTANT_COLOR
-    DstAlpha              -> GL_DST_ALPHA
-    DstColor              -> GL_DST_COLOR
-    One                   -> GL_ONE
-    OneMinusConstantAlpha -> GL_ONE_MINUS_CONSTANT_ALPHA
-    OneMinusConstantColor -> GL_ONE_MINUS_CONSTANT_COLOR
-    OneMinusDstAlpha      -> GL_ONE_MINUS_DST_ALPHA
-    OneMinusDstColor      -> GL_ONE_MINUS_DST_COLOR
-    OneMinusSrcAlpha      -> GL_ONE_MINUS_SRC_ALPHA
-    OneMinusSrcColor      -> GL_ONE_MINUS_SRC_COLOR
-    SrcAlpha              -> GL_SRC_ALPHA
-    SrcAlphaSaturate      -> GL_SRC_ALPHA_SATURATE
-    SrcColor              -> GL_SRC_COLOR
-    Zero                  -> GL_ZERO
+    ConstantAlpha           -> GL_CONSTANT_ALPHA
+    ConstantColor           -> GL_CONSTANT_COLOR
+    DstAlpha                -> GL_DST_ALPHA
+    DstColor                -> GL_DST_COLOR
+    One                     -> GL_ONE
+    OneMinusConstantAlpha   -> GL_ONE_MINUS_CONSTANT_ALPHA
+    OneMinusConstantColor   -> GL_ONE_MINUS_CONSTANT_COLOR
+    OneMinusDstAlpha        -> GL_ONE_MINUS_DST_ALPHA
+    OneMinusDstColor        -> GL_ONE_MINUS_DST_COLOR
+    OneMinusSrcAlpha        -> GL_ONE_MINUS_SRC_ALPHA
+    OneMinusSrcColor        -> GL_ONE_MINUS_SRC_COLOR
+    SrcAlpha                -> GL_SRC_ALPHA
+    SrcAlphaSaturate        -> GL_SRC_ALPHA_SATURATE
+    SrcColor                -> GL_SRC_COLOR
+    Zero                    -> GL_ZERO
 
 -- XXX: we need to extend IR.TextureDescriptor to carry component bit depth
 --      if we want to avoid making arbitrary decisions here
@@ -421,13 +416,13 @@ textureDataTypeToGLType Color a = case a of
     FloatT RGBA -> GL_RGBA32F
     IntT   RGBA -> GL_RGBA8I
     WordT  RGBA -> GL_RGBA8UI
-    _           -> error $ "FIXME: This texture format is not yet supported" ++ show a
+    a           -> error $ "FIXME: This texture format is not yet supported" ++ show a
 textureDataTypeToGLType Depth a = case a of
     FloatT Red  -> GL_DEPTH_COMPONENT32F
     WordT  Red  -> GL_DEPTH_COMPONENT32
-    _           -> error $ "FIXME: This texture format is not yet supported" ++ show a
+    a           -> error $ "FIXME: This texture format is not yet supported" ++ show a
 textureDataTypeToGLType Stencil a = case a of
-    _           -> error $ "FIXME: This texture format is not yet supported" ++ show a
+    a           -> error $ "FIXME: This texture format is not yet supported" ++ show a
 
 textureDataTypeToGLArityType :: ImageSemantic -> TextureDataType -> GLenum
 textureDataTypeToGLArityType Color a = case a of
@@ -440,13 +435,13 @@ textureDataTypeToGLArityType Color a = case a of
     FloatT RGBA -> GL_RGBA
     IntT   RGBA -> GL_RGBA_INTEGER
     WordT  RGBA -> GL_RGBA_INTEGER
-    _           -> error $ "FIXME: This texture format is not yet supported" ++ show a
+    a           -> error $ "FIXME: This texture format is not yet supported" ++ show a
 textureDataTypeToGLArityType Depth a = case a of
     FloatT Red  -> GL_DEPTH_COMPONENT
     WordT  Red  -> GL_DEPTH_COMPONENT
-    _           -> error $ "FIXME: This texture format is not yet supported" ++ show a
+    a           -> error $ "FIXME: This texture format is not yet supported" ++ show a
 textureDataTypeToGLArityType Stencil a = case a of
-    _           -> error $ "FIXME: This texture format is not yet supported" ++ show a
+    a           -> error $ "FIXME: This texture format is not yet supported" ++ show a
 {-
 Texture and renderbuffer color formats (R):
     R11F_G11F_B10F
@@ -486,7 +481,7 @@ Texture and renderbuffer color formats (R):
 -}
 
 glGetIntegerv1 :: GLenum -> IO GLint
-glGetIntegerv1 e = alloca $ \piPtr -> glGetIntegerv e piPtr >> peek piPtr
+glGetIntegerv1 e = alloca $ \pi -> glGetIntegerv e pi >> peek pi
 
 checkFBO :: IO String
 checkFBO = do
@@ -504,27 +499,27 @@ checkFBO = do
 
 filterToGLType :: Filter -> GLenum
 filterToGLType a = case a of
-    Nearest              -> GL_NEAREST
-    Linear               -> GL_LINEAR
-    NearestMipmapNearest -> GL_NEAREST_MIPMAP_NEAREST
-    NearestMipmapLinear  -> GL_NEAREST_MIPMAP_LINEAR
-    LinearMipmapNearest  -> GL_LINEAR_MIPMAP_NEAREST
-    LinearMipmapLinear   -> GL_LINEAR_MIPMAP_LINEAR
+    Nearest                 -> GL_NEAREST
+    Linear                  -> GL_LINEAR
+    NearestMipmapNearest    -> GL_NEAREST_MIPMAP_NEAREST
+    NearestMipmapLinear     -> GL_NEAREST_MIPMAP_LINEAR
+    LinearMipmapNearest     -> GL_LINEAR_MIPMAP_NEAREST
+    LinearMipmapLinear      -> GL_LINEAR_MIPMAP_LINEAR
 
 edgeModeToGLType :: EdgeMode -> GLenum
 edgeModeToGLType a = case a of
-    Repeat         -> GL_REPEAT
-    MirroredRepeat -> GL_MIRRORED_REPEAT
-    ClampToEdge    -> GL_CLAMP_TO_EDGE
-    ClampToBorder  -> GL_CLAMP_TO_BORDER
+    Repeat          -> GL_REPEAT
+    MirroredRepeat  -> GL_MIRRORED_REPEAT
+    ClampToEdge     -> GL_CLAMP_TO_EDGE
+    ClampToBorder   -> GL_CLAMP_TO_BORDER
 
 data ParameterSetup
   = ParameterSetup
-  { setParameteri    :: GLenum -> GLint -> IO ()
-  , setParameterfv   :: GLenum -> Ptr GLfloat -> IO ()
-  , setParameterIiv  :: GLenum -> Ptr GLint -> IO ()
-  , setParameterIuiv :: GLenum -> Ptr GLuint -> IO ()
-  , setParameterf    :: GLenum -> GLfloat -> IO ()
+  { setParameteri     :: GLenum -> GLint -> IO ()
+  , setParameterfv    :: GLenum -> Ptr GLfloat -> IO ()
+  , setParameterIiv   :: GLenum -> Ptr GLint -> IO ()
+  , setParameterIuiv  :: GLenum -> Ptr GLuint -> IO ()
+  , setParameterf     :: GLenum -> GLfloat -> IO ()
   }
 
 setTextureSamplerParameters :: GLenum -> SamplerDescriptor -> IO ()
@@ -576,7 +571,7 @@ setParameters ParameterSetup{..} s = do
         VV2U (V2 a b)   -> setBColorV4U $ V4 a b 0 0
         VV3U (V3 a b c) -> setBColorV4U $ V4 a b c 0
         VV4U a          -> setBColorV4U a
-        _               -> fail "internal error (setTextureSamplerParameters)!"
+        _ -> fail "internal error (setTextureSamplerParameters)!"
 
     case samplerMinLod s of
         Nothing -> return ()
@@ -624,7 +619,7 @@ compileTexture txDescriptor = do
         mipSize n x = x : mipSize (n-1) (x `div` 2)
         mipS = mipSize (txMaxLevel - txBaseLevel)
         levels = [txBaseLevel..txMaxLevel]
-    target <- case txType of
+    (target, sizeV3) <- case txType of
         Texture1D dTy layerCnt -> do
             let VWord txW = txSize
                 txTarget = if layerCnt > 1 then GL_TEXTURE_1D_ARRAY else GL_TEXTURE_1D
@@ -632,7 +627,7 @@ compileTexture txDescriptor = do
             forM_ (zip levels (mipS txW)) $ \(l,w) -> case layerCnt > 1 of
                 True    -> glTexImage2D txTarget (fromIntegral l) internalFormat (fromIntegral w) (fromIntegral layerCnt) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
                 False   -> glTexImage1D txTarget (fromIntegral l) internalFormat (fromIntegral w) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
-            return txTarget
+            return (txTarget, V3 txW 0 0)
         Texture2D dTy layerCnt -> do
             let VV2U (V2 txW txH) = txSize
                 txTarget = if layerCnt > 1 then GL_TEXTURE_2D_ARRAY else GL_TEXTURE_2D
@@ -640,19 +635,19 @@ compileTexture txDescriptor = do
             forM_ (zip3 levels (mipS txW) (mipS txH)) $ \(l,w,h) -> case layerCnt > 1 of
                 True    -> glTexImage3D txTarget (fromIntegral l) internalFormat (fromIntegral w) (fromIntegral h) (fromIntegral layerCnt) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
                 False   -> glTexImage2D txTarget (fromIntegral l) internalFormat (fromIntegral w) (fromIntegral h) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
-            return txTarget
+            return (txTarget, V3 txW txH 0)
         Texture3D dTy -> do
             let VV3U (V3 txW txH txD) = txSize
                 txTarget = GL_TEXTURE_3D
             (internalFormat,dataFormat) <- txSetup txTarget dTy
-            forM_ (L.zip4 levels (mipS txW) (mipS txH) (mipS txD)) $ \(l,w,h,d) ->
+            forM_ (zip4 levels (mipS txW) (mipS txH) (mipS txD)) $ \(l,w,h,d) ->
                 glTexImage3D txTarget (fromIntegral l) internalFormat (fromIntegral w) (fromIntegral h) (fromIntegral d) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
-            return txTarget
+            return (txTarget, V3 txW txH txD)
         TextureCube dTy -> do
             let VV2U (V2 txW txH) = txSize
                 txTarget = GL_TEXTURE_CUBE_MAP
                 targets =
-                    [ GL_TEXTURE_CUBE_MAP_POSITIVE_X
+                    [ GL_TEXTURE_CUBE_MAP_POSITIVE_X 
                     , GL_TEXTURE_CUBE_MAP_NEGATIVE_X
                     , GL_TEXTURE_CUBE_MAP_POSITIVE_Y
                     , GL_TEXTURE_CUBE_MAP_NEGATIVE_Y
@@ -660,104 +655,105 @@ compileTexture txDescriptor = do
                     , GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
                     ]
             (internalFormat,dataFormat) <- txSetup txTarget dTy
-            forM_ (zip3 levels (mipS txW) (mipS txH)) $ \(l,w,h) ->
+            forM_ (zip3 levels (mipS txW) (mipS txH)) $ \(l,w,h) -> 
                 forM_ targets $ \t -> glTexImage2D t (fromIntegral l) internalFormat (fromIntegral w) (fromIntegral h) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
-            return txTarget
+            return (txTarget, V3 txW txH 0)
         TextureRect dTy -> do
             let VV2U (V2 txW txH) = txSize
                 txTarget = GL_TEXTURE_RECTANGLE
             (internalFormat,dataFormat) <- txSetup txTarget dTy
-            forM_ (zip3 levels (mipS txW) (mipS txH)) $ \(l,w,h) ->
+            forM_ (zip3 levels (mipS txW) (mipS txH)) $ \(l,w,h) -> 
                 glTexImage2D txTarget (fromIntegral l) internalFormat (fromIntegral w) (fromIntegral h) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
-            return txTarget
+            return (txTarget, V3 txW txH 0)
         Texture2DMS dTy layerCnt sampleCount isFixedLocations -> do
             let VV2U (V2 w h)   = txSize
                 txTarget        = if layerCnt > 1 then GL_TEXTURE_2D_MULTISAMPLE_ARRAY else GL_TEXTURE_2D_MULTISAMPLE
                 isFixed         = fromIntegral $ if isFixedLocations then GL_TRUE else GL_FALSE
-            (internalFormat,_dataFormat) <- txSetup txTarget dTy
-            if layerCnt > 1
-                then glTexImage3DMultisample txTarget (fromIntegral sampleCount) internalFormat (fromIntegral w) (fromIntegral h) (fromIntegral layerCnt) isFixed
-                else glTexImage2DMultisample txTarget (fromIntegral sampleCount) internalFormat (fromIntegral w) (fromIntegral h) isFixed
-            return txTarget
+            (internalFormat,dataFormat) <- txSetup txTarget dTy
+            case layerCnt > 1 of
+                True    -> glTexImage3DMultisample txTarget (fromIntegral sampleCount) internalFormat (fromIntegral w) (fromIntegral h) (fromIntegral layerCnt) isFixed
+                False   -> glTexImage2DMultisample txTarget (fromIntegral sampleCount) internalFormat (fromIntegral w) (fromIntegral h) isFixed
+            return (txTarget, V3 w h 1)
         TextureBuffer dTy -> do
-            _ <- fail "internal error: buffer texture is not supported yet"
+            fail "internal error: buffer texture is not supported yet"
             -- TODO
             let VV2U (V2 w h)   = txSize
                 txTarget        = GL_TEXTURE_2D
             (internalFormat,dataFormat) <- txSetup txTarget dTy
             glTexImage2D GL_TEXTURE_2D 0 internalFormat (fromIntegral w) (fromIntegral h) 0 dataFormat GL_UNSIGNED_BYTE nullPtr
-            return txTarget
+            return (txTarget, V3 w h 0)
     return $ GLTexture
         { glTextureObject   = to
         , glTextureTarget   = target
+        , glTextureSize     = sizeV3
         }
 
 primitiveToFetchPrimitive :: Primitive -> FetchPrimitive
 primitiveToFetchPrimitive prim = case prim of
-    TriangleStrip          -> Triangles
-    TriangleList           -> Triangles
-    TriangleFan            -> Triangles
-    LineStrip              -> Lines
-    LineList               -> Lines
-    PointList              -> Points
-    TriangleStripAdjacency -> TrianglesAdjacency
-    TriangleListAdjacency  -> TrianglesAdjacency
-    LineStripAdjacency     -> LinesAdjacency
-    LineListAdjacency      -> LinesAdjacency
+    TriangleStrip           -> Triangles
+    TriangleList            -> Triangles
+    TriangleFan             -> Triangles
+    LineStrip               -> Lines
+    LineList                -> Lines
+    PointList               -> Points
+    TriangleStripAdjacency  -> TrianglesAdjacency
+    TriangleListAdjacency   -> TrianglesAdjacency
+    LineStripAdjacency      -> LinesAdjacency
+    LineListAdjacency       -> LinesAdjacency
 
 primitiveToGLType :: Primitive -> GLenum
 primitiveToGLType p = case p of
-    TriangleStrip          -> GL_TRIANGLE_STRIP
-    TriangleList           -> GL_TRIANGLES
-    TriangleFan            -> GL_TRIANGLE_FAN
-    LineStrip              -> GL_LINE_STRIP
-    LineList               -> GL_LINES
-    PointList              -> GL_POINTS
-    TriangleStripAdjacency -> GL_TRIANGLE_STRIP_ADJACENCY
-    TriangleListAdjacency  -> GL_TRIANGLES_ADJACENCY
-    LineStripAdjacency     -> GL_LINE_STRIP_ADJACENCY
-    LineListAdjacency      -> GL_LINES_ADJACENCY
+    TriangleStrip           -> GL_TRIANGLE_STRIP
+    TriangleList            -> GL_TRIANGLES
+    TriangleFan             -> GL_TRIANGLE_FAN
+    LineStrip               -> GL_LINE_STRIP
+    LineList                -> GL_LINES
+    PointList               -> GL_POINTS
+    TriangleStripAdjacency  -> GL_TRIANGLE_STRIP_ADJACENCY
+    TriangleListAdjacency   -> GL_TRIANGLES_ADJACENCY
+    LineStripAdjacency      -> GL_LINE_STRIP_ADJACENCY
+    LineListAdjacency       -> GL_LINES_ADJACENCY
 
 inputTypeToTextureTarget :: InputType -> GLenum
 inputTypeToTextureTarget ty = case ty of
-    STexture1D        -> GL_TEXTURE_1D
-    STexture2D        -> GL_TEXTURE_2D
-    STextureCube      -> GL_TEXTURE_CUBE_MAP
-    STexture1DArray   -> GL_TEXTURE_1D_ARRAY
-    STexture2DArray   -> GL_TEXTURE_2D_ARRAY
-    STexture2DRect    -> GL_TEXTURE_RECTANGLE
+    STexture1D          -> GL_TEXTURE_1D
+    STexture2D          -> GL_TEXTURE_2D
+    STextureCube        -> GL_TEXTURE_CUBE_MAP
+    STexture1DArray     -> GL_TEXTURE_1D_ARRAY
+    STexture2DArray     -> GL_TEXTURE_2D_ARRAY
+    STexture2DRect      -> GL_TEXTURE_RECTANGLE
 
-    FTexture1D        -> GL_TEXTURE_1D
-    FTexture2D        -> GL_TEXTURE_2D
-    FTexture3D        -> GL_TEXTURE_3D
-    FTextureCube      -> GL_TEXTURE_CUBE_MAP
-    FTexture1DArray   -> GL_TEXTURE_1D_ARRAY
-    FTexture2DArray   -> GL_TEXTURE_2D_ARRAY
-    FTexture2DMS      -> GL_TEXTURE_2D_MULTISAMPLE
-    FTexture2DMSArray -> GL_TEXTURE_2D_MULTISAMPLE_ARRAY
-    FTextureBuffer    -> GL_TEXTURE_BUFFER
-    FTexture2DRect    -> GL_TEXTURE_RECTANGLE
+    FTexture1D          -> GL_TEXTURE_1D
+    FTexture2D          -> GL_TEXTURE_2D
+    FTexture3D          -> GL_TEXTURE_3D
+    FTextureCube        -> GL_TEXTURE_CUBE_MAP
+    FTexture1DArray     -> GL_TEXTURE_1D_ARRAY
+    FTexture2DArray     -> GL_TEXTURE_2D_ARRAY
+    FTexture2DMS        -> GL_TEXTURE_2D_MULTISAMPLE
+    FTexture2DMSArray   -> GL_TEXTURE_2D_MULTISAMPLE_ARRAY
+    FTextureBuffer      -> GL_TEXTURE_BUFFER
+    FTexture2DRect      -> GL_TEXTURE_RECTANGLE
 
-    ITexture1D        -> GL_TEXTURE_1D
-    ITexture2D        -> GL_TEXTURE_2D
-    ITexture3D        -> GL_TEXTURE_3D
-    ITextureCube      -> GL_TEXTURE_CUBE_MAP
-    ITexture1DArray   -> GL_TEXTURE_1D_ARRAY
-    ITexture2DArray   -> GL_TEXTURE_2D_ARRAY
-    ITexture2DMS      -> GL_TEXTURE_2D_MULTISAMPLE
-    ITexture2DMSArray -> GL_TEXTURE_2D_MULTISAMPLE_ARRAY
-    ITextureBuffer    -> GL_TEXTURE_BUFFER
-    ITexture2DRect    -> GL_TEXTURE_RECTANGLE
+    ITexture1D          -> GL_TEXTURE_1D
+    ITexture2D          -> GL_TEXTURE_2D
+    ITexture3D          -> GL_TEXTURE_3D
+    ITextureCube        -> GL_TEXTURE_CUBE_MAP
+    ITexture1DArray     -> GL_TEXTURE_1D_ARRAY
+    ITexture2DArray     -> GL_TEXTURE_2D_ARRAY
+    ITexture2DMS        -> GL_TEXTURE_2D_MULTISAMPLE
+    ITexture2DMSArray   -> GL_TEXTURE_2D_MULTISAMPLE_ARRAY
+    ITextureBuffer      -> GL_TEXTURE_BUFFER
+    ITexture2DRect      -> GL_TEXTURE_RECTANGLE
 
-    UTexture1D        -> GL_TEXTURE_1D
-    UTexture2D        -> GL_TEXTURE_2D
-    UTexture3D        -> GL_TEXTURE_3D
-    UTextureCube      -> GL_TEXTURE_CUBE_MAP
-    UTexture1DArray   -> GL_TEXTURE_1D_ARRAY
-    UTexture2DArray   -> GL_TEXTURE_2D_ARRAY
-    UTexture2DMS      -> GL_TEXTURE_2D_MULTISAMPLE
-    UTexture2DMSArray -> GL_TEXTURE_2D_MULTISAMPLE_ARRAY
-    UTextureBuffer    -> GL_TEXTURE_BUFFER
-    UTexture2DRect    -> GL_TEXTURE_RECTANGLE
+    UTexture1D          -> GL_TEXTURE_1D
+    UTexture2D          -> GL_TEXTURE_2D
+    UTexture3D          -> GL_TEXTURE_3D
+    UTextureCube        -> GL_TEXTURE_CUBE_MAP
+    UTexture1DArray     -> GL_TEXTURE_1D_ARRAY
+    UTexture2DArray     -> GL_TEXTURE_2D_ARRAY
+    UTexture2DMS        -> GL_TEXTURE_2D_MULTISAMPLE
+    UTexture2DMSArray   -> GL_TEXTURE_2D_MULTISAMPLE_ARRAY
+    UTextureBuffer      -> GL_TEXTURE_BUFFER
+    UTexture2DRect      -> GL_TEXTURE_RECTANGLE
 
-    _                 -> error "internal error (inputTypeToTextureTarget)!"
+    _ -> error "internal error (inputTypeToTextureTarget)!"

@@ -93,19 +93,21 @@ diffuseLight fp n lightPos lightColor =
 fragObject time texture depth fp lsfp uv normal =
     V4 result%x result%y result%z 1
   where
+    textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
+    depthMap = texture2D (Sampler LinearFilter ClampToEdge depth)
+
     lightDir = normalize (lightPos time - fp)
 
     diffuse = diffuseLight fp normal (lightPos time) (V3 1.0 1.0 1.0)
             -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
-    textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
     objectColor = textureMap (uv%xy *! 0.000025)
 
     -- perform perspective divide
     projCoords = (lsfp%xyz /! lsfp%w) *! 0.5 +! 0.5
     -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    closestDepth = (textureMap projCoords%xy)%r
+    closestDepth = (depthMap projCoords%xy)%r
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
     -- check whether current frag pos is in shadow
@@ -134,7 +136,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
           (time :: Float)
           (position :: Vec 3 Float)
           (texture :: Texture)
-          (depth :: Image 1 Depth)
+          (depth :: Texture)
           (objects :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
           (lights :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
     = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))
@@ -177,7 +179,7 @@ makeShadowMap (depthMapSize :: Vec 2 Float)
   where
     objectsSurfaces = objects
       & mapPrimitives (\((pos,_)) -> vertShadow depthMapSize time position pos)
-      & rasterizePrimitives (TriangleCtx CullBack PolygonFill NoOffset LastVertex) ((Smooth))
+      & rasterizePrimitives (TriangleCtx CullFront PolygonFill NoOffset LastVertex) ((Smooth))
       & mapFragments (\((z)) -> ((V4 z z z 1)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
@@ -210,8 +212,8 @@ showTexture = showTextureOn quad
 boop x = if x < 750 then boop (x + 1) else x
 
 main = renderFrame
-    frame
-    -- (showTexture shadowMapTexture)
+    -- frame
+    (showTexture shadowMapTexture)
     -- shadowMap
   where
     frame = makeFrame
@@ -219,9 +221,8 @@ main = renderFrame
         (Uniform "screenSize")
         (Uniform "time" / 10)
         (Uniform "position")
-        -- (Texture2DSlot "diffuseTexture")
+        (Texture2DSlot "diffuseTexture")
         shadowMapTexture
-        (PrjImageDepth shadowMap)
         (fetch "objects" (Attribute "position", Attribute "normal"))
         (fetch "lights" (Attribute "position", Attribute "normal"))
 
@@ -232,5 +233,5 @@ main = renderFrame
         (Uniform "position")
         (fetch "objects" (Attribute "position", Attribute "normal"))
 
-    depthMapSize = V2 (boop 3) (boop 3)
+    depthMapSize = V2 1500 750
     -- depthMapSize = Uniform "screenSize"

@@ -106,7 +106,8 @@ void main() {
                                                              ,vi1)));
     vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
         ((time) / (10.0),position,vi1));
-    vo2 = (lightMat_2_Float (vec2 (750.0,750.0),(time) / (10.0))) * ((modelMat_Float
+    vo2 = (lightMat_2_Float (vec2 (1500.0,1500.0)
+                            ,(time) / (10.0))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));

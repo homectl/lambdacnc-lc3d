@@ -63,12 +63,12 @@ vec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {
     return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
 }
 void main() {
-    gl_Position = (lightMat_2_Float (vec2 (750.0,750.0)
+    gl_Position = (lightMat_2_Float (vec2 (1500.0,750.0)
                                     ,(time) / (10.0))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));
-    vo1 = ((((lightMat_2_Float (vec2 (750.0,750.0)
+    vo1 = ((((lightMat_2_Float (vec2 (1500.0,750.0)
                                ,(time) / (10.0))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position

@@ -3,14 +3,19 @@
 {-# LANGUAGE MonadComprehensions #-}
 {-# LANGUAGE RecordWildCards     #-}
 {-# LANGUAGE TupleSections       #-}
-{-# OPTIONS_GHC -Wno-name-shadowing #-}
 {-# OPTIONS_GHC -Wno-unused-matches #-}
+{-# OPTIONS_GHC -Wno-name-shadowing #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+{-# OPTIONS_GHC -Wno-missing-signatures #-}
 {-# OPTIONS_GHC -Wno-unused-local-binds #-}
+{-# OPTIONS_GHC -Wno-unused-do-bind #-}
+{-# OPTIONS_GHC -Wno-type-defaults #-}
 module LambdaCube.GL.Backend where
 
+import           Control.Monad              (foldM, foldM_, forM_, unless, when)
 import           Control.Monad.State.Strict (MonadState (get), State, execState,
-                                             foldM, foldM_, forM_, gets, modify,
-                                             unless, when)
+                                             gets, modify)
+import           Data.Bits                  (Bits ((.|.)))
 import           Data.IORef                 (IORef, modifyIORef, newIORef,
                                              readIORef, writeIORef)
 import           Data.IntMap                (IntMap)
@@ -24,16 +29,15 @@ import           Data.Vector                (Vector, (!), (//))
 import qualified Data.Vector                as V
 import qualified Data.Vector.Storable       as SV
 
-import           Foreign                    (Bits ((.|.)), Storable (peek),
-                                             alloca, castPtr, intPtrToPtr, with,
-                                             withArray)
+import           Foreign                    (Storable (peek), alloca, castPtr,
+                                             intPtrToPtr, with, withArray)
 import           Foreign.C.String           (withCString)
 import           Graphics.GL.Core33
 
 -- LC IR imports
 import           LambdaCube.IR              hiding (streamType)
 import qualified LambdaCube.IR              as IR
-import           LambdaCube.Linear
+import           LambdaCube.Linear          (V2 (V2), V3 (V3), V4 (V4))
 import           LambdaCube.PipelineSchema
 
 import           LambdaCube.GL.Type
@@ -113,21 +117,21 @@ setupRasterContext = cvt
         setProvokingVertex pv
 
 setupAccumulationContext :: AccumulationContext -> IO ()
-setupAccumulationContext (AccumulationContext _n ops) = cvt ops
+setupAccumulationContext (AccumulationContext n ops) = cvt ops
   where
     cvt :: [FragmentOperation] -> IO ()
-    cvt (StencilOp{} : DepthOp{} : xs) = do
+    cvt (StencilOp a b c : DepthOp f m : xs) = do
         -- TODO
         cvtC 0 xs
-    cvt (StencilOp{} : xs) = do
+    cvt (StencilOp a b c : xs) = do
         -- TODO
         cvtC 0 xs
     cvt (DepthOp df dm : xs) = do
         -- TODO
         glDisable GL_STENCIL_TEST
-        if df == Always && dm == False
-            then glDisable GL_DEPTH_TEST
-            else do
+        case df == Always && dm == False of
+            True    -> glDisable GL_DEPTH_TEST
+            False   -> do
                 glEnable GL_DEPTH_TEST
                 glDepthFunc $! comparisonFunctionToGLType df
                 glDepthMask (cvtBool dm)
@@ -159,16 +163,17 @@ setupAccumulationContext (AccumulationContext _n ops) = cvt ops
                 glBlendFuncSeparate (blendingFactorToGLType scF) (blendingFactorToGLType dcF)
                                     (blendingFactorToGLType saF) (blendingFactorToGLType daF)
                 glBlendColor (realToFrac r) (realToFrac g) (realToFrac b) (realToFrac a)
-        let (mr,mg,mb,ma) = case m of
-                VBool r           -> (cvtBool r, 1, 1, 1)
-                VV2B (V2 r g)     -> (cvtBool r, cvtBool g, 1, 1)
-                VV3B (V3 r g b)   -> (cvtBool r, cvtBool g, cvtBool b, 1)
-                VV4B (V4 r g b a) -> (cvtBool r, cvtBool g, cvtBool b, cvtBool a)
+        let cvt True  = 1
+            cvt False = 0
+            (mr,mg,mb,ma) = case m of
+                VBool r           -> (cvt r, 1, 1, 1)
+                VV2B (V2 r g)     -> (cvt r, cvt g, 1, 1)
+                VV3B (V3 r g b)   -> (cvt r, cvt g, cvt b, 1)
+                VV4B (V4 r g b a) -> (cvt r, cvt g, cvt b, cvt a)
                 _                 -> (1,1,1,1)
         glColorMask mr mg mb ma
         cvtC (i + 1) xs
     cvtC _ [] = return ()
-    cvtC _ (_:_) = fail "unmatched"
 
     cvtBool :: Bool -> GLboolean
     cvtBool True  = 1
@@ -225,9 +230,7 @@ clearRenderTarget GLRenderTarget{..} values = do
     (mask,_) <- foldM setClearValue (0,0) values
     glClear $ fromIntegral mask
 
-printGLStatus :: IO ()
 printGLStatus = checkGL >>= print
-printFBOStatus :: IO ()
 printFBOStatus = checkFBO >>= print
 
 compileProgram :: Program -> IO GLProgram
@@ -280,9 +283,9 @@ compileProgram p = do
         inTextureNames = programInTextures p
         inTextures = L.filter (\(n,v) -> Map.member n inTextureNames) $ Map.toList $ uniforms
         texUnis = [n | (n,_) <- inTextures, Map.member n (programUniforms p)]
-    {-
     let prgInTextures = Map.keys inTextureNames
         uniInTextures = map fst inTextures
+    {-
     unless (S.fromList prgInTextures == S.fromList uniInTextures) $ fail $ unlines
       [ "shader program uniform texture input mismatch!"
       , "expected: " ++ show prgInTextures
@@ -301,8 +304,8 @@ compileProgram p = do
     --putStrLn $ "inTextureNames: " ++ show inTextureNames
     --putStrLn $ "inTextures: " ++ show inTextures
     --putStrLn $ "texUnis: " ++ show texUnis
-    --let valA = Map.toList $ attributes
-    --    valB = Map.toList $ programStreams p
+    let valA = Map.toList $ attributes
+        valB = Map.toList $ programStreams p
     --putStrLn "------------"
     --print $ Map.toList $ attributes
     --print $ Map.toList $ programStreams p
@@ -317,21 +320,21 @@ compileProgram p = do
         }
 
 renderTargetOutputs :: Vector GLTexture -> RenderTarget -> GLRenderTarget -> [GLOutput]
-renderTargetOutputs glTexs (RenderTarget targetItems) (GLRenderTarget fbo bufs) =
+renderTargetOutputs glTexs (RenderTarget targetItems) (GLRenderTarget fbo bufs _) =
     let isFB (Framebuffer _) = True
         isFB _               = False
         images = [img | TargetItem _ (Just img) <- V.toList targetItems]
-    in if all isFB images
-         then fromMaybe [] $ (GLOutputDrawBuffer fbo <$>) <$> bufs
-         else (\(TextureImage texIdx _ _)-> GLOutputRenderTexture fbo $ glTexs ! texIdx) <$> images
+    in case all isFB images of
+         True  -> fromMaybe [] $ (GLOutputDrawBuffer fbo <$>) <$> bufs
+         False -> (\(TextureImage texIdx _ _)-> GLOutputRenderTexture fbo $ glTexs ! texIdx) <$> images
 
 compileRenderTarget :: Vector TextureDescriptor -> Vector GLTexture -> RenderTarget -> IO GLRenderTarget
 compileRenderTarget texs glTexs (RenderTarget targets) = do
     let isFB (Framebuffer _) = True
         isFB _               = False
         images = [img | TargetItem _ (Just img) <- V.toList targets]
-    if all isFB images
-        then do
+    case all isFB images of
+        True -> do
             let bufs = [cvt img | TargetItem Color img <- V.toList targets]
                 cvt a = case a of
                     Nothing                     -> GL_NONE
@@ -340,8 +343,9 @@ compileRenderTarget texs glTexs (RenderTarget targets) = do
             return $ GLRenderTarget
                 { framebufferObject         = 0
                 , framebufferDrawbuffers    = Just bufs
+                , framebufferSize           = Nothing
                 }
-        else do
+        False -> do
             when (any isFB images) $ fail "internal error (compileRenderTarget)!"
             fbo <- alloca $! \pbo -> glGenFramebuffers 1 pbo >> peek pbo
             glBindFramebuffer GL_DRAW_FRAMEBUFFER fbo
@@ -386,11 +390,9 @@ compileRenderTarget texs glTexs (RenderTarget targets) = do
                             | n > 1             -> attachArray
                             | otherwise         -> attach2D
                         TextureBuffer _         -> fail "internalError (compileRenderTarget/TextureBuffer)!"
-                attach _ _ = fail "unmatched"
 
-                go :: ([GLenum], Int) -> TargetItem -> IO ([GLenum], Int)
                 go a (TargetItem Stencil (Just img)) = do
-                    _ <- fail "Stencil support is not implemented yet!"
+                    fail "Stencil support is not implemented yet!"
                     return a
                 go a (TargetItem Depth (Just img)) = do
                     attach GL_DEPTH_ATTACHMENT img
@@ -403,19 +405,20 @@ compileRenderTarget texs glTexs (RenderTarget targets) = do
                 go a _ = return a
             (bufs,_) <- foldM go ([],0) targets
             withArray (reverse bufs) $ glDrawBuffers (fromIntegral $ length bufs)
+            let framebufferImageSizes = [glTextureSize (glTexs ! texIdx) | TargetItem _ (Just (TextureImage texIdx _ _)) <- V.toList targets]
             return $ GLRenderTarget
                 { framebufferObject         = fbo
                 , framebufferDrawbuffers    = Nothing
+                , framebufferSize           = if null framebufferImageSizes then Nothing else Just $ minimum framebufferImageSizes
                 }
 
 compileStreamData :: StreamData -> IO GLStream
 compileStreamData s = do
-  let withV w a f = w a (f . castPtr)
+  let withV w a f = w a (\p -> f $ castPtr p)
   let compileAttr (VFloatArray v) = Array ArrFloat (V.length v) (withV (SV.unsafeWith . V.convert) v)
       compileAttr (VIntArray v) = Array ArrInt32 (V.length v) (withV (SV.unsafeWith . V.convert) v)
       compileAttr (VWordArray v) = Array ArrWord32 (V.length v) (withV (SV.unsafeWith . V.convert) v)
       --TODO: compileAttr (VBoolArray v) = Array ArrWord32 (length v) (withV withArray v)
-      compileAttr (VBoolArray v) = error "TODO"
       (indexMap,arrays) = unzip [((n,i),compileAttr d) | (i,(n,d)) <- zip [0..] $ Map.toList $ streamData s]
       getLength n = l `div` c
         where
@@ -554,7 +557,7 @@ allocRenderer p = do
     let st = execState (mapM_ (compileCommand texUnitMapRefs smps texs trgs prgs) cmds) initCGState
     input <- newIORef Nothing
     -- default Vertex Array Object
-    vao <- alloca $ \pvao -> glGenVertexArrays 1 pvao >> peek pvao
+    vao <- alloca $! \pvao -> glGenVertexArrays 1 pvao >> peek pvao
     strs <- V.mapM compileStreamData $ streams p
     drawContextRef <- newIORef $ error "missing DrawContext"
     forceSetup <- newIORef True
@@ -583,24 +586,17 @@ allocRenderer p = do
 
 disposeRenderer :: GLRenderer -> IO ()
 disposeRenderer p = do
-    _ <- setStorage' p Nothing
+    setStorage' p Nothing
     V.forM_ (glPrograms p) $ \prg -> do
         glDeleteProgram $ programObject prg
         mapM_ glDeleteShader $ shaderObjects prg
     let targets = glTargets p
-    withArray (V.toList $ V.map framebufferObject targets) (glDeleteFramebuffers $ fromIntegral $ V.length targets)
+    withArray (map framebufferObject $ V.toList targets) $ (glDeleteFramebuffers $ fromIntegral $ V.length targets)
     let textures = glTextures p
-    withArray (V.toList $ V.map glTextureObject textures) (glDeleteTextures $ fromIntegral $ V.length textures)
+    withArray (map glTextureObject $ V.toList textures) $ (glDeleteTextures $ fromIntegral $ V.length textures)
     let samplers = glSamplers p
-    withArray (V.toList $ V.map glSamplerObject samplers) (glDeleteSamplers $ fromIntegral $ V.length $ glSamplers p)
-    with (glVAO p) $ glDeleteVertexArrays 1
-
-withRenderer :: Pipeline -> (GLRenderer -> IO a) -> IO a
-withRenderer p f = do
-    renderer <- allocRenderer p
-    r <- f renderer
-    disposeRenderer renderer
-    return r
+    withArray (map glSamplerObject $ V.toList samplers) $ (glDeleteSamplers . fromIntegral . V.length $ glSamplers p)
+    with (glVAO p) $ (glDeleteVertexArrays 1)
 
 {-
 data ObjectArraySchema
@@ -794,23 +790,26 @@ renderSlot glDrawCallCounterRef glVertexBufferRef glIndexBufferRef cmds = forM_ 
     --isOk <- checkGL
     --putStrLn $ isOk ++ " - " ++ show cmd
 
-setupRenderTarget :: IORef (Maybe InputConnection) -> GLRenderTarget -> IO ()
 setupRenderTarget glInput GLRenderTarget{..} = do
   -- set target viewport
-  ic' <- readIORef glInput
-  case ic' of
-      Nothing -> return ()
-      Just ic -> do
-                  let input = icInput ic
-                  (w,h) <- readIORef $ screenSize input
-                  glViewport 0 0 (fromIntegral w) (fromIntegral h)
-  -- TODO: set FBO target viewport
+  let setMainScreenSize = do
+        ic' <- readIORef glInput
+        case ic' of
+            Nothing -> return ()
+            Just ic -> do
+                        let input = icInput ic
+                        (w,h) <- readIORef $ screenSize input
+                        glViewport 0 0 (fromIntegral w) (fromIntegral h)
+
   glBindFramebuffer GL_DRAW_FRAMEBUFFER framebufferObject
   case framebufferDrawbuffers of
-      Nothing -> return ()
-      Just bl -> withArray bl $ glDrawBuffers (fromIntegral $ length bl)
+      Nothing -> setMainScreenSize
+      Just bl -> do
+        case framebufferSize of
+          Nothing         -> pure ()
+          Just (V3 w h _) -> glViewport 0 0 (fromIntegral w) (fromIntegral h)
+        withArray bl $ glDrawBuffers (fromIntegral $ length bl)
 
-setupDrawContext :: IORef Bool -> IORef GLDrawContext -> IORef (Maybe InputConnection) -> GLDrawContext -> IO ()
 setupDrawContext glForceSetup glDrawContextRef glInput new = do
   old <- readIORef glDrawContextRef
   writeIORef glDrawContextRef new
@@ -897,7 +896,6 @@ data CGState
   , samplerMapping        :: IntMap GLSampler
   }
 
-initCGState :: CGState
 initCGState = CGState
   { drawCommands          = mempty
   -- draw context data
@@ -915,7 +913,6 @@ type CG a = State CGState a
 emit :: GLCommand -> CG ()
 emit cmd = modify $ \s -> s {drawCommands = cmd : drawCommands s}
 
-drawContext :: MonadState CGState m => Vector GLProgram -> m GLDrawContext
 drawContext programs = do
   GLProgram{..} <- (programs !) <$> gets currentProgram
   let f = take (Map.size inputTextures) . IntMap.toList
@@ -955,7 +952,6 @@ compileCommand texUnitMap samplers textures targets programs cmd = case cmd of
     ClearRenderTarget vals      -> do
                                     rt <- gets renderTarget
                                     emit $ GLClearRenderTarget rt $ V.toList vals
-    _ -> error $ "internal error (unhandled command): " ++ show cmd
 {-
     GenerateMipMap tu           -> do
                                     tb <- textureBinding <$> get

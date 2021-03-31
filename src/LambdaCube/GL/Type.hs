@@ -1,31 +1,22 @@
-{-# LANGUAGE ExistentialQuantification  #-}
-{-# LANGUAGE FlexibleInstances          #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE ScopedTypeVariables        #-}
-{-# OPTIONS_GHC -Wno-orphans #-}
+{-# LANGUAGE ExistentialQuantification, FlexibleInstances, GeneralizedNewtypeDeriving, ScopedTypeVariables #-}
 module LambdaCube.GL.Type where
 
-import           Data.ByteString           (ByteString)
-import           Data.IORef                (IORef)
-import           Data.Int                  (Int32)
-import           Data.IntMap.Strict        (IntMap)
-import           Data.Map                  (Map)
-import           Data.Set                  (Set)
-import           Data.Vector               (Vector)
-import           Data.Word                 (Word32)
-import           Foreign.Ptr               (Ptr, castPtr)
-import           Foreign.Storable          (Storable (alignment, peek, peekByteOff, poke, pokeByteOff, sizeOf))
+import Data.IORef
+import Data.Int
+import Data.IntMap.Strict (IntMap)
+import Data.Set (Set)
+import Data.Map (Map)
+import Data.Vector (Vector)
+import Data.Word
+import Foreign.Ptr
+import Foreign.Storable
+import Data.ByteString
 
-import           Graphics.GL.Core33        (GLenum, GLint, GLsizei, GLuint)
+import Graphics.GL.Core33
 
-import           LambdaCube.IR             (AccumulationContext, ClearImage,
-                                            InputType (..), ProgramName,
-                                            RasterContext, SlotName, StreamName)
-import           LambdaCube.Linear         (M22F, M23F, M24F, M32F, M33F, M34F,
-                                            M42F, M43F, M44F, V2 (..), V2B, V2F,
-                                            V2I, V2U, V3 (..), V3B, V3F, V3I,
-                                            V3U, V4 (..), V4B, V4F, V4I, V4U)
-import           LambdaCube.PipelineSchema (PipelineSchema, StreamType (..))
+import LambdaCube.Linear
+import LambdaCube.IR
+import LambdaCube.PipelineSchema
 
 type GLUniformName = ByteString
 
@@ -125,72 +116,74 @@ data Object -- internal type
 
 data GLProgram
     = GLProgram
-    { shaderObjects        :: [GLuint]
-    , programObject        :: GLuint
-    , inputUniforms        :: Map String GLint
-    , inputTextures        :: Map String GLint   -- all input textures (render texture + uniform texture)
-    , inputTextureUniforms :: Set String
-    , inputStreams         :: Map String (GLuint,String)
+    { shaderObjects         :: [GLuint]
+    , programObject         :: GLuint
+    , inputUniforms         :: Map String GLint
+    , inputTextures         :: Map String GLint   -- all input textures (render texture + uniform texture)
+    , inputTextureUniforms  :: Set String
+    , inputStreams          :: Map String (GLuint,String)
     }
 
 data GLTexture
     = GLTexture
-    { glTextureObject :: GLuint
-    , glTextureTarget :: GLenum
+    { glTextureObject   :: GLuint
+    , glTextureTarget   :: GLenum
+    , glTextureSize     :: V3U
     } deriving Eq
 
 data InputConnection
     = InputConnection
-    { icId                     :: Int              -- identifier (vector index) for attached pipeline
-    , icInput                  :: GLStorage
-    , icSlotMapPipelineToInput :: Vector SlotName  -- GLRenderer to GLStorage slot name mapping
-    , icSlotMapInputToPipeline :: Vector (Maybe SlotName)  -- GLStorage to GLRenderer slot name mapping
+    { icId                      :: Int              -- identifier (vector index) for attached pipeline
+    , icInput                   :: GLStorage
+    , icSlotMapPipelineToInput  :: Vector SlotName  -- GLRenderer to GLStorage slot name mapping
+    , icSlotMapInputToPipeline  :: Vector (Maybe SlotName)  -- GLStorage to GLRenderer slot name mapping
     }
 
 data GLStream
     = GLStream
-    { glStreamCommands   :: IORef [GLObjectCommand]
-    , glStreamPrimitive  :: Primitive
-    , glStreamAttributes :: Map String (Stream Buffer)
-    , glStreamProgram    :: ProgramName
+    { glStreamCommands    :: IORef [GLObjectCommand]
+    , glStreamPrimitive   :: Primitive
+    , glStreamAttributes  :: Map String (Stream Buffer)
+    , glStreamProgram     :: ProgramName
     }
 
 data GLRenderer
     = GLRenderer
-    { glPrograms           :: Vector GLProgram
-    , glTextures           :: Vector GLTexture
-    , glSamplers           :: Vector GLSampler
-    , glTargets            :: Vector GLRenderTarget
-    , glOutputs            :: [GLOutput]
-    , glCommands           :: [GLCommand]
-    , glSlotPrograms       :: Vector [ProgramName] -- programs depend on a slot
-    , glInput              :: IORef (Maybe InputConnection)
-    , glSlotNames          :: Vector String
-    , glVAO                :: GLuint
-    , glTexUnitMapping     :: Map String (IORef GLint)   -- maps texture uniforms to texture units
-    , glStreams            :: Vector GLStream
-    , glDrawContextRef     :: IORef GLDrawContext
-    , glForceSetup         :: IORef Bool
-    , glVertexBufferRef    :: IORef GLuint
-    , glIndexBufferRef     :: IORef GLuint
+    { glPrograms        :: Vector GLProgram
+    , glTextures        :: Vector GLTexture
+    , glSamplers        :: Vector GLSampler
+    , glTargets         :: Vector GLRenderTarget
+    , glOutputs         :: [GLOutput]
+    , glCommands        :: [GLCommand]
+    , glSlotPrograms    :: Vector [ProgramName] -- programs depend on a slot
+    , glInput           :: IORef (Maybe InputConnection)
+    , glSlotNames       :: Vector String
+    , glVAO             :: GLuint
+    , glTexUnitMapping  :: Map String (IORef GLint)   -- maps texture uniforms to texture units
+    , glStreams         :: Vector GLStream
+    , glDrawContextRef  :: IORef GLDrawContext
+    , glForceSetup      :: IORef Bool
+    , glVertexBufferRef :: IORef GLuint
+    , glIndexBufferRef  :: IORef GLuint
     , glDrawCallCounterRef :: IORef Int
     }
 
-newtype GLSampler
+data GLSampler
     = GLSampler
     { glSamplerObject :: GLuint
     } deriving Eq
 
 data GLRenderTarget
     = GLRenderTarget
-    { framebufferObject      :: GLuint
-    , framebufferDrawbuffers :: Maybe [GLenum]
+    { framebufferObject         :: GLuint
+    , framebufferDrawbuffers    :: Maybe [GLenum]
+    , framebufferSize           :: Maybe V3U
     } deriving Eq
 
 data GLOutput
     = GLOutputDrawBuffer
-      { glOutputFBO        :: GLuint
-      , glOutputDrawBuffer :: GLenum
+      { glOutputFBO           :: GLuint
+      , glOutputDrawBuffer    :: GLenum
       }
     | GLOutputRenderTexture
       { glOutputFBO           :: GLuint
@@ -346,51 +339,51 @@ data Array  -- array type, element count (NOT byte size!), setter
     = Array ArrayType Int BufferSetter
 
 toStreamType :: InputType -> Maybe StreamType
-toStreamType Word  = Just Attribute_Word
-toStreamType V2U   = Just Attribute_V2U
-toStreamType V3U   = Just Attribute_V3U
-toStreamType V4U   = Just Attribute_V4U
-toStreamType Int   = Just Attribute_Int
-toStreamType V2I   = Just Attribute_V2I
-toStreamType V3I   = Just Attribute_V3I
-toStreamType V4I   = Just Attribute_V4I
-toStreamType Float = Just Attribute_Float
-toStreamType V2F   = Just Attribute_V2F
-toStreamType V3F   = Just Attribute_V3F
-toStreamType V4F   = Just Attribute_V4F
-toStreamType M22F  = Just Attribute_M22F
-toStreamType M23F  = Just Attribute_M23F
-toStreamType M24F  = Just Attribute_M24F
-toStreamType M32F  = Just Attribute_M32F
-toStreamType M33F  = Just Attribute_M33F
-toStreamType M34F  = Just Attribute_M34F
-toStreamType M42F  = Just Attribute_M42F
-toStreamType M43F  = Just Attribute_M43F
-toStreamType M44F  = Just Attribute_M44F
-toStreamType _     = Nothing
+toStreamType Word     = Just Attribute_Word
+toStreamType V2U      = Just Attribute_V2U
+toStreamType V3U      = Just Attribute_V3U
+toStreamType V4U      = Just Attribute_V4U
+toStreamType Int      = Just Attribute_Int
+toStreamType V2I      = Just Attribute_V2I
+toStreamType V3I      = Just Attribute_V3I
+toStreamType V4I      = Just Attribute_V4I
+toStreamType Float    = Just Attribute_Float
+toStreamType V2F      = Just Attribute_V2F
+toStreamType V3F      = Just Attribute_V3F
+toStreamType V4F      = Just Attribute_V4F
+toStreamType M22F     = Just Attribute_M22F
+toStreamType M23F     = Just Attribute_M23F
+toStreamType M24F     = Just Attribute_M24F
+toStreamType M32F     = Just Attribute_M32F
+toStreamType M33F     = Just Attribute_M33F
+toStreamType M34F     = Just Attribute_M34F
+toStreamType M42F     = Just Attribute_M42F
+toStreamType M43F     = Just Attribute_M43F
+toStreamType M44F     = Just Attribute_M44F
+toStreamType _          = Nothing
 
 fromStreamType :: StreamType -> InputType
-fromStreamType Attribute_Word  = Word
-fromStreamType Attribute_V2U   = V2U
-fromStreamType Attribute_V3U   = V3U
-fromStreamType Attribute_V4U   = V4U
-fromStreamType Attribute_Int   = Int
-fromStreamType Attribute_V2I   = V2I
-fromStreamType Attribute_V3I   = V3I
-fromStreamType Attribute_V4I   = V4I
-fromStreamType Attribute_Float = Float
-fromStreamType Attribute_V2F   = V2F
-fromStreamType Attribute_V3F   = V3F
-fromStreamType Attribute_V4F   = V4F
-fromStreamType Attribute_M22F  = M22F
-fromStreamType Attribute_M23F  = M23F
-fromStreamType Attribute_M24F  = M24F
-fromStreamType Attribute_M32F  = M32F
-fromStreamType Attribute_M33F  = M33F
-fromStreamType Attribute_M34F  = M34F
-fromStreamType Attribute_M42F  = M42F
-fromStreamType Attribute_M43F  = M43F
-fromStreamType Attribute_M44F  = M44F
+fromStreamType Attribute_Word    = Word
+fromStreamType Attribute_V2U     = V2U
+fromStreamType Attribute_V3U     = V3U
+fromStreamType Attribute_V4U     = V4U
+fromStreamType Attribute_Int     = Int
+fromStreamType Attribute_V2I     = V2I
+fromStreamType Attribute_V3I     = V3I
+fromStreamType Attribute_V4I     = V4I
+fromStreamType Attribute_Float   = Float
+fromStreamType Attribute_V2F     = V2F
+fromStreamType Attribute_V3F     = V3F
+fromStreamType Attribute_V4F     = V4F
+fromStreamType Attribute_M22F    = M22F
+fromStreamType Attribute_M23F    = M23F
+fromStreamType Attribute_M24F    = M24F
+fromStreamType Attribute_M32F    = M32F
+fromStreamType Attribute_M33F    = M33F
+fromStreamType Attribute_M34F    = M34F
+fromStreamType Attribute_M42F    = M42F
+fromStreamType Attribute_M43F    = M43F
+fromStreamType Attribute_M44F    = M44F
 
 -- user can specify streams using Stream type
 -- a stream can be constant (ConstXXX) or can came from a buffer
@@ -416,47 +409,47 @@ data Stream b
     | ConstM42F  M42F
     | ConstM43F  M43F
     | ConstM44F  M44F
-    | Stream
-        { streamType   :: StreamType
-        , streamBuffer :: b
-        , streamArrIdx :: Int
-        , streamStart  :: Int
-        , streamLength :: Int
+    | Stream 
+        { streamType    :: StreamType
+        , streamBuffer  :: b
+        , streamArrIdx  :: Int
+        , streamStart   :: Int
+        , streamLength  :: Int
         }
     deriving Show
 
 streamToStreamType :: Stream a -> StreamType
 streamToStreamType s = case s of
-    ConstWord  _     -> Attribute_Word
-    ConstV2U   _     -> Attribute_V2U
-    ConstV3U   _     -> Attribute_V3U
-    ConstV4U   _     -> Attribute_V4U
-    ConstInt   _     -> Attribute_Int
-    ConstV2I   _     -> Attribute_V2I
-    ConstV3I   _     -> Attribute_V3I
-    ConstV4I   _     -> Attribute_V4I
-    ConstFloat _     -> Attribute_Float
-    ConstV2F   _     -> Attribute_V2F
-    ConstV3F   _     -> Attribute_V3F
-    ConstV4F   _     -> Attribute_V4F
-    ConstM22F  _     -> Attribute_M22F
-    ConstM23F  _     -> Attribute_M23F
-    ConstM24F  _     -> Attribute_M24F
-    ConstM32F  _     -> Attribute_M32F
-    ConstM33F  _     -> Attribute_M33F
-    ConstM34F  _     -> Attribute_M34F
-    ConstM42F  _     -> Attribute_M42F
-    ConstM43F  _     -> Attribute_M43F
-    ConstM44F  _     -> Attribute_M44F
+    ConstWord  _ -> Attribute_Word
+    ConstV2U   _ -> Attribute_V2U
+    ConstV3U   _ -> Attribute_V3U
+    ConstV4U   _ -> Attribute_V4U
+    ConstInt   _ -> Attribute_Int
+    ConstV2I   _ -> Attribute_V2I
+    ConstV3I   _ -> Attribute_V3I
+    ConstV4I   _ -> Attribute_V4I
+    ConstFloat _ -> Attribute_Float
+    ConstV2F   _ -> Attribute_V2F
+    ConstV3F   _ -> Attribute_V3F
+    ConstV4F   _ -> Attribute_V4F
+    ConstM22F  _ -> Attribute_M22F
+    ConstM23F  _ -> Attribute_M23F
+    ConstM24F  _ -> Attribute_M24F
+    ConstM32F  _ -> Attribute_M32F
+    ConstM33F  _ -> Attribute_M33F
+    ConstM34F  _ -> Attribute_M34F
+    ConstM42F  _ -> Attribute_M42F
+    ConstM43F  _ -> Attribute_M43F
+    ConstM44F  _ -> Attribute_M44F
     Stream t _ _ _ _ -> t
 
 -- stream of index values (for index buffer)
 data IndexStream b
     = IndexStream
-    { indexBuffer :: b
-    , indexArrIdx :: Int
-    , indexStart  :: Int
-    , indexLength :: Int
+    { indexBuffer   :: b
+    , indexArrIdx   :: Int
+    , indexStart    :: Int
+    , indexLength   :: Int
     }
 
 newtype TextureData
@@ -488,9 +481,9 @@ instance Storable a => Storable (V2 a) where
     peek q = do
         let p = castPtr q :: Ptr a
             k = sizeOf (undefined :: a)
-        x <- peek        p
+        x <- peek        p 
         y <- peekByteOff p k
-        return $! V2 x y
+        return $! (V2 x y)
 
     poke q (V2 x y) = do
         let p = castPtr q :: Ptr a
@@ -505,10 +498,10 @@ instance Storable a => Storable (V3 a) where
     peek q = do
         let p = castPtr q :: Ptr a
             k = sizeOf (undefined :: a)
-        x <- peek        p
+        x <- peek        p 
         y <- peekByteOff p k
         z <- peekByteOff p (k*2)
-        return $! V3 x y z
+        return $! (V3 x y z)
 
     poke q (V3 x y z) = do
         let p = castPtr q :: Ptr a
@@ -524,11 +517,11 @@ instance Storable a => Storable (V4 a) where
     peek q = do
         let p = castPtr q :: Ptr a
             k = sizeOf (undefined :: a)
-        x <- peek        p
+        x <- peek        p 
         y <- peekByteOff p k
         z <- peekByteOff p (k*2)
         w <- peekByteOff p (k*3)
-        return $! V4 x y z w
+        return $! (V4 x y z w)
 
     poke q (V4 x y z w) = do
         let p = castPtr q :: Ptr a

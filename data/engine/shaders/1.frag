@@ -18,14 +18,17 @@ void main() {
     f0 = vec4 (((diffuseLight_4_VecSFloat3 (vo1
                                            ,vo3
                                            ,lightPos_Float
-                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s0,((vo2).xy) * (5.0e-5))).xyz)).x
+                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s0
+                                                                               ,((vo2).xy) * (3.0000000000000004e-5))).xyz)).x
               ,((diffuseLight_4_VecSFloat3 (vo1
                                            ,vo3
                                            ,lightPos_Float
-                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s1,((vo2).xy) * (5.0e-5))).xyz)).y
+                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s1
+                                                                               ,((vo2).xy) * (3.0000000000000004e-5))).xyz)).y
               ,((diffuseLight_4_VecSFloat3 (vo1
                                            ,vo3
                                            ,lightPos_Float
-                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s2,((vo2).xy) * (5.0e-5))).xyz)).z
+                                           ,vec3 (2.0,2.0,2.0))) * ((texture2D (s2
+                                                                               ,((vo2).xy) * (3.0000000000000004e-5))).xyz)).z
               ,1.0);
 }

@@ -7,17 +7,19 @@ identity = M44F r1 r2 r3 r4
 
 ----------------------------------------
 
+aspectRatio = 1920.0 / 1080.0
+
 lightPos = V4 (60000) (10000) (34000) 1
 cameraPos = V4 0 80000 44000 0
 
 cameraMat = projection .*. view
   where
-    projection = perspective 10000 300000 45 1.75
+    projection = perspective 10000 300000 45 aspectRatio
     view = lookat cameraPos%xyz (V3 0 0 0) (V3 0 0 1)
 
 lightMat = projection .*. view
   where
-    projection = perspective 10000 300000 45 1.75
+    projection = orthographic 1000 300000 50000 aspectRatio
     view = lookat lightPos%xyz (V3 0 0 0) (V3 0 0 1)
 
 ----------------------------------------
@@ -70,7 +72,7 @@ fragObject time texture fp uv n =
             -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
     sampler = Sampler LinearFilter MirroredRepeat texture
-    objectColor = texture2D sampler (uv%xy *! 0.00005)
+    objectColor = texture2D sampler (uv%xy *! 0.00003)
     result = diffuse * objectColor%xyz
 
 ----------------------------------------
@@ -132,20 +134,20 @@ makeShadowMap (time :: Float)
   where
     objectsSurfaces = objects
       & mapPrimitives (\((pos,n)) -> vertShadow time position pos n)
-      & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) ((Smooth))
+      & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
       & mapFragments (\((n)) -> ((black)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
 
 main = renderFrame
-    frame
-    -- shadowMap
+    -- frame
+    shadowMap
   where
     frame = makeFrame
         (Uniform "time" / 10)
         (Uniform "position")
         -- (Texture2DSlot "diffuseTexture")
-        (Texture2D (V2 1500 1500) (PrjImageColor shadowMap))
+        (Texture2D (V2 1000 600) (PrjImageColor shadowMap))
         (fetch "objects" (Attribute "position", Attribute "normal"))
         (fetch "lights" (Attribute "position", Attribute "normal"))
 

@@ -339,6 +339,21 @@ perspective n f fovy aspect =
     r = aspect*t
     l = -r
 
+orthographic :: Float
+             -> Float
+             -> Float
+             -> Float
+             -> Mat 4 4 Float
+orthographic n f t aspect =
+    M44F (V4 (2/(r-l))      0              0              0)
+         (V4 0              (2/(t-b))      0              0)
+         (V4 0              0              (-2/(f-n))      0)
+         (V4 (-(r+l)/(r-l)) (-(t+b)/(t-b)) (-(f+n)/(f-n)) 1)
+  where
+    b = -t
+    r = aspect*t
+    l = -r
+
 rotMatrixZ a = M44F (V4 c s 0 0) (V4 (-s) c 0 0) (V4 0 0 1 0) (V4 0 0 0 1)
   where
     c = cos a

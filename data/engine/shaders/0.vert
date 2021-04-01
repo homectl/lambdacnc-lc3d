@@ -19,9 +19,6 @@ mat4 translateBefore4(vec3 z0) {
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 ((z0).x,(z0).y,(z0).z,1.0));
 }
-float aspectRatio_Float_2_1(vec2 z0) {
-    return ((z0).x) / ((z0).y);
-}
 mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
     return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
                                                             ,normalize ((z0) - (z1)))))
@@ -49,17 +46,13 @@ mat4 rotMatrixZ(float z0) {
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 (0.0,0.0,0.0,1.0));
 }
-vec2 depthMapSize_Float;
-mat4 lightMat_4_2(vec2 z0,vec4 z1) {
-    return (orthographic (3000.0
-                         ,350000.0
-                         ,50000.0
-                         ,aspectRatio_Float_2_1 (z0))) * (lookat ((z1).xyz
-                                                                 ,vec3 (0.0,0.0,0.0)
-                                                                 ,vec3 (0.0,0.0,1.0)));
+vec4 getLightPos2(float z0) {
+    return (rotMatrixZ ((z0) * (2.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
-vec4 lightPos_Float(float z0) {
-    return (rotMatrixZ (5.890486225480862)) * (vec4 (80000.0,10000.0,40000.0,1.0));
+mat4 lightMat_4(vec4 z0) {
+    return (orthographic (3000.0,350000.0,50000.0,2.0)) * (lookat ((z0).xyz
+                                                                  ,vec3 (0.0,0.0,0.0)
+                                                                  ,vec3 (0.0,0.0,1.0)));
 }
 mat4 modelMat_Float(float z0) {
     return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
@@ -71,14 +64,11 @@ vec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {
     return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
 }
 void main() {
-    depthMapSize_Float = vec2 (800.0,400.0);
-    gl_Position = (lightMat_4_2 (depthMapSize_Float
-                                ,lightPos_Float ((time) / (10.0)))) * ((modelMat_Float
+    gl_Position = (lightMat_4 (getLightPos2 ((time) / (10.0)))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));
-    vo1 = ((((lightMat_4_2 (depthMapSize_Float
-                           ,lightPos_Float ((time) / (10.0)))) * ((modelMat_Float
+    vo1 = ((((lightMat_4 (getLightPos2 ((time) / (10.0)))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)))).z) * (0.5)) + (0.5);

@@ -8,9 +8,10 @@ module LambdaCNC.Viewer where
 
 import qualified Codec.Picture             as Pic
 import           Control.Arrow             ((&&&))
-import           Control.Monad             (unless)
+import           Control.Monad             (replicateM, unless)
 import qualified Data.Aeson.Encode.Pretty  as Aeson (encodePretty)
 import qualified Data.ByteString.Lazy      as LBS
+import           Data.Int                  (Int32)
 import qualified Data.Map                  as Map
 import           Data.Vect                 (Vec3 (..), (&-))
 import qualified Data.Vect                 as Vect
@@ -29,7 +30,7 @@ import qualified LambdaCube.Compiler       as L (Backend (OpenGL33),
                                                  compileMain, ppShow)
 import           LambdaCube.GL             as LGL (FetchPrimitive (Triangles),
                                                    GLRenderer, GLStorage,
-                                                   InputType (FTexture2D, Float, V2F, V3F),
+                                                   InputType (FTexture2D, Float, Int, V2F, V3F),
                                                    Object,
                                                    StreamType (Attribute_V3F),
                                                    TextureData, V2 (V2),
@@ -98,7 +99,7 @@ data Machine = Machine
     , yaxis  :: LGL.Object
     , zaxis  :: LGL.Object
     , ground :: LGL.Object
-    , bulb   :: LGL.Object
+    , bulbs  :: [LGL.Object]
     }
 
 
@@ -201,18 +202,18 @@ toFloat = fromIntegral
 
 ---------------------------------------------
 
-uploadModel :: String -> [String] -> GLStorage -> FilePath -> IO Object
-uploadModel slotName uniformNames storage path = do
+uploadModel :: String -> [String] -> (IO Object -> IO b) -> GLStorage -> [Char] -> IO b
+uploadModel slotName uniformNames f storage path = do
     putStrLn $ "Loading model: " ++ path
-    STL.mustLoadSTL path
-        >>= LGL.uploadMeshToGPU . stlToMesh
-        >>= LGL.addMeshToObjectArray storage slotName uniformNames
+    mesh <- STL.mustLoadSTL path >>= LGL.uploadMeshToGPU . stlToMesh
+    f $ LGL.addMeshToObjectArray storage slotName uniformNames mesh
+
 
 uploadObject :: GLStorage -> FilePath -> IO Object
-uploadObject = uploadModel "objects" ["position"]
+uploadObject = uploadModel "objects" ["position"] id
 
-uploadLight :: GLStorage -> FilePath -> IO Object
-uploadLight = uploadModel "lights" []
+uploadLights :: Int -> GLStorage -> FilePath -> IO [Object]
+uploadLights = uploadModel "lights" ["index"] . replicateM
 
 uploadTexture :: FilePath -> IO TextureData
 uploadTexture path = do
@@ -235,6 +236,7 @@ main = do
             "normal"            @: Attribute_V3F
           LGL.defUniforms $ do
             "time"              @: Float
+            "index"             @: Int
             "position"          @: V3F
             "screenSize"        @: V2F
             "diffuseTexture"    @: FTexture2D
@@ -248,14 +250,17 @@ main = do
         <*> uploadObject storage "data/models/YAxis.stl"
         <*> uploadObject storage "data/models/ZAxis.stl"
         <*> uploadObject storage "data/models/Ground.stl"
-        <*> uploadLight storage "data/models/lightbulb.stl"
+        <*> uploadLights 2 storage "data/models/lightbulb.stl"
 
     LGL.enableObject bed True
     LGL.enableObject yaxis True
     LGL.enableObject xaxis True
     LGL.enableObject zaxis True
     LGL.enableObject ground True
-    LGL.enableObject bulb True
+    mapM_ (`LGL.enableObject` True) bulbs
+
+    mapM_ (\(i, b) -> LGL.updateObjectUniforms b $ do
+      "index" @= return (i :: Int32)) $ zip [0..] bulbs
 
     LGL.updateObjectUniforms ground $ do
       "position" @= return (V3 0 0 (-500) :: V3F)

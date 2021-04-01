@@ -27,6 +27,7 @@ nearPlane = 3000
 farPlane = 350000
 
 depthMapSize = V2 800 400
+texelSize = mapVec (1.0 /) depthMapSize
 
 linearizeDepth depth =
     let
@@ -38,7 +39,7 @@ linearizeDepth depth =
     depth / (f/7 - n)
     
 -- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
-lightPos time = rotMatrixZ (pi/8*15) *. V4 (80000) (10000) (40000) 1
+getLightPos time = rotMatrixZ (pi/8*15) *. V4 (80000) (10000) (40000) 1
 cameraPos time = V4 0 180000 60000 0
 
 cameraMat screenSize time = projection .*. view
@@ -88,7 +89,7 @@ vertObject depthMapSize time screenSize origPos vertPos n =
 
     pos = cameraMat screenSize time *. model *. objPos
     fragPos = model *. objPos
-    fragPosLightSpace = lightMat depthMapSize (lightPos time) *. fragPos
+    fragPosLightSpace = lightMat depthMapSize (getLightPos time) *. fragPos
     uvw = vertPos + V3 24000 0 0
     normal = normalize $ model *. (V4 n%x n%y n%z 0)
 
@@ -100,7 +101,7 @@ vertShadow depthMapSize time origPos vertPos =
 
     objPos = positionObject time origPos vertPos
 
-    pos = lightMat depthMapSize (lightPos time) *. model *. objPos
+    pos = lightMat depthMapSize (getLightPos time) *. model *. objPos
 
 ----------------------------------------
 
@@ -112,46 +113,34 @@ diffuseLight fp normal lightPos lightColor =
     in
     diffuse
 
+getBias normal lightDir = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
 
-shadowCalculation (time :: Float)
-                  (shadowMap :: Vec 2 Float -> Vec 4 Float)
-                  (fp :: VecS Float 4)
-                  (lsfp :: VecS Float 4)
-                  (normal :: VecS Float 4) = shadowPcf
+mkLightDir time fp = normalize (getLightPos time - fp)
+
+perspectiveDivide lsfp = (lsfp%xyz /! lsfp%w) *! 0.5 +! 0.5
+
+shadowCalculation time shadowMap fp lsfp normal offset = shadow
   where
-    lightDir = normalize (lightPos time - fp)
-
     -- perform perspective divide
-    projCoords = (lsfp%xyz /! lsfp%w) *! 0.5 +! 0.5
+    projCoords = perspectiveDivide lsfp
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
 
     -- -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    -- closestDepth = (shadowMap projCoords%xy)%r
+    -- closestDepth = (texture2D shadowMap projCoords%xy)%r
     -- -- check whether current frag pos is in shadow
     -- bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
     -- shadow = if currentDepth - bias > closestDepth then 0.0 else 1.0
 
-    pcfVecs = [ V2 0 0
-              -- , V2 (-1) (-1)
-              -- , V2 (-1) 0
-              -- , V2 (-1) 1
-              , V2 0 (-1)
-              -- , V2 0 1
-              -- , V2 1 (-1)
-              -- , V2 1 0
-              -- , V2 1 1
-              ]
-    shadowPcf = foldl' (+) 0 (map (pcf shadowMap currentDepth projCoords normal lightDir) pcfVecs) / 2
-
-
-pcf shadowMap currentDepth projCoords normal lightDir offset = shadow
-  where
-    texelSize = mapVec (1.0 /) depthMapSize
     -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    closestDepth = (shadowMap (projCoords%xy + offset * texelSize))%r
+    closestDepth = (texture2D shadowMap (projCoords%xy + offset * texelSize))%r
+    shadow = pcf currentDepth closestDepth normal (mkLightDir time fp) / 1
+
+
+pcf currentDepth closestDepth normal lightDir = shadow
+  where
     -- check whether current frag pos is in shadow
-    bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
+    bias = getBias normal lightDir
     shadow = if currentDepth - bias > closestDepth then 0.3 else 1.0
 
 
@@ -161,12 +150,22 @@ fragObject time texture depth fp lsfp uv normal =
     textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
     objectColor = textureMap (uv%xy *! 0.000025)
 
-    diffuse = diffuseLight fp normal (lightPos time) (V3 1.0 1.0 1.0)
+    diffuse = diffuseLight fp normal (getLightPos time) (V3 1.0 1.0 1.0)
             -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
 
-    shadow = shadowCalculation time depth fp lsfp normal
+    pcfVecs = [ V2 0 0
+              -- , V2 (-1) (-1)
+              -- , V2 (-1) 0
+              -- , V2 (-1) 1
+              -- , V2 0 (-1)
+              -- , V2 0 1
+              -- , V2 1 (-1)
+              -- , V2 1 0
+              -- , V2 1 1
+              ]
+    shadow = shadowCalculation time depth fp lsfp normal (V2 0 0)
 
     result = diffuse * objectColor%xyz *! shadow
 
@@ -178,7 +177,7 @@ bulbOffset = V4 0 0 4200 0
 
 vertBulb screenSize time vertPos n =
     let
-        objPos = rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 0) + lightPos time + bulbOffset
+        objPos = rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 0) + getLightPos time + bulbOffset
         pos = cameraMat screenSize time *. objPos
     in
     (pos, n)
@@ -190,7 +189,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
           (time :: Float)
           (position :: Vec 3 Float)
           (texture :: Texture)
-          (depth :: Vec 2 Float -> Vec 4 Float)
+          (depth :: Sampler)
           (objects :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
           (lights :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
     = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))
@@ -245,17 +244,18 @@ makeShadowMap (depthMapSize :: Vec 2 Float)
 
 
 showTextureOn (prims :: PrimitiveStream Triangle (Vec 2 Float, Vec 2 Float))
-              (texture :: Vec 2 Float -> Vec 4 Float)
+              (texture :: Sampler)
     = prims
     & mapPrimitives (\(p, uv) -> (V4 p%x p%y (-1) 1, uv))
     & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
-    & mapFragments (\((uv)) -> ((texture uv)))
+    & mapFragments (\((uv)) -> ((texture2D texture uv)))
     & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True)) 
 
 
 showTexture texture = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0 0 0.4 1))
   `overlay`
     showTextureOn (quad 2) texture
+
 
 main = renderFrame
     frame
@@ -272,7 +272,7 @@ main = renderFrame
         (fetch "objects" (Attribute "position", Attribute "normal"))
         (fetch "lights" (Attribute "position", Attribute "normal"))
 
-    shadowMapTexture = texture2D (Sampler LinearFilter ClampToEdge (Texture2D depthMapSize (PrjImageColor shadowMap)))
+    shadowMapTexture = Sampler LinearFilter ClampToEdge (Texture2D depthMapSize (PrjImageColor shadowMap))
     shadowMap = makeShadowMap
         depthMapSize
         (Uniform "time" / 10)

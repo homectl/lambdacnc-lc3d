@@ -931,6 +931,7 @@ genGLSL dns e = case e of
             "M44F" -> "mat4"
 
             "==" -> "=="
+            "isEQ" -> "=="
 
             n | n `elem` ["primNegateWord", "primNegateInt", "primNegateFloat"] -> "-_"
             n | n `elem` ["V2", "V3", "V4"] -> toGLSLType (n ++ " " ++ show (length xs)) $ tyOf e
@@ -950,7 +951,9 @@ genGLSL dns e = case e of
             [] -> return $ text f
             xs -> (text f </>) . tupled <$> mapM gen xs
       [op, '_'] -> case xs of [a] -> (text [op] <+>) . parens <$> gen a
-      o         -> case xs of [a, b] -> hsep <$> sequence [parens <$> gen a, pure $ text o, parens <$> gen b]
+      o         -> case xs of
+          [a, b] -> hsep <$> sequence [parens <$> gen a, pure $ text o, parens <$> gen b]
+          _ -> error $ ppShow xs
 
     gen = genGLSL dns
 

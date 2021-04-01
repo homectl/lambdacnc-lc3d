@@ -69,9 +69,6 @@ lightMat pos = projection .*. view
     -- projection = perspective nearPlane farPlane 45 (depthMapSize%x / depthMapSize%y)
     view = lookat pos%xyz (V3 0 0 0) (V3 0 0 1)
 
-lightColor1 = (V4 0.7 0.7 0.2 1.0)
-lightColor2 = (V4 1.0 0.5 1.0 1.0)
-
 ----------------------------------------
 
 modelMat time =
@@ -84,7 +81,7 @@ positionObject time origPos vertPos =
     V4 vertPos%x vertPos%y vertPos%z 1 + V4 origPos%x origPos%y origPos%z 0
 
 
-vertObject time screenSize origPos vertPos n (lightPos1, lightPos2) =
+vertObject time screenSize origPos vertPos n [lightPos1, lightPos2] =
     (pos, uvw, normal, fragPos, fragPosLightSpace1, fragPosLightSpace2)
   where
     model = modelMat time
@@ -152,17 +149,16 @@ shadowCalculation lightPos shadowMap fp lsfp normal =
               -- , V2 1 1
               ]
 
-diffuseLamp fp normal lightColor lightPos shadowMap lsfp =
+diffuseLamp fp normal ((lightColor, lightPos, shadowMap), lsfp) =
        diffuseLight fp normal lightPos lightColor
     *! shadowCalculation lightPos shadowMap fp lsfp normal
 
-fragObject time textureMap fp uv normal (lightPos1, shadowMap1, lsfp1) (lightPos2, shadowMap2, lsfp2) =
+fragObject time textureMap fp uv normal lights =
     result
   where
     objectColor = textureMap (uv%xy *! 0.000025)
 
-    diffuse = diffuseLamp fp normal lightColor1 lightPos1 shadowMap1 lsfp1
-            + diffuseLamp fp normal lightColor2 lightPos2 shadowMap2 lsfp2
+    diffuse = foldl' (+) zero $ map (diffuseLamp fp normal) lights
 
     result = (diffuse /! 1.2) * objectColor
 
@@ -181,36 +177,38 @@ vertBulb screenSize time vertPos n lightPos =
 
 ----------------------------------------
 
-makeObjects screenSize time position texture objects (lightPos1, shadowMap1) (lightPos2, shadowMap2) =
+makeObjects screenSize time position texture objects lights =
     [ objectsWireFrame
     , objectsSurfaces
     ]
   where
+    color (_, c, _) = c
+
     objectsWireFrame = objects
-      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (lightPos1, lightPos2))
+      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (map color lights))
       & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth, Smooth)
       & mapFragments (\((_,_,_,_,_)) -> ((V4 0 0 0 0.5)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     objectsSurfaces = objects
-      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (lightPos1, lightPos2))
+      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (map color lights))
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth, Smooth)
-      & mapFragments (\((uv,n,fp,lsfp1,lsfp2)) -> ((fragObject time textureMap fp uv n (lightPos1, shadowMap1, lsfp1) (lightPos2, shadowMap2, lsfp2))))
+      & mapFragments (\((uv,n,fp,lsfp1,lsfp2)) -> ((fragObject time textureMap fp uv n (zip lights [lsfp1, lsfp2]))))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
 
 
-makeScene screenSize time position index texture objects bulbs (lightPos1, shadowMap1) (lightPos2, shadowMap2)
+makeScene screenSize time position index texture objects bulbs lights
     = foldl' overlay (imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))) $
-    (makeObjects screenSize time position texture objects (lightPos1, shadowMap1) (lightPos2, shadowMap2)) ++
+    (makeObjects screenSize time position texture objects lights) ++
     [ bulbsWireFrame
     , bulbsSurfaces
-    , showTextureOn (quad 0.25 (0, 0)) shadowMap1
-    , showTextureOn (quad 0.25 (0.25, 0)) shadowMap2
-    ]
+    ] ++ map (\(i, (_, _, shadowMap)) -> showTextureOn (quad 0.25 (0.25 * i, 0)) shadowMap) (zip [0..10] lights)
   where
-    lightPos = if index < 1 then lightPos1 else lightPos2
+    [(lightColor1, lightPos1, _), (lightColor2, lightPos2, _)] = lights
+    
+    lightPos = if not (index /= 0) then lightPos1 else lightPos2
     lightColor = if index < 1 then lightColor1 else lightColor2
 
     bulbsWireFrame = bulbs
@@ -226,7 +224,7 @@ makeScene screenSize time position index texture objects bulbs (lightPos1, shado
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
 
-makeShadowMap time lightPos position objects
+makeShadowMap time position objects lightPos
     = imageFrame (emptyDepthImage 1, emptyColorImage (V4 1 1 0 1))
   `overlay` objectsSurfaces
   where
@@ -263,11 +261,7 @@ makeFrame (screenSize :: Vec 2 Float)
           (texture :: Texture)
           (objects :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
           (bulbs :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float)) =
-    frame
-    -- (showTexture shadowMapTexture)
-    -- shadowMap
-  where
-    frame = makeScene
+    makeScene
         screenSize
         time
         position
@@ -275,24 +269,13 @@ makeFrame (screenSize :: Vec 2 Float)
         texture
         objects
         bulbs
-        (lightPos1, shadowMap1)
-        (lightPos2, shadowMap2)
+        (zip3 lightColor lightPos shadowMap)
+  where
+    lightPos = [getLightPos1 time, getLightPos2 time]
+    lightColor = [V4 0.7 0.7 0.2 1.0, V4 1.0 0.5 1.0 1.0]
 
-    lightPos1 = getLightPos1 time
-    shadowMap1 = Sampler LinearFilter ClampToEdge (Texture2D depthMapSize (PrjImageColor shadowMapFrame1))
-    shadowMapFrame1 = makeShadowMap
-        time
-        lightPos1
-        position
-        objects
-
-    lightPos2 = getLightPos2 time
-    shadowMap2 = Sampler LinearFilter ClampToEdge (Texture2D depthMapSize (PrjImageColor shadowMapFrame2))
-    shadowMapFrame2 = makeShadowMap
-        time
-        lightPos2
-        position
-        objects
+    shadowMap = map (Sampler LinearFilter ClampToEdge . Texture2D depthMapSize . PrjImageColor) shadowMapFrame
+    shadowMapFrame = map (makeShadowMap time position objects) lightPos
 
     -- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
     getLightPos1 time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1

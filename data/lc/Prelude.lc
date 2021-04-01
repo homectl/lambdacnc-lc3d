@@ -33,6 +33,12 @@ zip []      xs     = []
 zip xs      []     = []
 zip (a: as) (b: bs) = (a,b): zip as bs
 
+zip3 :: [a] -> [b] -> [c] -> [(a,b,c)]
+zip3 []      bs      cs     = []
+zip3 as      []      cs     = []
+zip3 as      bs      []     = []
+zip3 (a: as) (b: bs) (c: cs)= (a,b,c): zip3 as bs cs
+
 unzip :: [(a,b)] -> ([a],[b])
 unzip [] = ([],[])
 unzip ((a,b):xs) = (a:as,b:bs)

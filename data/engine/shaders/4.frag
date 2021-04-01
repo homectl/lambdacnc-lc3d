@@ -4,8 +4,8 @@ vec4 texture2D(sampler2D s,vec2 uv) {
 }
 smooth in vec3 vo1;
 out vec4 f0;
-vec4 white;
+vec4 black;
 void main() {
-    white = vec4 (1.0,1.0,1.0,1.0);
-    f0 = white;
+    black = vec4 (0.0,0.0,0.0,1.0);
+    f0 = black;
 }

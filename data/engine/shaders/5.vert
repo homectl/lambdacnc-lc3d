@@ -60,7 +60,7 @@ mat4 rotMatrixZ(float z0) {
 vec4 bulbOffset_Float;
 mat4 cameraMat_2_Float(vec2 z0,float z1) {
     return (perspective (3000.0
-                        ,300000.0
+                        ,350000.0
                         ,0.5235987755982988
                         ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
                                                                 ,vec3 (0.0,0.0,10000.0)

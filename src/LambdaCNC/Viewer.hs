@@ -48,6 +48,7 @@ lcFile = "data/engine/lambdacnc.lc"
 
 loadRenderer :: GLStorage -> IO (Maybe GLRenderer)
 loadRenderer storage = do
+    putStrLn $ "Compiling renderer: " ++ lcFile
     L.compileMain ["."] L.OpenGL33 lcFile >>= \case
       Left err  -> do
         putStrLn $ "compile error:\n" ++ L.ppShow err
@@ -115,12 +116,11 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
         -- Possibly reload the rendering pipeline.
         lcTime <- lcModificationTime
         let reload = lcTime /= lcTime0
-        renderer <- if not reload then return renderer0 else do
-          putStrLn "compiling renderer"
+        renderer <- if not reload then return renderer0 else
           loadRenderer storage >>= \case
             Nothing -> return renderer0
             Just newRenderer -> do
-              putStrLn "reloading renderer"
+              putStrLn "Reloading renderer"
               LGL.disposeRenderer renderer0
               return newRenderer
 

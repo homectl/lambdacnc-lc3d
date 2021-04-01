@@ -4,7 +4,7 @@ Pipeline
   , textures =
       [ TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -24,7 +24,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -44,7 +44,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -64,7 +64,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -84,7 +84,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -104,7 +104,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -124,7 +124,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -144,7 +144,607 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 960 540)
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Color
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT Red) 1
+          , textureSize = VV2U (V2 200 100)
+          , textureSemantic = Depth
+          , textureSampler =
+              SamplerDescriptor
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
+                , samplerWrapR = Nothing
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
+                , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
+                , samplerMinLod = Nothing
+                , samplerMaxLod = Nothing
+                , samplerLodBias = 0.0
+                , samplerCompareFunc = Nothing
+                }
+          , textureBaseLevel = 0
+          , textureMaxLevel = 0
+          }
+      , TextureDescriptor
+          { textureType = Texture2D (FloatT RGBA) 1
+          , textureSize = VV2U (V2 200 100)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -221,6 +821,186 @@ Pipeline
                   }
               ]
           }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 8 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 9 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 10 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 11 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 12 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 13 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 14 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 15 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 16 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 17 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 18 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 19 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 20 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 21 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 22 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 23 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 24 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 25 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 26 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 27 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 28 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 29 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 30 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 31 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 32 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 33 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 34 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 35 0 Nothing)
+                  }
+              ]
+          }
+      , RenderTarget
+          { renderTargets =
+              [ TargetItem
+                  { targetSemantic = Depth
+                  , targetRef = Just (TextureImage 36 0 Nothing)
+                  }
+              , TargetItem
+                  { targetSemantic = Color
+                  , targetRef = Just (TextureImage 37 0 Nothing)
+                  }
+              ]
+          }
       ]
   , programs =
       [ Program
@@ -250,12 +1030,6 @@ Pipeline
               vec3 neg_VecSFloat3(vec3 z0) {
                   return - (z0);
               }
-              mat4 rotMatrixZ(float z0) {
-                  return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
-                              ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 (0.0,0.0,0.0,1.0));
-              }
               mat4 translateBefore4(vec3 z0) {
                   return mat4 (vec4 (1.0,0.0,0.0,0.0)
                               ,vec4 (0.0,1.0,0.0,0.0)
@@ -264,9 +1038,6 @@ Pipeline
               }
               float aspectRatio_Float_2_1(vec2 z0) {
                   return ((z0).x) / ((z0).y);
-              }
-              vec4 lightPos_Float(float z0) {
-                  return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
                   return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
@@ -289,13 +1060,22 @@ Pipeline
                               ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))
                               ,1.0));
               }
-              mat4 lightMat_2_Float(vec2 z0,float z1) {
+              mat4 rotMatrixZ(float z0) {
+                  return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
+                              ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
+                              ,vec4 (0.0,0.0,1.0,0.0)
+                              ,vec4 (0.0,0.0,0.0,1.0));
+              }
+              mat4 lightMat_4_2(vec2 z0,vec4 z1) {
                   return (orthographic (3000.0
-                                       ,300000.0
+                                       ,350000.0
                                        ,50000.0
-                                       ,aspectRatio_Float_2_1 (z0))) * (lookat ((lightPos_Float (z1)).xyz
+                                       ,aspectRatio_Float_2_1 (z0))) * (lookat ((z1).xyz
                                                                                ,vec3 (0.0,0.0,0.0)
                                                                                ,vec3 (0.0,0.0,1.0)));
+              }
+              vec4 lightPos(float z0) {
+                  return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 modelMat_Float(float z0) {
                   return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
@@ -307,13 +1087,13 @@ Pipeline
                   return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
               }
               void main() {
-                  gl_Position = (lightMat_2_Float (vec2 (960.0,540.0)
-                                                  ,(time) / (10.0))) * ((modelMat_Float
+                  gl_Position = (lightMat_4_2 (vec2 (200.0,100.0)
+                                              ,lightPos ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)));
-                  vo1 = ((((lightMat_2_Float (vec2 (960.0,540.0)
-                                             ,(time) / (10.0))) * ((modelMat_Float
+                  vo1 = ((((lightMat_4_2 (vec2 (200.0,100.0)
+                                         ,lightPos ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)))).z) * (0.5)) + (0.5);
@@ -389,7 +1169,22 @@ Pipeline
                 [ ( "diffuseTexture" , FTexture2D )
                 , ( "s0" , FTexture2D )
                 , ( "s1" , FTexture2D )
+                , ( "s10" , FTexture2D )
+                , ( "s11" , FTexture2D )
+                , ( "s12" , FTexture2D )
+                , ( "s13" , FTexture2D )
+                , ( "s14" , FTexture2D )
+                , ( "s15" , FTexture2D )
+                , ( "s16" , FTexture2D )
+                , ( "s17" , FTexture2D )
                 , ( "s2" , FTexture2D )
+                , ( "s3" , FTexture2D )
+                , ( "s4" , FTexture2D )
+                , ( "s5" , FTexture2D )
+                , ( "s6" , FTexture2D )
+                , ( "s7" , FTexture2D )
+                , ( "s8" , FTexture2D )
+                , ( "s9" , FTexture2D )
                 ]
           , programOutput = [ Parameter { name = "f0" , ty = V4F } ]
           , vertexShader =
@@ -413,12 +1208,6 @@ Pipeline
               vec3 neg_VecSFloat3(vec3 z0) {
                   return - (z0);
               }
-              mat4 rotMatrixZ(float z0) {
-                  return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
-                              ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 (0.0,0.0,0.0,1.0));
-              }
               mat4 translateBefore4(vec3 z0) {
                   return mat4 (vec4 (1.0,0.0,0.0,0.0)
                               ,vec4 (0.0,1.0,0.0,0.0)
@@ -427,9 +1216,6 @@ Pipeline
               }
               float aspectRatio_Float_2_1(vec2 z0) {
                   return ((z0).x) / ((z0).y);
-              }
-              vec4 lightPos_Float(float z0) {
-                  return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
                   return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
@@ -473,21 +1259,30 @@ Pipeline
                                     ,-1.0)
                               ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));
               }
+              mat4 rotMatrixZ(float z0) {
+                  return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
+                              ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
+                              ,vec4 (0.0,0.0,1.0,0.0)
+                              ,vec4 (0.0,0.0,0.0,1.0));
+              }
               mat4 cameraMat_2_Float(vec2 z0,float z1) {
                   return (perspective (3000.0
-                                      ,300000.0
+                                      ,350000.0
                                       ,0.5235987755982988
                                       ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
                                                                               ,vec3 (0.0,0.0,10000.0)
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
-              mat4 lightMat_2_Float(vec2 z0,float z1) {
+              mat4 lightMat_4_2(vec2 z0,vec4 z1) {
                   return (orthographic (3000.0
-                                       ,300000.0
+                                       ,350000.0
                                        ,50000.0
-                                       ,aspectRatio_Float_2_1 (z0))) * (lookat ((lightPos_Float (z1)).xyz
+                                       ,aspectRatio_Float_2_1 (z0))) * (lookat ((z1).xyz
                                                                                ,vec3 (0.0,0.0,0.0)
                                                                                ,vec3 (0.0,0.0,1.0)));
+              }
+              vec4 lightPos(float z0) {
+                  return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 modelMat_Float(float z0) {
                   return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
@@ -506,7 +1301,8 @@ Pipeline
                                                                            ,vi1)));
                   vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
                       ((time) / (10.0),position,vi1));
-                  vo2 = (lightMat_2_Float (vec2 (960.0,540.0),(time) / (10.0))) * ((modelMat_Float
+                  vo2 = (lightMat_4_2 (vec2 (200.0,100.0)
+                                      ,lightPos ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)));
@@ -527,7 +1323,22 @@ Pipeline
               uniform sampler2D diffuseTexture;
               uniform sampler2D s0;
               uniform sampler2D s1;
+              uniform sampler2D s10;
+              uniform sampler2D s11;
+              uniform sampler2D s12;
+              uniform sampler2D s13;
+              uniform sampler2D s14;
+              uniform sampler2D s15;
+              uniform sampler2D s16;
+              uniform sampler2D s17;
               uniform sampler2D s2;
+              uniform sampler2D s3;
+              uniform sampler2D s4;
+              uniform sampler2D s5;
+              uniform sampler2D s6;
+              uniform sampler2D s7;
+              uniform sampler2D s8;
+              uniform sampler2D s9;
               uniform float time;
               smooth in vec4 vo1;
               smooth in vec4 vo2;
@@ -543,194 +1354,116 @@ Pipeline
               vec3 diffuseLight_4_VecSFloat3(vec4 z0,vec4 z1,vec4 z2,vec3 z3) {
                   return (z3) * (max (dot (z1,normalize ((z2) - (z0))),0.0));
               }
-              vec4 lightPos_Float(float z0) {
-                  return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
+              vec4 lightPos(float z0) {
+                  return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               void main() {
                   f0 = vec4 ((((diffuseLight_4_VecSFloat3 (vo1
                                                           ,vo4
-                                                          ,lightPos_Float ((time) / (10.0))
+                                                          ,lightPos ((time) / (10.0))
                                                           ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
-                                                                                              ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                                                                                              ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
                             ((5.0e-4) * ((1.0) - (dot (vo4
-                                                      ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
                             ,5.0e-5))) > ((texture2D (s0
-                                                     ,(((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy)).x) ? 0.3 : 1.0)).x
-                            ,(((diffuseLight_4_VecSFloat3 (vo1
-                                                          ,vo4
-                                                          ,lightPos_Float ((time) / (10.0))
-                                                          ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
-                                                                                              ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,-1.0)))).x) ? 0.0 : 1.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
                             ((5.0e-4) * ((1.0) - (dot (vo4
-                                                      ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
                             ,5.0e-5))) > ((texture2D (s1
-                                                     ,(((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy)).x) ? 0.3 : 1.0)).y
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,0.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s2
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,1.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s3
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (0.0
+                                                                                                                 ,-1.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s4
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,0.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s5
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,1.0)))).x) ? 0.0 : 1.0)) / (4.0))).x
                             ,(((diffuseLight_4_VecSFloat3 (vo1
                                                           ,vo4
-                                                          ,lightPos_Float ((time) / (10.0))
+                                                          ,lightPos ((time) / (10.0))
                                                           ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
-                                                                                              ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                                                                                              ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
                             ((5.0e-4) * ((1.0) - (dot (vo4
-                                                      ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-                            ,5.0e-5))) > ((texture2D (s2
-                                                     ,(((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy)).x) ? 0.3 : 1.0)).z
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s6
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,-1.0)))).x) ? 0.0 : 1.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s7
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,0.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s8
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,1.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s9
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (0.0
+                                                                                                                 ,-1.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s10
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,0.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s11
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,1.0)))).x) ? 0.0 : 1.0)) / (4.0))).y
+                            ,(((diffuseLight_4_VecSFloat3 (vo1
+                                                          ,vo4
+                                                          ,lightPos ((time) / (10.0))
+                                                          ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
+                                                                                              ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s12
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,-1.0)))).x) ? 0.0 : 1.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s13
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,0.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s14
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,1.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s15
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (0.0
+                                                                                                                 ,-1.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s16
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,0.0)))).x) ? 0.0 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                            ((5.0e-4) * ((1.0) - (dot (vo4
+                                                      ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                            ,5.0e-5))) > ((texture2D (s17
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (-1.0
+                                                                                                                 ,1.0)))).x) ? 0.0 : 1.0)) / (4.0))).z
                             ,1.0);
-              }
-              """
-          }
-      , Program
-          { programUniforms =
-              fromList
-                [ ( "position" , V3F )
-                , ( "screenSize" , V2F )
-                , ( "time" , Float )
-                ]
-          , programStreams =
-              fromList
-                [ ( "vi1" , Parameter { name = "position" , ty = V3F } )
-                , ( "vi2" , Parameter { name = "normal" , ty = V3F } )
-                ]
-          , programInTextures = fromList []
-          , programOutput = [ Parameter { name = "f0" , ty = V4F } ]
-          , vertexShader =
-              """
-              #version 330 core
-              vec4 texture2D(sampler2D s,vec2 uv) {
-                  return texture(s,uv);
-              }
-              uniform vec3 position;
-              uniform vec2 screenSize;
-              uniform float time;
-              in vec3 vi1;
-              in vec3 vi2;
-              smooth out vec4 vo1;
-              smooth out vec4 vo2;
-              smooth out vec3 vo3;
-              smooth out vec4 vo4;
-              vec4 ext0_Float_3(vec3 z0) {
-                  return vec4 ((z0).x,(z0).y,(z0).z,0.0);
-              }
-              vec3 neg_VecSFloat3(vec3 z0) {
-                  return - (z0);
-              }
-              mat4 rotMatrixZ(float z0) {
-                  return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
-                              ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 (0.0,0.0,0.0,1.0));
-              }
-              mat4 translateBefore4(vec3 z0) {
-                  return mat4 (vec4 (1.0,0.0,0.0,0.0)
-                              ,vec4 (0.0,1.0,0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 ((z0).x,(z0).y,(z0).z,1.0));
-              }
-              float aspectRatio_Float_2_1(vec2 z0) {
-                  return ((z0).x) / ((z0).y);
-              }
-              vec4 lightPos_Float(float z0) {
-                  return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
-              }
-              mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
-                  return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
-                                                                          ,normalize ((z0) - (z1)))))
-                                          ,ext0_Float_3 (cross (normalize ((z0) - (z1))
-                                                               ,normalize (cross (z2,normalize ((z0) - (z1))))))
-                                          ,ext0_Float_3 (normalize ((z0) - (z1)))
-                                          ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));
-              }
-              mat4 orthographic(float z0,float z1,float z2,float z3) {
-                  return mat4 (vec4 ((2.0) / (((z3) * (z2)) - ((0.0) - ((z3) * (z2))))
-                                    ,0.0
-                                    ,0.0
-                                    ,0.0)
-                              ,vec4 (0.0,(2.0) / ((z2) - ((0.0) - (z2))),0.0,0.0)
-                              ,vec4 (0.0,0.0,(0.0) - ((2.0) / ((z1) - (z0))),0.0)
-                              ,vec4
-                              ((0.0) - ((((z3) * (z2)) + ((0.0) - ((z3) * (z2)))) / (((z3) * (z2)) - ((0.0) - ((z3) * (z2)))))
-                              ,(0.0) - (((z2) + ((0.0) - (z2))) / ((z2) - ((0.0) - (z2))))
-                              ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))
-                              ,1.0));
-              }
-              mat4 perspective(float z0,float z1,float z2,float z3) {
-                  return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan
-                                    ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))
-                                    ,0.0
-                                    ,0.0
-                                    ,0.0)
-                              ,vec4 (0.0
-                                    ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan
-                                    ((z2) / (2.0))))))
-                                    ,0.0
-                                    ,0.0)
-                              ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan
-                                    ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan
-                                    ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))
-                                    ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan
-                                    ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan
-                                    ((z2) / (2.0))))))
-                                    ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))
-                                    ,-1.0)
-                              ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));
-              }
-              mat4 cameraMat_2_Float(vec2 z0,float z1) {
-                  return (perspective (3000.0
-                                      ,300000.0
-                                      ,0.5235987755982988
-                                      ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
-                                                                              ,vec3 (0.0,0.0,10000.0)
-                                                                              ,vec3 (0.0,0.0,1.0)));
-              }
-              mat4 lightMat_2_Float(vec2 z0,float z1) {
-                  return (orthographic (3000.0
-                                       ,300000.0
-                                       ,50000.0
-                                       ,aspectRatio_Float_2_1 (z0))) * (lookat ((lightPos_Float (z1)).xyz
-                                                                               ,vec3 (0.0,0.0,0.0)
-                                                                               ,vec3 (0.0,0.0,1.0)));
-              }
-              mat4 modelMat_Float(float z0) {
-                  return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
-                              ,vec4 ((0.0) - (sin (2.356194490192345)),cos (2.356194490192345),0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 (0.0,0.0,0.0,1.0));
-              }
-              vec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {
-                  return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
-              }
-              void main() {
-                  gl_Position = (cameraMat_2_Float (screenSize
-                                                   ,(time) / (10.0))) * ((modelMat_Float
-                      ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
-                                                                           ,position
-                                                                           ,vi1)));
-                  vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
-                      ((time) / (10.0),position,vi1));
-                  vo2 = (lightMat_2_Float (vec2 (960.0,540.0),(time) / (10.0))) * ((modelMat_Float
-                      ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
-                                                                           ,position
-                                                                           ,vi1)));
-                  vo3 = (vi1) + (vec3 (24000.0,0.0,0.0));
-                  vo4 = normalize ((modelMat_Float ((time) / (10.0))) * (vec4 ((vi2).x
-                                                                              ,(vi2).y
-                                                                              ,(vi2).z
-                                                                              ,0.0)));
-              }
-              """
-          , geometryShader = Nothing
-          , fragmentShader =
-              """
-              #version 330 core
-              vec4 texture2D(sampler2D s,vec2 uv) {
-                  return texture(s,uv);
-              }
-              smooth in vec4 vo1;
-              smooth in vec4 vo2;
-              smooth in vec3 vo3;
-              smooth in vec4 vo4;
-              out vec4 f0;
-              void main() {
-                  f0 = vec4 (0.0,0.0,0.0,0.5);
               }
               """
           }
@@ -808,14 +1541,14 @@ Pipeline
               vec4 bulbOffset_Float;
               mat4 cameraMat_2_Float(vec2 z0,float z1) {
                   return (perspective (3000.0
-                                      ,300000.0
+                                      ,350000.0
                                       ,0.5235987755982988
                                       ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
                                                                               ,vec3 (0.0,0.0,10000.0)
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
-              vec4 lightPos_Float(float z0) {
-                  return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
+              vec4 lightPos(float z0) {
+                  return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 rotMatrixX(float z0) {
                   return mat4 (vec4 (1.0,0.0,0.0,0.0)
@@ -830,7 +1563,7 @@ Pipeline
                   bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
                   gl_Position = (cameraMat_2_Float (screenSize,(time) / (10.0))) * ((((rotMatrixX
                       (-1.5707963267948966)) * (scale (200.0
-                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (lightPos_Float
+                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (lightPos
                       ((time) / (10.0)))) + (bulbOffset_Float));
                   vo1 = vi2;
               }
@@ -925,14 +1658,14 @@ Pipeline
               vec4 bulbOffset_Float;
               mat4 cameraMat_2_Float(vec2 z0,float z1) {
                   return (perspective (3000.0
-                                      ,300000.0
+                                      ,350000.0
                                       ,0.5235987755982988
                                       ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
                                                                               ,vec3 (0.0,0.0,10000.0)
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
-              vec4 lightPos_Float(float z0) {
-                  return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
+              vec4 lightPos(float z0) {
+                  return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 rotMatrixX(float z0) {
                   return mat4 (vec4 (1.0,0.0,0.0,0.0)
@@ -947,7 +1680,7 @@ Pipeline
                   bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
                   gl_Position = (cameraMat_2_Float (screenSize,(time) / (10.0))) * ((((rotMatrixX
                       (-1.5707963267948966)) * (scale (200.0
-                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (lightPos_Float
+                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (lightPos
                       ((time) / (10.0)))) + (bulbOffset_Float));
                   vo1 = vi2;
               }
@@ -982,7 +1715,28 @@ Pipeline
                 , ( "time" , Float )
                 ]
           , slotPrimitive = Triangles
-          , slotPrograms = [ 0 , 0 , 0 , 0 , 2 , 3 ]
+          , slotPrograms =
+              [ 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 0
+              , 2
+              ]
           }
       , Slot
           { slotName = "lights"
@@ -991,7 +1745,7 @@ Pipeline
           , slotUniforms =
               fromList [ ( "screenSize" , V2F ) , ( "time" , Float ) ]
           , slotPrimitive = Triangles
-          , slotPrograms = [ 4 , 5 ]
+          , slotPrograms = [ 3 , 4 ]
           }
       ]
   , streams =
@@ -1092,6 +1846,276 @@ Pipeline
                 ]
             }
       , RenderSlot 0
+      , SetRenderTarget 5
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 6
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 7
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 8
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 9
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 10
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 11
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 12
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 13
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 14
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 15
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 16
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 17
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 18
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
+      , SetRenderTarget 19
+      , ClearRenderTarget
+          [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
+          , ClearImage
+              { imageSemantic = Color , clearValue = VV4F (V4 1.0 1.0 0.0 1.0) }
+          ]
+      , SetProgram 0
+      , SetRasterContext
+          (TriangleCtx (CullFront CCW) PolygonFill NoOffset LastVertex)
+      , SetAccumulationContext
+          AccumulationContext
+            { accViewportName = Nothing
+            , accOperations =
+                [ DepthOp Less True
+                , ColorOp NoBlending (VV4B (V4 True True True True))
+                ]
+            }
+      , RenderSlot 0
       , SetRenderTarget 1
       , ClearRenderTarget
           [ ClearImage { imageSemantic = Depth , clearValue = VFloat 1.0 }
@@ -1116,21 +2140,9 @@ Pipeline
           , ClearImage
               { imageSemantic = Color , clearValue = VV4F (V4 0.7 0.7 0.7 1.0) }
           ]
-      , SetProgram 5
-      , SetRasterContext
-          (TriangleCtx CullNone (PolygonLine 0.0) NoOffset LastVertex)
-      , SetAccumulationContext
-          AccumulationContext
-            { accViewportName = Nothing
-            , accOperations =
-                [ DepthOp Less True
-                , ColorOp NoBlending (VV4B (V4 True True True True))
-                ]
-            }
-      , RenderSlot 1
       , SetProgram 4
       , SetRasterContext
-          (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
+          (TriangleCtx CullNone (PolygonLine 0.0) NoOffset LastVertex)
       , SetAccumulationContext
           AccumulationContext
             { accViewportName = Nothing
@@ -1142,7 +2154,7 @@ Pipeline
       , RenderSlot 1
       , SetProgram 3
       , SetRasterContext
-          (TriangleCtx CullNone (PolygonLine 0.0) NoOffset LastVertex)
+          (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
       , SetAccumulationContext
           AccumulationContext
             { accViewportName = Nothing
@@ -1151,7 +2163,7 @@ Pipeline
                 , ColorOp NoBlending (VV4B (V4 True True True True))
                 ]
             }
-      , RenderSlot 0
+      , RenderSlot 1
       , SetProgram 2
       , SetSamplerUniform "diffuseTexture" 0
       , SetTexture 1 3
@@ -1159,7 +2171,37 @@ Pipeline
       , SetTexture 2 5
       , SetSamplerUniform "s1" 2
       , SetTexture 3 7
-      , SetSamplerUniform "s2" 3
+      , SetSamplerUniform "s10" 3
+      , SetTexture 4 9
+      , SetSamplerUniform "s11" 4
+      , SetTexture 5 11
+      , SetSamplerUniform "s12" 5
+      , SetTexture 6 13
+      , SetSamplerUniform "s13" 6
+      , SetTexture 7 15
+      , SetSamplerUniform "s14" 7
+      , SetTexture 8 17
+      , SetSamplerUniform "s15" 8
+      , SetTexture 9 19
+      , SetSamplerUniform "s16" 9
+      , SetTexture 10 21
+      , SetSamplerUniform "s17" 10
+      , SetTexture 11 23
+      , SetSamplerUniform "s2" 11
+      , SetTexture 12 25
+      , SetSamplerUniform "s3" 12
+      , SetTexture 13 27
+      , SetSamplerUniform "s4" 13
+      , SetTexture 14 29
+      , SetSamplerUniform "s5" 14
+      , SetTexture 15 31
+      , SetSamplerUniform "s6" 15
+      , SetTexture 16 33
+      , SetSamplerUniform "s7" 16
+      , SetTexture 17 35
+      , SetSamplerUniform "s8" 17
+      , SetTexture 18 37
+      , SetSamplerUniform "s9" 18
       , SetRasterContext
           (TriangleCtx CullNone PolygonFill NoOffset LastVertex)
       , SetAccumulationContext

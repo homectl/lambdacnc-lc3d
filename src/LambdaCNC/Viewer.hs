@@ -1,9 +1,9 @@
+{-# LANGUAGE DeriveFunctor     #-}
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE NamedFieldPuns    #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PackageImports    #-}
 {-# LANGUAGE RecordWildCards   #-}
-{-# LANGUAGE DeriveFunctor #-}
 module LambdaCNC.Viewer where
 
 import qualified Codec.Picture             as Pic
@@ -21,6 +21,7 @@ import           "GLFW-b" Graphics.UI.GLFW (Key (..), KeyState (..),
                                             OpenGLProfile (..), WindowHint (..))
 import qualified "GLFW-b" Graphics.UI.GLFW as GLFW
 import           System.Directory          (getModificationTime)
+import           System.FilePath           ((</>))
 
 import           LambdaCube.Compiler       (prettyShowUnlines)
 import qualified LambdaCube.Compiler       as L (Backend (OpenGL33),
@@ -43,8 +44,12 @@ import qualified System.IO                 as IO
 
 ---------------------------------------------
 
-lcFile :: FilePath
-lcFile = "data/engine/lambdacnc.lc"
+enginePrefix, shadersPrefix, lcFile, pplFile, jsonFile :: FilePath
+enginePrefix = "data" </> "engine"
+shadersPrefix = enginePrefix </> "shaders"
+lcFile = enginePrefix </> "lambdacnc.lc"
+pplFile = enginePrefix </> "lambdacnc.ppl"
+jsonFile = enginePrefix </> "lambdacnc.json"
 
 loadRenderer :: GLStorage -> IO (Maybe GLRenderer)
 loadRenderer storage = do
@@ -54,23 +59,25 @@ loadRenderer storage = do
         putStrLn $ "compile error:\n" ++ L.ppShow err
         return Nothing
       Right pipelineDesc -> do
-        LBS.writeFile "data/engine/lambdacnc.json" $ encodePretty pipelineDesc
-        IO.writeFile "data/engine/lambdacnc.ppl" $ prettyShowUnlines pipelineDesc
+        putStrLn $ "Dumping pipeline to file: " ++ pplFile
+        LBS.writeFile jsonFile $ encodePretty pipelineDesc
+        IO.writeFile pplFile $ prettyShowUnlines pipelineDesc
         mapM_ writeShaders (zip [0..] $ map (IR.fragmentShader &&& IR.vertexShader) $ V.toList $ IR.programs pipelineDesc)
+        putStrLn $ "Allocating renderer"
         renderer <- LGL.allocRenderer pipelineDesc
+        putStrLn $ "Assigning storage to new renderer"
         LGL.setStorage renderer storage >>= \case -- check schema compatibility
           Just err -> do
             putStrLn $ "setStorage error: " ++ err
             LGL.disposeRenderer renderer
             return Nothing
           Nothing -> do
-            putStrLn "setStorage ok"
             return $ Just renderer
 
 writeShaders :: (Int, (String, String)) -> IO ()
 writeShaders (n, (frag, vert)) = do
-    IO.writeFile ("data/engine/shaders/" ++ show n ++ ".frag") frag
-    IO.writeFile ("data/engine/shaders/" ++ show n ++ ".vert") vert
+    IO.writeFile (shadersPrefix </> show n ++ ".frag") frag
+    IO.writeFile (shadersPrefix </> show n ++ ".vert") vert
 
 ---------------------------------------------
 

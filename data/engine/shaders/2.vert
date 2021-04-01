@@ -90,8 +90,8 @@ mat4 lightMat_4_2(vec2 z0,vec4 z1) {
                                                                  ,vec3 (0.0,0.0,0.0)
                                                                  ,vec3 (0.0,0.0,1.0)));
 }
-vec4 lightPos(float z0) {
-    return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
+vec4 lightPos_Float(float z0) {
+    return (rotMatrixZ (5.890486225480862)) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
 mat4 modelMat_Float(float z0) {
     return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
@@ -111,7 +111,7 @@ void main() {
     vo1 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
         ((time) / (10.0),position,vi1));
     vo2 = (lightMat_4_2 (vec2 (200.0,100.0)
-                        ,lightPos ((time) / (10.0)))) * ((modelMat_Float
+                        ,lightPos_Float ((time) / (10.0)))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));

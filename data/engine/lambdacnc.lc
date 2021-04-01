@@ -35,8 +35,8 @@ linearizeDepth depth =
     -- (2.0 * n * f) / (f + n - z * (f - n))
     depth / (f/7 - n)
     
-lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
--- lightPos time = rotMatrixZ (pi/8*12) *. V4 (80000) (10000) (40000) 1
+-- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
+lightPos time = rotMatrixZ (pi/8*15) *. V4 (80000) (10000) (40000) 1
 cameraPos time = V4 0 180000 60000 0
 
 cameraMat screenSize time = projection .*. view
@@ -126,17 +126,17 @@ shadowCalculation (time :: Float)
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
 
-    pcfVecs = [ V2 (-1) (-1)
-              , V2 (-1) 0
-              , V2 (-1) 1
-              , V2 0 (-1)
-              , V2 0 0
-              , V2 0 1
-              , V2 1 (-1)
-              , V2 1 0
-              , V2 1 1
+    pcfVecs = [ -- V2 (-1) (-1)
+              -- , V2 (-1) 0
+              -- , V2 (-1) 1
+              -- , V2 0 (-1)
+               V2 0 0
+              -- , V2 0 1
+              -- , V2 1 (-1)
+              -- , V2 1 0
+              -- , V2 1 1
               ]
-    shadow = foldl' (+) 0 (map (pcf depthMap currentDepth projCoords normal lightDir) pcfVecs) / 9
+    shadow = foldl' (+) 0 (map (pcf depthMap currentDepth projCoords normal lightDir) pcfVecs) / 1
 
 pcf depthMap currentDepth projCoords normal lightDir offset = shadow
   where

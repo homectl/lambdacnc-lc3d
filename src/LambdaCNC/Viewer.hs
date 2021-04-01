@@ -21,6 +21,7 @@ import           "GLFW-b" Graphics.UI.GLFW (Key (..), KeyState (..),
 import qualified "GLFW-b" Graphics.UI.GLFW as GLFW
 import           System.Directory          (getModificationTime)
 
+import           LambdaCube.Compiler       (prettyShowUnlines)
 import qualified LambdaCube.Compiler       as L (Backend (OpenGL33),
                                                  compileMain, ppShow)
 import           LambdaCube.GL             as LGL (FetchPrimitive (Triangles),
@@ -60,8 +61,8 @@ loadRenderer storage = do
         putStrLn $ "compile error:\n" ++ L.ppShow err
         return Nothing
       Right pipelineDesc -> do
-        let json = encodePretty pipelineDesc
-        LBS.writeFile "data/engine/lambdacnc.json" json
+        LBS.writeFile "data/engine/lambdacnc.json" $ encodePretty pipelineDesc
+        IO.writeFile "data/engine/lambdacnc.ppl" $ prettyShowUnlines pipelineDesc
         mapM_ writeShaders (zip [0..] $ map (IR.fragmentShader &&& IR.vertexShader) $ V.toList $ IR.programs pipelineDesc)
         renderer <- LGL.allocRenderer pipelineDesc
         LGL.setStorage renderer storage >>= \case -- check schema compatibility
@@ -81,12 +82,12 @@ writeShaders (n, (frag, vert)) = do
 ---------------------------------------------
 
 data Machine = Machine
-    { bed   :: LGL.Object
-    , xaxis :: LGL.Object
-    , yaxis :: LGL.Object
-    , zaxis :: LGL.Object
+    { bed    :: LGL.Object
+    , xaxis  :: LGL.Object
+    , yaxis  :: LGL.Object
+    , zaxis  :: LGL.Object
     , ground :: LGL.Object
-    , bulb  :: LGL.Object
+    , bulb   :: LGL.Object
     }
 
 

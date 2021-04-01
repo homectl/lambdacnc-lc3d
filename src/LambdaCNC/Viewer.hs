@@ -59,10 +59,12 @@ loadRenderer storage = do
         putStrLn $ "compile error:\n" ++ L.ppShow err
         return Nothing
       Right pipelineDesc -> do
-        putStrLn $ "Dumping pipeline to file: " ++ pplFile
+        putStrLn $ "Generating JSON: " ++ jsonFile
         LBS.writeFile jsonFile $ encodePretty pipelineDesc
+        putStrLn $ "Generating pipeline dump: " ++ pplFile
         IO.writeFile pplFile $ prettyShowUnlines pipelineDesc
-        mapM_ writeShaders (zip [0..] $ map (IR.fragmentShader &&& IR.vertexShader) $ V.toList $ IR.programs pipelineDesc)
+        putStrLn $ "Writing shaders: " ++ shadersPrefix </> "..."
+        mapM_ writeShaders (zip [0..] . map (IR.fragmentShader &&& IR.vertexShader) . V.toList . IR.programs $ pipelineDesc)
         putStrLn $ "Allocating renderer"
         renderer <- LGL.allocRenderer pipelineDesc
         putStrLn $ "Assigning storage to new renderer"

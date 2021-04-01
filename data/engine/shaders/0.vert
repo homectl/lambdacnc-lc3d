@@ -49,6 +49,7 @@ mat4 rotMatrixZ(float z0) {
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 (0.0,0.0,0.0,1.0));
 }
+vec2 depthMapSize_Float;
 mat4 lightMat_4_2(vec2 z0,vec4 z1) {
     return (orthographic (3000.0
                          ,350000.0
@@ -70,12 +71,13 @@ vec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {
     return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
 }
 void main() {
-    gl_Position = (lightMat_4_2 (vec2 (200.0,100.0)
+    depthMapSize_Float = vec2 (800.0,400.0);
+    gl_Position = (lightMat_4_2 (depthMapSize_Float
                                 ,lightPos_Float ((time) / (10.0)))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position
                                                              ,vi1)));
-    vo1 = ((((lightMat_4_2 (vec2 (200.0,100.0)
+    vo1 = ((((lightMat_4_2 (depthMapSize_Float
                            ,lightPos_Float ((time) / (10.0)))) * ((modelMat_Float
         ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                              ,position

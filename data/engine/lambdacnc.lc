@@ -26,6 +26,8 @@ aspectRatio screenSize = screenSize%x / screenSize%y
 nearPlane = 3000
 farPlane = 350000
 
+depthMapSize = V2 800 400
+
 linearizeDepth depth =
     let
         z = depth * 2.0 - 1.0 -- Back to NDC 
@@ -115,9 +117,9 @@ shadowCalculation (time :: Float)
                   (depth :: Texture)
                   (fp :: VecS Float 4)
                   (lsfp :: VecS Float 4)
-                  (normal :: VecS Float 4) = (shadow :: Float)
+                  (normal :: VecS Float 4) = shadowPcf
   where
-    depthMap = texture2D (Sampler LinearFilter ClampToEdge depth)
+    shadowMap = texture2D (Sampler LinearFilter ClampToEdge depth)
 
     lightDir = normalize (lightPos time - fp)
 
@@ -126,25 +128,33 @@ shadowCalculation (time :: Float)
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
 
-    pcfVecs = [ -- V2 (-1) (-1)
+    -- -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    -- closestDepth = (shadowMap projCoords%xy)%r
+    -- -- check whether current frag pos is in shadow
+    -- bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
+    -- shadow = if currentDepth - bias > closestDepth then 0.0 else 1.0
+
+    pcfVecs = [ V2 0 0
+              -- , V2 (-1) (-1)
               -- , V2 (-1) 0
               -- , V2 (-1) 1
               -- , V2 0 (-1)
-               V2 0 0
               -- , V2 0 1
               -- , V2 1 (-1)
               -- , V2 1 0
               -- , V2 1 1
               ]
-    shadow = foldl' (+) 0 (map (pcf depthMap currentDepth projCoords normal lightDir) pcfVecs) / 1
+    shadowPcf = foldl' (+) 0 (map (pcf shadowMap currentDepth projCoords normal lightDir) pcfVecs) / 1
 
-pcf depthMap currentDepth projCoords normal lightDir offset = shadow
+
+pcf shadowMap currentDepth projCoords normal lightDir offset = shadow
   where
+    texelSize = mapVec (1.0 /) depthMapSize
     -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    closestDepth = (depthMap (projCoords%xy + offset))%r
+    closestDepth = (shadowMap (projCoords%xy + offset * texelSize))%r
     -- check whether current frag pos is in shadow
     bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
-    shadow = if currentDepth - bias > closestDepth then 0.0 else 1.0
+    shadow = if currentDepth - bias > closestDepth then 0.3 else 1.0
 
 
 fragObject time texture depth fp lsfp uv normal =
@@ -270,5 +280,3 @@ main = renderFrame
         (Uniform "time" / 10)
         (Uniform "position")
         (fetch "objects" (Attribute "position", Attribute "normal"))
-
-    depthMapSize = V2 200 100

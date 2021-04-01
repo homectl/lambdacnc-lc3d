@@ -33,8 +33,8 @@ void main() {
               ((5.0e-4) * ((1.0) - (dot (vo4
                                         ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
               ,5.0e-5))) > ((texture2D (s0
-                                       ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (0.0
-                                                                                                   ,0.0)))).x) ? 0.0 : 1.0)) / (1.0))).x
+                                       ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,0.0)) * (vec2
+                                       (1.25e-3,2.5e-3))))).x) ? 0.3 : 1.0)) / (1.0))).x
               ,(((diffuseLight_4_VecSFloat3 (vo1
                                             ,vo4
                                             ,lightPos_Float ((time) / (10.0))
@@ -43,8 +43,8 @@ void main() {
               ((5.0e-4) * ((1.0) - (dot (vo4
                                         ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
               ,5.0e-5))) > ((texture2D (s1
-                                       ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (0.0
-                                                                                                   ,0.0)))).x) ? 0.0 : 1.0)) / (1.0))).y
+                                       ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,0.0)) * (vec2
+                                       (1.25e-3,2.5e-3))))).x) ? 0.3 : 1.0)) / (1.0))).y
               ,(((diffuseLight_4_VecSFloat3 (vo1
                                             ,vo4
                                             ,lightPos_Float ((time) / (10.0))
@@ -53,7 +53,7 @@ void main() {
               ((5.0e-4) * ((1.0) - (dot (vo4
                                         ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
               ,5.0e-5))) > ((texture2D (s2
-                                       ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + (vec2 (0.0
-                                                                                                   ,0.0)))).x) ? 0.0 : 1.0)) / (1.0))).z
+                                       ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,0.0)) * (vec2
+                                       (1.25e-3,2.5e-3))))).x) ? 0.3 : 1.0)) / (1.0))).z
               ,1.0);
 }

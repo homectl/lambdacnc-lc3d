@@ -37,7 +37,7 @@ void main() {
                                      ,vo4
                                      ,lightPos_Float ((time) / (10.0))
                                      ,vec4 (1.0,1.0,1.0,1.0))) * (texture2D (diffuseTexture
-                                                                            ,((vo3).xy) * (2.5e-5)))) * ((((((((((0.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                                                                            ,((vo3).xy) * (2.5e-5)))) * ((0.1111111111111111) * ((((((((((0.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
         ((5.0e-4) * ((1.0) - (dot (vo4
                                   ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
         ,5.0e-5))) > ((texture2D (s0
@@ -82,5 +82,5 @@ void main() {
                                   ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
         ,5.0e-5))) > ((texture2D (s8
                                  ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (1.0
-                                                                                              ,1.0)) * (texelSize)))).x) ? 0.3 : 1.0));
+                                                                                              ,1.0)) * (texelSize)))).x) ? 0.3 : 1.0)));
 }

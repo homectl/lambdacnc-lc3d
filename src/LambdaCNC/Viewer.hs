@@ -9,8 +9,7 @@ module LambdaCNC.Viewer where
 import qualified Codec.Picture             as Pic
 import           Control.Arrow             ((&&&))
 import           Control.Monad             (unless)
-import qualified System.IO                 as IO
-import qualified Data.Aeson                as Aeson (encode)
+import qualified Data.Aeson.Encode.Pretty  as Aeson (encodePretty)
 import qualified Data.ByteString.Lazy      as LBS
 import qualified Data.Map                  as Map
 import           Data.Vect                 (Vec3 (..), (&-))
@@ -23,6 +22,7 @@ import           "GLFW-b" Graphics.UI.GLFW (Key (..), KeyState (..),
 import qualified "GLFW-b" Graphics.UI.GLFW as GLFW
 import           System.Directory          (getModificationTime)
 import           System.FilePath           ((</>))
+import qualified System.IO                 as IO
 
 import           LambdaCube.Compiler       (prettyShowUnlines)
 import qualified LambdaCube.Compiler       as L (Backend (OpenGL33),
@@ -73,24 +73,22 @@ loadRenderer storage = do
 
   where
     dumpPipeline ppl = do
+      mapM_ writeShaders (zip [0..] . map (IR.fragmentShader &&& IR.vertexShader) . V.toList . IR.programs $ ppl)
       putStrLn $ "Generating pipeline text dump: " ++ pplFile
       let pplPretty = prettyShowUnlines ppl
           pplSize = length pplPretty
       putStrLn $ "=> Pipeline text dump is " ++ show pplSize ++ " bytes"
-      if pplSize > 60000
-        then putStrLn "Not generating text dumps since the pipeline is too large"
-        else do
-          IO.writeFile pplFile pplPretty
-          putStrLn $ "Generating JSON: " ++ jsonFile
-          LBS.writeFile jsonFile $ Aeson.encode ppl
-      putStrLn $ "Writing shaders: " ++ shadersPrefix </> "..."
-      mapM_ writeShaders (zip [0..] . map (IR.fragmentShader &&& IR.vertexShader) . V.toList . IR.programs $ ppl)
+      IO.writeFile pplFile pplPretty
+      putStrLn $ "Generating JSON: " ++ jsonFile
+      LBS.writeFile jsonFile $ Aeson.encodePretty ppl
 
 
 writeShaders :: (Int, (String, String)) -> IO ()
 writeShaders (n, (frag, vert)) = do
-    IO.writeFile (shadersPrefix </> show n ++ ".frag") frag
-    IO.writeFile (shadersPrefix </> show n ++ ".vert") vert
+    let program = shadersPrefix </> show n
+    putStrLn $ "Writing shaders: " ++ program ++ ".{frag,vert}"
+    IO.writeFile (program ++ ".frag") frag
+    IO.writeFile (program ++ ".vert") vert
 
 ---------------------------------------------
 

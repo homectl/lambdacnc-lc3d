@@ -129,7 +129,8 @@ shadowCoords time fp lsfp normal offset = (currentDepth, pcfCoords, bias)
 
 
 shadowCalculation time shadowMap fp lsfp normal =
-    foldl' (\x (currentDepth, pcfCoords, bias) -> 
+    (1/9 *)
+    $ foldl' (\x (currentDepth, pcfCoords, bias) -> 
       let closestDepth = (texture2D shadowMap pcfCoords)%r in
       x + if currentDepth - bias > closestDepth then 0.3 else 1.0) 0
     $ map (shadowCoords time fp lsfp normal) pcfVecs
@@ -145,10 +146,9 @@ shadowCalculation time shadowMap fp lsfp normal =
               , V2 1 1
               ]
 
-fragObject time texture shadowMap fp lsfp uv normal =
+fragObject time textureMap shadowMap fp lsfp uv normal =
     result
   where
-    textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
     objectColor = textureMap (uv%xy *! 0.000025)
 
     diffuse = diffuseLight fp normal (lightPos time) (V4 1.0 1.0 1.0 1.0)
@@ -211,7 +211,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
     objectsSurfaces = objects
       & mapPrimitives (\((pos,n)) -> vertObject depthMapSize time screenSize position pos n)
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth)
-      & mapFragments (\((fp,lsfp,uv,n)) -> ((fragObject time texture shadowMap fp lsfp uv n)))
+      & mapFragments (\((fp,lsfp,uv,n)) -> ((fragObject time (texture2D (Sampler LinearFilter ClampToEdge texture)) shadowMap fp lsfp uv n)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
 

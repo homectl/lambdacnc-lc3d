@@ -4,14 +4,6 @@ vec4 texture2D(sampler2D s,vec2 uv) {
 }
 uniform sampler2D diffuseTexture;
 uniform sampler2D s0;
-uniform sampler2D s1;
-uniform sampler2D s2;
-uniform sampler2D s3;
-uniform sampler2D s4;
-uniform sampler2D s5;
-uniform sampler2D s6;
-uniform sampler2D s7;
-uniform sampler2D s8;
 uniform float time;
 smooth in vec4 vo1;
 smooth in vec4 vo2;
@@ -37,50 +29,10 @@ void main() {
                                      ,vo4
                                      ,lightPos_Float ((time) / (10.0))
                                      ,vec4 (1.0,1.0,1.0,1.0))) * (texture2D (diffuseTexture
-                                                                            ,((vo3).xy) * (2.5e-5)))) * ((0.1111111111111111) * ((((((((((0.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
+                                                                            ,((vo3).xy) * (2.5e-5)))) * (((0.0) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
         ((5.0e-4) * ((1.0) - (dot (vo4
                                   ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
         ,5.0e-5))) > ((texture2D (s0
                                  ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
-                                                                                              ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s1
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (-1.0
-                                                                                              ,-1.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s2
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (-1.0
-                                                                                              ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s3
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (-1.0
-                                                                                              ,1.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s4
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
-                                                                                              ,-1.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s5
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
-                                                                                              ,1.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s6
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (1.0
-                                                                                              ,-1.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s7
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (1.0
-                                                                                              ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) + ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
-        ((5.0e-4) * ((1.0) - (dot (vo4
-                                  ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
-        ,5.0e-5))) > ((texture2D (s8
-                                 ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (1.0
-                                                                                              ,1.0)) * (texelSize)))).x) ? 0.3 : 1.0)));
+                                                                                              ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) / (1.0));
 }

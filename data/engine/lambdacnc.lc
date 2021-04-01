@@ -129,21 +129,22 @@ shadowCoords time fp lsfp normal offset = (currentDepth, pcfCoords, bias)
 
 
 shadowCalculation time shadowMap fp lsfp normal =
-    (1/9 *)
+    (/ fromInt (len pcfVecs))
     $ foldl' (\x (currentDepth, pcfCoords, bias) -> 
       let closestDepth = (texture2D shadowMap pcfCoords)%r in
       x + if currentDepth - bias > closestDepth then 0.3 else 1.0) 0
     $ map (shadowCoords time fp lsfp normal) pcfVecs
   where
-    pcfVecs = [ V2 0 0
-              , V2 (-1) (-1)
-              , V2 (-1) 0
-              , V2 (-1) 1
-              , V2 0 (-1)
-              , V2 0 1
-              , V2 1 (-1)
-              , V2 1 0
-              , V2 1 1
+    pcfVecs = [ V2 0 (0 :: Float)
+              -- TODO: figure out how to do this without ending up with 9 samplers.
+              -- , V2 (-1) (-1)
+              -- , V2 (-1) 0
+              -- , V2 (-1) 1
+              -- , V2 0 (-1)
+              -- , V2 0 1
+              -- , V2 1 (-1)
+              -- , V2 1 0
+              -- , V2 1 1
               ]
 
 fragObject time textureMap shadowMap fp lsfp uv normal =

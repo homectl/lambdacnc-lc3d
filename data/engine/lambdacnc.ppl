@@ -8,11 +8,11 @@ Pipeline
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
-                { samplerWrapS = Repeat
-                , samplerWrapT = Just Repeat
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
                 , samplerWrapR = Nothing
-                , samplerMinFilter = Nearest
-                , samplerMagFilter = Nearest
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
                 , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
                 , samplerMinLod = Nothing
                 , samplerMaxLod = Nothing
@@ -28,11 +28,11 @@ Pipeline
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
-                { samplerWrapS = Repeat
-                , samplerWrapT = Just Repeat
+                { samplerWrapS = ClampToEdge
+                , samplerWrapT = Just ClampToEdge
                 , samplerWrapR = Nothing
-                , samplerMinFilter = Nearest
-                , samplerMagFilter = Nearest
+                , samplerMinFilter = Linear
+                , samplerMagFilter = Linear
                 , samplerBorderColor = VV4F (V4 0.0 0.0 0.0 1.0)
                 , samplerMinLod = Nothing
                 , samplerMaxLod = Nothing
@@ -728,7 +728,7 @@ Pipeline
                             ((5.0e-4) * ((1.0) - (dot (vo4
                                                       ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
                             ,5.0e-5))) > ((texture2D (s1
-                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,1.0)) * (vec2
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,-1.0)) * (vec2
                                                      (1.25e-3,2.5e-3))))).x) ? 0.3 : 1.0)) / (2.0))).x
                             ,(((diffuseLight_4_VecSFloat3 (vo1
                                                           ,vo4
@@ -744,7 +744,7 @@ Pipeline
                             ((5.0e-4) * ((1.0) - (dot (vo4
                                                       ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
                             ,5.0e-5))) > ((texture2D (s3
-                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,1.0)) * (vec2
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,-1.0)) * (vec2
                                                      (1.25e-3,2.5e-3))))).x) ? 0.3 : 1.0)) / (2.0))).y
                             ,(((diffuseLight_4_VecSFloat3 (vo1
                                                           ,vo4
@@ -760,7 +760,7 @@ Pipeline
                             ((5.0e-4) * ((1.0) - (dot (vo4
                                                       ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
                             ,5.0e-5))) > ((texture2D (s5
-                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,1.0)) * (vec2
+                                                     ,((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0,-1.0)) * (vec2
                                                      (1.25e-3,2.5e-3))))).x) ? 0.3 : 1.0)) / (2.0))).z
                             ,1.0);
               }

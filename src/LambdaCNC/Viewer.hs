@@ -9,7 +9,8 @@ module LambdaCNC.Viewer where
 import qualified Codec.Picture             as Pic
 import           Control.Arrow             ((&&&))
 import           Control.Monad             (unless)
-import           Data.Aeson.Encode.Pretty  (encodePretty)
+import qualified System.IO                 as IO
+import qualified Data.Aeson                as Aeson (encode)
 import qualified Data.ByteString.Lazy      as LBS
 import qualified Data.Map                  as Map
 import           Data.Vect                 (Vec3 (..), (&-))
@@ -40,7 +41,6 @@ import           LambdaCube.GL.Mesh        as LGL (Mesh (..),
 import qualified LambdaCube.GL.Mesh        as LGL
 import qualified LambdaCube.IR             as IR
 import           LambdaCube.Linear         (V2F, V3F)
-import qualified System.IO                 as IO
 
 ---------------------------------------------
 
@@ -58,16 +58,11 @@ loadRenderer storage = do
       Left err  -> do
         putStrLn $ "compile error:\n" ++ L.ppShow err
         return Nothing
-      Right pipelineDesc -> do
-        putStrLn $ "Generating JSON: " ++ jsonFile
-        LBS.writeFile jsonFile $ encodePretty pipelineDesc
-        putStrLn $ "Generating pipeline dump: " ++ pplFile
-        IO.writeFile pplFile $ prettyShowUnlines pipelineDesc
-        putStrLn $ "Writing shaders: " ++ shadersPrefix </> "..."
-        mapM_ writeShaders (zip [0..] . map (IR.fragmentShader &&& IR.vertexShader) . V.toList . IR.programs $ pipelineDesc)
-        putStrLn $ "Allocating renderer"
-        renderer <- LGL.allocRenderer pipelineDesc
-        putStrLn $ "Assigning storage to new renderer"
+      Right ppl -> do
+        dumpPipeline ppl
+        putStrLn "Allocating renderer"
+        renderer <- LGL.allocRenderer ppl
+        putStrLn "Assigning storage to new renderer"
         LGL.setStorage renderer storage >>= \case -- check schema compatibility
           Just err -> do
             putStrLn $ "setStorage error: " ++ err
@@ -75,6 +70,22 @@ loadRenderer storage = do
             return Nothing
           Nothing -> do
             return $ Just renderer
+
+  where
+    dumpPipeline ppl = do
+      putStrLn $ "Generating pipeline text dump: " ++ pplFile
+      let pplPretty = prettyShowUnlines ppl
+          pplSize = length pplPretty
+      putStrLn $ "=> Pipeline text dump is " ++ show pplSize ++ " bytes"
+      if pplSize > 60000
+        then putStrLn "Not generating text dumps since the pipeline is too large"
+        else do
+          IO.writeFile pplFile pplPretty
+          putStrLn $ "Generating JSON: " ++ jsonFile
+          LBS.writeFile jsonFile $ Aeson.encode ppl
+      putStrLn $ "Writing shaders: " ++ shadersPrefix </> "..."
+      mapM_ writeShaders (zip [0..] . map (IR.fragmentShader &&& IR.vertexShader) . V.toList . IR.programs $ ppl)
+
 
 writeShaders :: (Int, (String, String)) -> IO ()
 writeShaders (n, (frag, vert)) = do
@@ -122,48 +133,48 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
     lcModificationTime = getModificationTime lcFile
 
     loop renderer0 pos0 lcTime0 = do
-        -- Possibly reload the rendering pipeline.
-        lcTime <- lcModificationTime
-        let reload = lcTime /= lcTime0
-        renderer <- if not reload then return renderer0 else
-          loadRenderer storage >>= \case
-            Nothing -> return renderer0
-            Just newRenderer -> do
-              putStrLn "Reloading renderer"
-              LGL.disposeRenderer renderer0
-              return newRenderer
+      -- Possibly reload the rendering pipeline.
+      lcTime <- lcModificationTime
+      let reload = lcTime /= lcTime0
+      renderer <- if not reload then return renderer0 else
+        loadRenderer storage >>= \case
+          Nothing -> return renderer0
+          Just newRenderer -> do
+            putStrLn "Reloading renderer"
+            LGL.disposeRenderer renderer0
+            return newRenderer
 
-        -- Update machine position.
-        pos <- reposition pos0
+      -- Update machine position.
+      pos <- reposition pos0
 
-        -- Update graphics input.
-        GLFW.getWindowSize win >>= \(w, h) -> do
-            LGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
-            LGL.updateUniforms storage $ do
-              "screenSize" @= return (V2 (fromIntegral w) (fromIntegral h) :: V2F)
-              "diffuseTexture" @= return textureData
-              "time" @= do
-                  Just t <- GLFW.getTime
-                  return (realToFrac t :: Float)
+      -- Update graphics input.
+      GLFW.getWindowSize win >>= \(w, h) -> do
+        LGL.setScreenSize storage (fromIntegral w) (fromIntegral h)
+        LGL.updateUniforms storage $ do
+          "screenSize" @= return (V2 (fromIntegral w) (fromIntegral h) :: V2F)
+          "diffuseTexture" @= return textureData
+          "time" @= do
+            Just t <- GLFW.getTime
+            return (realToFrac t :: Float)
 
-        -- Render machine in the current position.
-        let x = toFloat (xPos pos - (xMax `div` 2))
-            y = toFloat (yPos pos - (yMax `div` 2))
-            z = toFloat (zPos pos - (zMax `div` 2))
-        LGL.updateObjectUniforms xaxis $ do
-          "position" @= return (V3 x (y + 4000)      24500 )
-        LGL.updateObjectUniforms yaxis $ do
-          "position" @= return (V3 0  y               5000 )
-        LGL.updateObjectUniforms zaxis $ do
-          "position" @= return (V3 x (y - 4000) (z + 24500))
+      -- Render machine in the current position.
+      let x = toFloat (xPos pos - (xMax `div` 2))
+          y = toFloat (yPos pos - (yMax `div` 2))
+          z = toFloat (zPos pos - (zMax `div` 2))
+      LGL.updateObjectUniforms xaxis $ do
+        "position" @= return (V3 x (y + 4000)      24500 )
+      LGL.updateObjectUniforms yaxis $ do
+        "position" @= return (V3 0  y               5000 )
+      LGL.updateObjectUniforms zaxis $ do
+        "position" @= return (V3 x (y - 4000) (z + 24500))
 
-        -- render
-        LGL.renderFrame renderer
-        GLFW.swapBuffers win
-        GLFW.waitEventsTimeout (1/fps)
+      -- render
+      LGL.renderFrame renderer
+      GLFW.swapBuffers win
+      GLFW.waitEventsTimeout (1/fps)
 
-        escape <- keyIsPressed Key'Escape
-        unless escape $ loop renderer pos lcTime
+      escape <- keyIsPressed Key'Escape
+      unless escape $ loop renderer pos lcTime
 
     keyIsPressed :: Key -> IO Bool
     keyIsPressed k = (==KeyState'Pressed) <$> GLFW.getKey win k

@@ -114,13 +114,11 @@ diffuseLight fp normal lightPos lightColor =
 
 
 shadowCalculation (time :: Float)
-                  (depth :: Texture)
+                  (shadowMap :: Vec 2 Float -> Vec 4 Float)
                   (fp :: VecS Float 4)
                   (lsfp :: VecS Float 4)
                   (normal :: VecS Float 4) = shadowPcf
   where
-    shadowMap = texture2D (Sampler LinearFilter ClampToEdge depth)
-
     lightDir = normalize (lightPos time - fp)
 
     -- perform perspective divide
@@ -138,8 +136,8 @@ shadowCalculation (time :: Float)
               -- , V2 (-1) (-1)
               -- , V2 (-1) 0
               -- , V2 (-1) 1
-              -- , V2 0 (-1)
-              , V2 0 1
+              , V2 0 (-1)
+              -- , V2 0 1
               -- , V2 1 (-1)
               -- , V2 1 0
               -- , V2 1 1
@@ -192,7 +190,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
           (time :: Float)
           (position :: Vec 3 Float)
           (texture :: Texture)
-          (depth :: Texture)
+          (depth :: Vec 2 Float -> Vec 4 Float)
           (objects :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
           (lights :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
     = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))
@@ -247,11 +245,11 @@ makeShadowMap (depthMapSize :: Vec 2 Float)
 
 
 showTextureOn (prims :: PrimitiveStream Triangle (Vec 2 Float, Vec 2 Float))
-              (texture :: Texture)
+              (texture :: Vec 2 Float -> Vec 4 Float)
     = prims
     & mapPrimitives (\(p, uv) -> (V4 p%x p%y (-1) 1, uv))
     & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
-    & mapFragments (\((uv)) -> ((texture2D (Sampler PointFilter Repeat texture) uv)))
+    & mapFragments (\((uv)) -> ((texture uv)))
     & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True)) 
 
 
@@ -274,7 +272,7 @@ main = renderFrame
         (fetch "objects" (Attribute "position", Attribute "normal"))
         (fetch "lights" (Attribute "position", Attribute "normal"))
 
-    shadowMapTexture = Texture2D depthMapSize (PrjImageColor shadowMap)
+    shadowMapTexture = texture2D (Sampler LinearFilter ClampToEdge (Texture2D depthMapSize (PrjImageColor shadowMap)))
     shadowMap = makeShadowMap
         depthMapSize
         (Uniform "time" / 10)

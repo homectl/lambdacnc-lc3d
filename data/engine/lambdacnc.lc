@@ -139,12 +139,12 @@ shadowCalculation (time :: Float)
               -- , V2 (-1) 0
               -- , V2 (-1) 1
               -- , V2 0 (-1)
-              -- , V2 0 1
+              , V2 0 1
               -- , V2 1 (-1)
               -- , V2 1 0
               -- , V2 1 1
               ]
-    shadowPcf = foldl' (+) 0 (map (pcf shadowMap currentDepth projCoords normal lightDir) pcfVecs) / 1
+    shadowPcf = foldl' (+) 0 (map (pcf shadowMap currentDepth projCoords normal lightDir) pcfVecs) / 2
 
 
 pcf shadowMap currentDepth projCoords normal lightDir offset = shadow

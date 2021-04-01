@@ -36,17 +36,17 @@ import           LambdaCube.GL.Mesh        as LGL (Mesh (..),
                                                    MeshPrimitive (P_Triangles))
 import qualified LambdaCube.GL.Mesh        as LGL
 import qualified LambdaCube.IR             as IR
-import           LambdaCube.Linear         (V2F)
+import           LambdaCube.Linear         (V2F, V3F)
 import qualified System.IO                 as IO
 
 xMax, yMax, zMax :: Int
 (xMax, yMax, zMax) = (40000, 61500, 5600)
 
 fps :: Double
-fps = 1
+fps = 24
 
 screenSize :: (Int, Int)
-screenSize = (1500, 750)
+screenSize = (960, 540)
 
 ---------------------------------------------
 
@@ -85,6 +85,7 @@ data Machine = Machine
     , xaxis :: LGL.Object
     , yaxis :: LGL.Object
     , zaxis :: LGL.Object
+    , ground :: LGL.Object
     , bulb  :: LGL.Object
     }
 
@@ -219,13 +220,18 @@ main = do
         <*> uploadObject storage "data/models/XAxis.stl"
         <*> uploadObject storage "data/models/YAxis.stl"
         <*> uploadObject storage "data/models/ZAxis.stl"
+        <*> uploadObject storage "data/models/Ground.stl"
         <*> uploadLight storage "data/models/lightbulb.stl"
 
     LGL.enableObject bed True
     LGL.enableObject yaxis True
     LGL.enableObject xaxis True
     LGL.enableObject zaxis True
+    LGL.enableObject ground True
     LGL.enableObject bulb True
+
+    LGL.updateObjectUniforms ground $ do
+      "position" @= return (V3 0 0 (-500) :: V3F)
 
     -- load image and upload texture
     textureData <- uploadTexture "examples/logo.png"

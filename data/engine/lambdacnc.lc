@@ -5,23 +5,42 @@ identity = M44F r1 r2 r3 r4
     r3 = V4 0 0 1 0
     r4 = V4 0 0 0 1
 
+quad size = fetchArrays (quadPosition, quadUV)
+  where
+    s = size - 1
+
+    quadPosition =
+      [ V2 (-1) (-1), V2 s s, V2 (-1) s
+      , V2 (-1) (-1), V2 s (-1), V2 s s
+      ]
+
+    quadUV =
+      [ V2 0 0, V2 1 1, V2 0 1
+      , V2 0 0, V2 1 0, V2 1 1
+      ]
+
 ----------------------------------------
 
 aspectRatio screenSize = screenSize%x / screenSize%y
 
-lightPos time = rotMatrixZ (pi / 4 * 3) *. V4 (60000) (10000) (50000) 1
-cameraPos time = V4 0 150000 60000 0
-
-nearPlane = 10000
+nearPlane = 30000
 farPlane = 300000
 
 linearizeDepth depth =
-    let z = depth * 2.0 - 1.0 in -- Back to NDC 
-    (2.0 * nearPlane * farPlane) / (farPlane + nearPlane - z * (farPlane - nearPlane))
+    let
+        z = depth * 2.0 - 1.0 -- Back to NDC 
+        n = nearPlane
+        f = farPlane
+    in
+    -- (2.0 * n * f) / (f + n - z * (f - n))
+    depth / (f/7 - n)
+    
+lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
+cameraPos time = V4 0 180000 60000 0
 
 cameraMat screenSize time = projection .*. view
   where
-    projection = perspective nearPlane farPlane 44.5 (aspectRatio screenSize)
+    projection = perspective nearPlane farPlane (30 * pi / 180) (aspectRatio screenSize)
     view = lookat (cameraPos time)%xyz (V3 0 0 10000) (V3 0 0 1)
 
 orthographic :: Float
@@ -41,8 +60,8 @@ orthographic n f t aspect =
 
 lightMat depthMapSize time = projection .*. view
   where
-    projection = orthographic nearPlane farPlane 70000 (depthMapSize%y / depthMapSize%x)
-    -- projection = perspective nearPlane farPlane 44.5 (depthMapSize%x / depthMapSize%y)
+    projection = orthographic nearPlane farPlane 50000 (aspectRatio depthMapSize)
+    -- projection = perspective nearPlane farPlane 45 (depthMapSize%x / depthMapSize%y)
     view = lookat (lightPos time)%xyz (V3 0 0 0) (V3 0 0 1)
 
 ----------------------------------------
@@ -82,10 +101,10 @@ vertShadow depthMapSize time origPos vertPos =
 
 ----------------------------------------
 
-diffuseLight fp n lightPos lightColor =
+diffuseLight fp normal lightPos lightColor =
     let
         lightDir = normalize (lightPos - fp)
-        diff = max (dot n lightDir) 0
+        diff = max (dot normal lightDir) 0
         diffuse = lightColor *! diff
     in
     diffuse
@@ -144,6 +163,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
   `overlay` bulbsSurfaces
   `overlay` objectsWireFrame
   `overlay` objectsSurfaces
+  `overlay` showTextureOn (quad 0.5) depth
   where
     bulbsWireFrame = lights
       & mapPrimitives (\((pos,n)) -> vertBulb screenSize time pos n)
@@ -180,40 +200,31 @@ makeShadowMap (depthMapSize :: Vec 2 Float)
     objectsSurfaces = objects
       & mapPrimitives (\((pos,_)) -> vertShadow depthMapSize time position pos)
       & rasterizePrimitives (TriangleCtx CullFront PolygonFill NoOffset LastVertex) ((Smooth))
-      & mapFragments (\((z)) -> ((V4 z z z 1)))
+      & mapFragments (\((z)) -> fragColor z)
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
+
+    fragColor z = 
+      -- let c = linearizeDepth z in
+      let c = z in
+      ((V4 c c c 1))
 
 
 showTextureOn (prims :: PrimitiveStream Triangle (Vec 2 Float, Vec 2 Float))
               (texture :: Texture)
-    = imageFrame ((emptyColorImage (V4 0 0 0.4 1)))
-  `overlay`
-      prims
+    = prims
     & mapPrimitives (\(p, uv) -> (V4 p%x p%y (-1) 1, uv))
     & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
     & mapFragments (\((uv)) -> ((texture2D (Sampler PointFilter Repeat texture) uv)))
-    & accumulateWith ((ColorOp NoBlending (V4 True True True True)))
+    & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True)) 
 
 
-showTexture = showTextureOn quad
-  where
-    quadPosition =
-      [ V2 (-1) (-1), V2 1 1, V2 (-1) 1
-      , V2 (-1) (-1), V2 1 (-1), V2 1 1
-      ]
-
-    quadUV =
-      [ V2 0 0, V2 1 1, V2 0 1
-      , V2 0 0, V2 1 0, V2 1 1
-      ]
-    
-    quad = fetchArrays (quadPosition, quadUV)
-
-boop x = if x < 750 then boop (x + 1) else x
+showTexture texture = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0 0 0.4 1))
+  `overlay`
+    showTextureOn (quad 2) texture
 
 main = renderFrame
-    -- frame
-    (showTexture shadowMapTexture)
+    frame
+    -- (showTexture shadowMapTexture)
     -- shadowMap
   where
     frame = makeFrame
@@ -233,5 +244,4 @@ main = renderFrame
         (Uniform "position")
         (fetch "objects" (Attribute "position", Attribute "normal"))
 
-    depthMapSize = V2 1500 750
-    -- depthMapSize = Uniform "screenSize"
+    depthMapSize = V2 960 540

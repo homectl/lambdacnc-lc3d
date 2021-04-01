@@ -66,7 +66,7 @@ mat4 cameraMat_2_Float(vec2 z0,float z1) {
                                                                 ,vec3 (0.0,0.0,10000.0)
                                                                 ,vec3 (0.0,0.0,1.0)));
 }
-vec4 getLightPos_Float(float z0) {
+vec4 lightPos_Float(float z0) {
     return (rotMatrixZ (5.890486225480862)) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
 mat4 rotMatrixX(float z0) {
@@ -82,7 +82,7 @@ void main() {
     bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
     gl_Position = (cameraMat_2_Float (screenSize,(time) / (10.0))) * ((((rotMatrixX
         (-1.5707963267948966)) * (scale (200.0
-                                        ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (getLightPos_Float
+                                        ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (lightPos_Float
         ((time) / (10.0)))) + (bulbOffset_Float));
     vo1 = vi2;
 }

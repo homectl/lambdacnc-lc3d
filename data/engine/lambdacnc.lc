@@ -27,7 +27,6 @@ nearPlane = 3000
 farPlane = 350000
 
 depthMapSize = V2 800 400
-texelSize = mapVec (1.0 /) depthMapSize
 
 linearizeDepth depth =
     let
@@ -39,7 +38,7 @@ linearizeDepth depth =
     depth / (f/7 - n)
     
 -- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
-getLightPos time = rotMatrixZ (pi/8*15) *. V4 (80000) (10000) (40000) 1
+lightPos time = rotMatrixZ (pi/8*15) *. V4 (80000) (10000) (40000) 1
 cameraPos time = V4 0 180000 60000 0
 
 cameraMat screenSize time = projection .*. view
@@ -89,7 +88,7 @@ vertObject depthMapSize time screenSize origPos vertPos n =
 
     pos = cameraMat screenSize time *. model *. objPos
     fragPos = model *. objPos
-    fragPosLightSpace = lightMat depthMapSize (getLightPos time) *. fragPos
+    fragPosLightSpace = lightMat depthMapSize (lightPos time) *. fragPos
     uvw = vertPos + V3 24000 0 0
     normal = normalize $ model *. (V4 n%x n%y n%z 0)
 
@@ -101,7 +100,7 @@ vertShadow depthMapSize time origPos vertPos =
 
     objPos = positionObject time origPos vertPos
 
-    pos = lightMat depthMapSize (getLightPos time) *. model *. objPos
+    pos = lightMat depthMapSize (lightPos time) *. model *. objPos
 
 ----------------------------------------
 
@@ -111,18 +110,15 @@ diffuseLight fp normal lightPos lightColor =
         diff = max (dot normal lightDir) 0
         diffuse = lightColor *! diff
     in
-    diffuse
+    V4 diffuse%x diffuse%y diffuse%z 1
 
-getBias normal lightDir = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
 
-mkLightDir time fp = normalize (getLightPos time - fp)
-
-perspectiveDivide lsfp = (lsfp%xyz /! lsfp%w) *! 0.5 +! 0.5
-
-shadowCalculation time shadowMap fp lsfp normal offset = shadow
+shadowCalculation time shadowMap fp lsfp normal = shadowPcf
   where
+    lightDir = normalize (lightPos time - fp)
+
     -- perform perspective divide
-    projCoords = perspectiveDivide lsfp
+    projCoords = (lsfp%xyz /! lsfp%w) *! 0.5 +! 0.5
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
 
@@ -131,29 +127,6 @@ shadowCalculation time shadowMap fp lsfp normal offset = shadow
     -- -- check whether current frag pos is in shadow
     -- bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
     -- shadow = if currentDepth - bias > closestDepth then 0.0 else 1.0
-
-    -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    closestDepth = (texture2D shadowMap (projCoords%xy + offset * texelSize))%r
-    shadow = pcf currentDepth closestDepth normal (mkLightDir time fp) / 1
-
-
-pcf currentDepth closestDepth normal lightDir = shadow
-  where
-    -- check whether current frag pos is in shadow
-    bias = getBias normal lightDir
-    shadow = if currentDepth - bias > closestDepth then 0.3 else 1.0
-
-
-fragObject time texture depth fp lsfp uv normal =
-    V4 result%x result%y result%z 1
-  where
-    textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
-    objectColor = textureMap (uv%xy *! 0.000025)
-
-    diffuse = diffuseLight fp normal (getLightPos time) (V3 1.0 1.0 1.0)
-            -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
-            -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
-            -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
 
     pcfVecs = [ V2 0 0
               -- , V2 (-1) (-1)
@@ -165,9 +138,33 @@ fragObject time texture depth fp lsfp uv normal =
               -- , V2 1 0
               -- , V2 1 1
               ]
-    shadow = shadowCalculation time depth fp lsfp normal (V2 0 0)
+    shadowPcf = pcf shadowMap currentDepth projCoords normal lightDir (pcfVecs !! 0) / 1
 
-    result = diffuse * objectColor%xyz *! shadow
+
+pcf shadowMap currentDepth projCoords normal lightDir offset = shadow
+  where
+    texelSize = mapVec (1.0 /) depthMapSize
+    -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    closestDepth = (texture2D shadowMap (projCoords%xy + offset * texelSize))%r
+    -- check whether current frag pos is in shadow
+    bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
+    shadow = if currentDepth - bias > closestDepth then 0.3 else 1.0
+
+
+fragObject time texture depth fp lsfp uv normal =
+    result
+  where
+    textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
+    objectColor = textureMap (uv%xy *! 0.000025)
+
+    diffuse = diffuseLight fp normal (lightPos time) (V3 1.0 1.0 1.0)
+            -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
+            -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
+            -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
+
+    shadow = shadowCalculation time depth fp lsfp normal
+
+    result = diffuse * objectColor *! shadow
 
 ----------------------------------------
 
@@ -177,7 +174,7 @@ bulbOffset = V4 0 0 4200 0
 
 vertBulb screenSize time vertPos n =
     let
-        objPos = rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 0) + getLightPos time + bulbOffset
+        objPos = rotMatrixX (-pi/2) *. scale 200 (V4 vertPos%x vertPos%y vertPos%z 0) + lightPos time + bulbOffset
         pos = cameraMat screenSize time *. objPos
     in
     (pos, n)

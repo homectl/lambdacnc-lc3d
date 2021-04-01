@@ -23,7 +23,7 @@ quad size = fetchArrays (quadPosition, quadUV)
 
 aspectRatio screenSize = screenSize%x / screenSize%y
 
-nearPlane = 30000
+nearPlane = 3000
 farPlane = 300000
 
 linearizeDepth depth =
@@ -35,7 +35,8 @@ linearizeDepth depth =
     -- (2.0 * n * f) / (f + n - z * (f - n))
     depth / (f/7 - n)
     
-lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
+-- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
+lightPos time = rotMatrixZ (pi/4*3) *. V4 (80000) (10000) (40000) 1
 cameraPos time = V4 0 180000 60000 0
 
 cameraMat screenSize time = projection .*. view

@@ -21,35 +21,35 @@ mat4 rotMatrixZ(float z0) {
 vec3 diffuseLight_4_VecSFloat3(vec4 z0,vec4 z1,vec4 z2,vec3 z3) {
     return (z3) * (max (dot (z1,normalize ((z2) - (z0))),0.0));
 }
-vec4 lightPos(float z0) {
-    return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
+vec4 lightPos_Float(float z0) {
+    return (rotMatrixZ (2.356194490192345)) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
 void main() {
     f0 = vec4 ((((diffuseLight_4_VecSFloat3 (vo1
                                             ,vo4
-                                            ,lightPos ((time) / (10.0))
+                                            ,lightPos_Float ((time) / (10.0))
                                             ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
                                                                                 ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
               ((5.0e-2) * ((1.0) - (dot (vo4
-                                        ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                                        ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
               ,5.0e-3))) > ((texture2D (s0
                                        ,(((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy)).x) ? 0.3 : 1.0)).x
               ,(((diffuseLight_4_VecSFloat3 (vo1
                                             ,vo4
-                                            ,lightPos ((time) / (10.0))
+                                            ,lightPos_Float ((time) / (10.0))
                                             ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
                                                                                 ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
               ((5.0e-2) * ((1.0) - (dot (vo4
-                                        ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                                        ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
               ,5.0e-3))) > ((texture2D (s1
                                        ,(((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy)).x) ? 0.3 : 1.0)).y
               ,(((diffuseLight_4_VecSFloat3 (vo1
                                             ,vo4
-                                            ,lightPos ((time) / (10.0))
+                                            ,lightPos_Float ((time) / (10.0))
                                             ,vec3 (1.0,1.0,1.0))) * ((texture2D (diffuseTexture
                                                                                 ,((vo3).xy) * (2.5e-5))).xyz)) * ((((((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).z) - (max
               ((5.0e-2) * ((1.0) - (dot (vo4
-                                        ,normalize ((lightPos ((time) / (10.0))) - (vo1)))))
+                                        ,normalize ((lightPos_Float ((time) / (10.0))) - (vo1)))))
               ,5.0e-3))) > ((texture2D (s2
                                        ,(((((vo2).xyz) / ((vo2).w)) * (0.5)) + (0.5)).xy)).x) ? 0.3 : 1.0)).z
               ,1.0);

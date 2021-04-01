@@ -27,6 +27,7 @@ nearPlane = 3000
 farPlane = 350000
 
 depthMapSize = V2 800 400
+texelSize = mapVec (1.0 /) depthMapSize
 
 linearizeDepth depth =
     let
@@ -110,10 +111,10 @@ diffuseLight fp normal lightPos lightColor =
         diff = max (dot normal lightDir) 0
         diffuse = lightColor *! diff
     in
-    V4 diffuse%x diffuse%y diffuse%z 1
+    diffuse
 
 
-shadowCalculation time shadowMap fp lsfp normal = shadowPcf
+shadowCoords time fp lsfp normal offset = (currentDepth, pcfCoords, bias)
   where
     lightDir = normalize (lightPos time - fp)
 
@@ -122,47 +123,40 @@ shadowCalculation time shadowMap fp lsfp normal = shadowPcf
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
 
-    -- -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    -- closestDepth = (texture2D shadowMap projCoords%xy)%r
-    -- -- check whether current frag pos is in shadow
-    -- bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
-    -- shadow = if currentDepth - bias > closestDepth then 0.0 else 1.0
-
-    pcfVecs = [ V2 0 0
-              -- , V2 (-1) (-1)
-              -- , V2 (-1) 0
-              -- , V2 (-1) 1
-              -- , V2 0 (-1)
-              -- , V2 0 1
-              -- , V2 1 (-1)
-              -- , V2 1 0
-              -- , V2 1 1
-              ]
-    shadowPcf = pcf shadowMap currentDepth projCoords normal lightDir (pcfVecs !! 0) / 1
-
-
-pcf shadowMap currentDepth projCoords normal lightDir offset = shadow
-  where
-    texelSize = mapVec (1.0 /) depthMapSize
-    -- get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
-    closestDepth = (texture2D shadowMap (projCoords%xy + offset * texelSize))%r
+    pcfCoords = projCoords%xy + offset * texelSize
     -- check whether current frag pos is in shadow
     bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
-    shadow = if currentDepth - bias > closestDepth then 0.3 else 1.0
 
 
-fragObject time texture depth fp lsfp uv normal =
+shadowCalculation time shadowMap fp lsfp normal =
+    foldl' (\x (currentDepth, pcfCoords, bias) -> 
+      let closestDepth = (texture2D shadowMap pcfCoords)%r in
+      x + if currentDepth - bias > closestDepth then 0.3 else 1.0) 0
+    $ map (shadowCoords time fp lsfp normal) pcfVecs
+  where
+    pcfVecs = [ V2 0 0
+              , V2 (-1) (-1)
+              , V2 (-1) 0
+              , V2 (-1) 1
+              , V2 0 (-1)
+              , V2 0 1
+              , V2 1 (-1)
+              , V2 1 0
+              , V2 1 1
+              ]
+
+fragObject time texture shadowMap fp lsfp uv normal =
     result
   where
     textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
     objectColor = textureMap (uv%xy *! 0.000025)
 
-    diffuse = diffuseLight fp normal (lightPos time) (V3 1.0 1.0 1.0)
+    diffuse = diffuseLight fp normal (lightPos time) (V4 1.0 1.0 1.0 1.0)
             -- + diffuseLight fp n (V4 0 0 20000 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 0 50000 0 1) (V3 1.0 1.0 1.0) *! 0.5
             -- + diffuseLight fp n (V4 50000 0 0 1) (V3 1.0 1.0 1.0) *! 0.5
 
-    shadow = shadowCalculation time depth fp lsfp normal
+    shadow = shadowCalculation time shadowMap fp lsfp normal
 
     result = diffuse * objectColor *! shadow
 
@@ -186,7 +180,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
           (time :: Float)
           (position :: Vec 3 Float)
           (texture :: Texture)
-          (depth :: Sampler)
+          (shadowMap :: Sampler)
           (objects :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
           (lights :: PrimitiveStream Triangle (Vec 3 Float, Vec 3 Float))
     = imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))
@@ -194,7 +188,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
   `overlay` bulbsSurfaces
   -- `overlay` objectsWireFrame
   `overlay` objectsSurfaces
-  `overlay` showTextureOn (quad 0.5) depth
+  `overlay` showTextureOn (quad 0.5) shadowMap
   where
     bulbsWireFrame = lights
       & mapPrimitives (\((pos,n)) -> vertBulb screenSize time pos n)
@@ -217,7 +211,7 @@ makeFrame (depthMapSize :: Vec 2 Float)
     objectsSurfaces = objects
       & mapPrimitives (\((pos,n)) -> vertObject depthMapSize time screenSize position pos n)
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth)
-      & mapFragments (\((fp,lsfp,uv,n)) -> ((fragObject time texture depth fp lsfp uv n)))
+      & mapFragments (\((fp,lsfp,uv,n)) -> ((fragObject time texture shadowMap fp lsfp uv n)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
 

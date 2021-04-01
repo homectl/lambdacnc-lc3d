@@ -33,7 +33,7 @@ float aspectRatio_Float_2_1(vec2 z0) {
     return ((z0).x) / ((z0).y);
 }
 vec4 lightPos_Float(float z0) {
-    return (rotMatrixZ (2.356194490192345)) * (vec4 (80000.0,10000.0,40000.0,1.0));
+    return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
 mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
     return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2

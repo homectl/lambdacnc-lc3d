@@ -3,6 +3,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE PackageImports    #-}
 {-# LANGUAGE RecordWildCards   #-}
+{-# LANGUAGE DeriveFunctor #-}
 module LambdaCNC.Viewer where
 
 import qualified Codec.Picture             as Pic
@@ -39,15 +40,6 @@ import qualified LambdaCube.GL.Mesh        as LGL
 import qualified LambdaCube.IR             as IR
 import           LambdaCube.Linear         (V2F, V3F)
 import qualified System.IO                 as IO
-
-xMax, yMax, zMax :: Int
-(xMax, yMax, zMax) = (40000, 61500, 5600)
-
-fps :: Double
-fps = 24
-
-screenSize :: (Int, Int)
-screenSize = (960, 540)
 
 ---------------------------------------------
 
@@ -91,18 +83,32 @@ data Machine = Machine
     }
 
 
-data MachinePosition = MachinePosition
-    { xPos :: Int
-    , yPos :: Int
-    , zPos :: Int
+data MachinePosition a = MachinePosition
+    { xPos :: a
+    , yPos :: a
+    , zPos :: a
     }
+    deriving (Functor)
 
+---------------------------------------------
+
+machMax :: MachinePosition Int
+machMax = MachinePosition 40000 61500 5600
+
+startPos :: MachinePosition Int
+startPos = fmap (`div` 2) machMax
+
+fps :: Double
+fps = 24
+
+screenSize :: (Int, Int)
+screenSize = (960, 540)
+
+---------------------------------------------
 
 mainLoop :: GLFW.Window -> GLStorage -> TextureData -> Machine -> GLRenderer -> IO ()
 mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r startPos
   where
-    startPos = MachinePosition 0 0 0
-
     lcModificationTime = getModificationTime lcFile
 
     loop renderer0 pos0 lcTime0 = do
@@ -119,7 +125,7 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
               return newRenderer
 
         -- Update machine position.
-        pos@MachinePosition{..} <- reposition pos0
+        pos <- reposition pos0
 
         -- Update graphics input.
         GLFW.getWindowSize win >>= \(w, h) -> do
@@ -132,9 +138,9 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
                   return (realToFrac t :: Float)
 
         -- Render machine in the current position.
-        let x = toFloat (xPos - (xMax `div` 2))
-            y = toFloat (yPos - (yMax `div` 2))
-            z = toFloat (zPos - (zMax `div` 2))
+        let x = toFloat (xPos pos - (xMax `div` 2))
+            y = toFloat (yPos pos - (yMax `div` 2))
+            z = toFloat (zPos pos - (zMax `div` 2))
         LGL.updateObjectUniforms xaxis $ do
           "position" @= return (V3 x (y + 4000)      24500 )
         LGL.updateObjectUniforms yaxis $ do
@@ -153,7 +159,9 @@ mainLoop win storage textureData Machine{..} r = lcModificationTime >>= loop r s
     keyIsPressed :: Key -> IO Bool
     keyIsPressed k = (==KeyState'Pressed) <$> GLFW.getKey win k
 
-    reposition :: MachinePosition -> IO MachinePosition
+    MachinePosition xMax yMax zMax = machMax
+
+    reposition :: MachinePosition Int -> IO (MachinePosition Int)
     reposition pos@MachinePosition{..} = do
       lr <- moveMult <$> keyIsPressed Key'Left <*> keyIsPressed Key'Right
       fb <- moveMult <$> keyIsPressed Key'Down <*> keyIsPressed Key'Up

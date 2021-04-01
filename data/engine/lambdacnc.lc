@@ -36,7 +36,7 @@ linearizeDepth depth =
     depth / (f/7 - n)
     
 -- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
-lightPos time = rotMatrixZ (pi/4*3) *. V4 (80000) (10000) (40000) 1
+lightPos time = rotMatrixZ (pi/8*12) *. V4 (80000) (10000) (40000) 1
 cameraPos time = V4 0 180000 60000 0
 
 cameraMat screenSize time = projection .*. view
@@ -131,7 +131,7 @@ fragObject time texture depth fp lsfp uv normal =
     -- get depth of current fragment from light's perspective
     currentDepth = projCoords%z
     -- check whether current frag pos is in shadow
-    bias = max (0.05 * (1.0 - (dot normal lightDir))) 0.005
+    bias = max (0.0005 * (1.0 - (dot normal lightDir))) 0.00005
     shadow = if currentDepth - bias > closestDepth then 0.3 else 1.0
 
     result = diffuse * objectColor%xyz *! shadow

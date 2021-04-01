@@ -67,7 +67,7 @@ mat4 cameraMat_2_Float(vec2 z0,float z1) {
                                                                 ,vec3 (0.0,0.0,1.0)));
 }
 vec4 lightPos_Float(float z0) {
-    return (rotMatrixZ (2.356194490192345)) * (vec4 (80000.0,10000.0,40000.0,1.0));
+    return (rotMatrixZ (4.71238898038469)) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
 mat4 rotMatrixX(float z0) {
     return mat4 (vec4 (1.0,0.0,0.0,0.0)

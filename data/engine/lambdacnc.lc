@@ -29,7 +29,7 @@ aspectRatio screenSize = screenSize%x / screenSize%y
 nearPlane = 3000
 farPlane = 350000
 
-depthMapSize = V2 800 400
+depthMapSize = V2 1600 1600
 texelSize = mapVec (1.0 /) depthMapSize
 
 linearizeDepth depth =
@@ -81,7 +81,7 @@ positionObject time origPos vertPos =
     V4 vertPos%x vertPos%y vertPos%z 1 + V4 origPos%x origPos%y origPos%z 0
 
 
-vertObject time screenSize origPos vertPos n [lightPos1, lightPos2] =
+vertObject time screenSize origPos vertPos n lightPos =
     (pos, uvw, normal, fragPos, fragPosLightSpace1, fragPosLightSpace2)
   where
     model = modelMat time
@@ -90,8 +90,7 @@ vertObject time screenSize origPos vertPos n [lightPos1, lightPos2] =
 
     pos = cameraMat screenSize time *. model *. objPos
     fragPos = model *. objPos
-    fragPosLightSpace1 = lightMat lightPos1 *. fragPos
-    fragPosLightSpace2 = lightMat lightPos2 *. fragPos
+    [fragPosLightSpace1, fragPosLightSpace2] = map (\p -> lightMat p *. fragPos) lightPos
     uvw = vertPos + V3 24000 0 0
     normal = normalize $ model *. (V4 n%x n%y n%z 0)
 
@@ -177,31 +176,29 @@ vertBulb screenSize time vertPos n lightPos =
 
 ----------------------------------------
 
-makeObjects screenSize time position texture objects lights =
-    [ objectsWireFrame
-    , objectsSurfaces
-    ]
+makeObjects screenSize time position texture objects exposure lights =
+    -- objectsWireFrame:
+    [objectsSurfaces]
   where
-    color (_, c, _) = c
+    lightPos (_, p, _) = p
 
     objectsWireFrame = objects
-      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (map color lights))
+      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (map lightPos lights))
       & rasterizePrimitives (TriangleCtx CullNone (PolygonLine 0) NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth, Smooth)
       & mapFragments (\((_,_,_,_,_)) -> ((V4 0 0 0 0.5)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     objectsSurfaces = objects
-      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (map color lights))
+      & mapPrimitives (\((pos,n)) -> vertObject time screenSize position pos n (map lightPos lights))
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) (Smooth, Smooth, Smooth, Smooth, Smooth)
-      & mapFragments (\((uv,n,fp,lsfp1,lsfp2)) -> ((fragObject time textureMap fp uv n (zip lights [lsfp1, lsfp2]))))
+      & mapFragments (\((uv,n,fp,lsfp1,lsfp2)) -> ((fragObject time textureMap fp uv n (zip lights [lsfp1, lsfp2]) *! exposure)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
     textureMap = texture2D (Sampler LinearFilter ClampToEdge texture)
 
-
-makeScene screenSize time position index texture objects bulbs lights
+makeScene screenSize time position index texture objects bulbs exposure lights
     = foldl' overlay (imageFrame (emptyDepthImage 1, emptyColorImage (V4 0.7 0.7 0.7 1))) $
-    (makeObjects screenSize time position texture objects lights) ++
+    (makeObjects screenSize time position texture objects exposure lights) ++
     [ bulbsWireFrame
     , bulbsSurfaces
     ] ++ map (\(i, (_, _, shadowMap)) -> showTextureOn (quad 0.25 (0.25 * i, 0)) shadowMap) (zip [0..10] lights)
@@ -220,7 +217,7 @@ makeScene screenSize time position index texture objects bulbs lights
     bulbsSurfaces = bulbs
       & mapPrimitives (\((pos,n)) -> vertBulb screenSize time pos n lightPos)
       & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
-      & mapFragments (\((_)) -> ((lightColor)))
+      & mapFragments (\((_)) -> ((lightColor *! exposure)))
       & accumulateWith (DepthOp Less True, ColorOp NoBlending (V4 True True True True))
 
 
@@ -269,8 +266,11 @@ makeFrame (screenSize :: Vec 2 Float)
         texture
         objects
         bulbs
+        exposure
         (zip3 lightColor lightPos shadowMap)
   where
+    exposure = 1.0
+
     lightPos = [getLightPos1 time, getLightPos2 time]
     lightColor = [V4 0.7 0.7 0.2 1.0, V4 1.0 0.5 1.0 1.0]
 

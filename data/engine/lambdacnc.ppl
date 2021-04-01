@@ -4,7 +4,7 @@ Pipeline
   , textures =
       [ TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -24,7 +24,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -44,7 +44,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -64,7 +64,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -84,7 +84,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -104,7 +104,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -124,7 +124,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT Red) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Depth
           , textureSampler =
               SamplerDescriptor
@@ -144,7 +144,7 @@ Pipeline
           }
       , TextureDescriptor
           { textureType = Texture2D (FloatT RGBA) 1
-          , textureSize = VV2U (V2 800 400)
+          , textureSize = VV2U (V2 1600 1600)
           , textureSemantic = Color
           , textureSampler =
               SamplerDescriptor
@@ -287,7 +287,7 @@ Pipeline
                   return (rotMatrixZ ((z0) * (2.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 lightMat_4(vec4 z0) {
-                  return (orthographic (3000.0,350000.0,50000.0,2.0)) * (lookat ((z0).xyz
+                  return (orthographic (3000.0,350000.0,50000.0,1.0)) * (lookat ((z0).xyz
                                                                                 ,vec3 (0.0,0.0,0.0)
                                                                                 ,vec3 (0.0,0.0,1.0)));
               }
@@ -427,7 +427,7 @@ Pipeline
                   return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
               }
               mat4 lightMat_4(vec4 z0) {
-                  return (orthographic (3000.0,350000.0,50000.0,2.0)) * (lookat ((z0).xyz
+                  return (orthographic (3000.0,350000.0,50000.0,1.0)) * (lookat ((z0).xyz
                                                                                 ,vec3 (0.0,0.0,0.0)
                                                                                 ,vec3 (0.0,0.0,1.0)));
               }
@@ -585,7 +585,7 @@ Pipeline
               smooth in vec3 vo1;
               out vec4 f0;
               void main() {
-                  f0 = (index) < (1) ? vec4 (0.7,0.7,0.2,1.0) : vec4 (1.0,0.5,1.0,1.0);
+                  f0 = ((index) < (1) ? vec4 (0.7,0.7,0.2,1.0) : vec4 (1.0,0.5,1.0,1.0)) * (1.0);
               }
               """
           }
@@ -816,7 +816,7 @@ Pipeline
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
               mat4 lightMat_4(vec4 z0) {
-                  return (orthographic (3000.0,350000.0,50000.0,2.0)) * (lookat ((z0).xyz
+                  return (orthographic (3000.0,350000.0,50000.0,1.0)) * (lookat ((z0).xyz
                                                                                 ,vec3 (0.0,0.0,0.0)
                                                                                 ,vec3 (0.0,0.0,1.0)));
               }
@@ -894,14 +894,14 @@ Pipeline
               }
               vec2 texelSize;
               void main() {
-                  texelSize = vec2 (1.25e-3,2.5e-3);
-                  f0 = ((((vec4 (0.0,0.0,0.0,0.0)) + ((diffuseLight_4_VecScalar4Float (vo3
-                                                                                      ,vo2
-                                                                                      ,getLightPos1 ((time) / (10.0))
-                                                                                      ,vec4 (0.7
-                                                                                            ,0.7
-                                                                                            ,0.2
-                                                                                            ,1.0))) * (((0.0) + ((((((((vo4).xyz) / ((vo4).w)) * (0.5)) + (0.5)).z) - (max
+                  texelSize = vec2 (6.25e-4,6.25e-4);
+                  f0 = (((((vec4 (0.0,0.0,0.0,0.0)) + ((diffuseLight_4_VecScalar4Float (vo3
+                                                                                       ,vo2
+                                                                                       ,getLightPos1 ((time) / (10.0))
+                                                                                       ,vec4 (0.7
+                                                                                             ,0.7
+                                                                                             ,0.2
+                                                                                             ,1.0))) * (((0.0) + ((((((((vo4).xyz) / ((vo4).w)) * (0.5)) + (0.5)).z) - (max
                       ((5.0e-4) * ((1.0) - (dot (vo2
                                                 ,normalize ((getLightPos1 ((time) / (10.0))) - (vo3)))))
                       ,5.0e-5))) > ((texture2D (s0
@@ -919,165 +919,7 @@ Pipeline
                       ,5.0e-5))) > ((texture2D (s1
                                                ,((((((vo5).xyz) / ((vo5).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
                                                                                                             ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) / (1.0)))) / (1.2)) * (texture2D
-                      (diffuseTexture,((vo1).xy) * (2.5e-5)));
-              }
-              """
-          }
-      , Program
-          { programUniforms =
-              fromList
-                [ ( "position" , V3F )
-                , ( "screenSize" , V2F )
-                , ( "time" , Float )
-                ]
-          , programStreams =
-              fromList
-                [ ( "vi1" , Parameter { name = "position" , ty = V3F } )
-                , ( "vi2" , Parameter { name = "normal" , ty = V3F } )
-                ]
-          , programInTextures = fromList []
-          , programOutput = [ Parameter { name = "f0" , ty = V4F } ]
-          , vertexShader =
-              """
-              #version 330 core
-              vec4 texture2D(sampler2D s,vec2 uv) {
-                  return texture(s,uv);
-              }
-              uniform vec3 position;
-              uniform vec2 screenSize;
-              uniform float time;
-              in vec3 vi1;
-              in vec3 vi2;
-              smooth out vec3 vo1;
-              smooth out vec4 vo2;
-              smooth out vec4 vo3;
-              smooth out vec4 vo4;
-              smooth out vec4 vo5;
-              vec4 ext0_Float_3(vec3 z0) {
-                  return vec4 ((z0).x,(z0).y,(z0).z,0.0);
-              }
-              vec3 neg_VecSFloat3(vec3 z0) {
-                  return - (z0);
-              }
-              mat4 translateBefore4(vec3 z0) {
-                  return mat4 (vec4 (1.0,0.0,0.0,0.0)
-                              ,vec4 (0.0,1.0,0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 ((z0).x,(z0).y,(z0).z,1.0));
-              }
-              float aspectRatio_Float_2_1(vec2 z0) {
-                  return ((z0).x) / ((z0).y);
-              }
-              mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
-                  return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
-                                                                          ,normalize ((z0) - (z1)))))
-                                          ,ext0_Float_3 (cross (normalize ((z0) - (z1))
-                                                               ,normalize (cross (z2,normalize ((z0) - (z1))))))
-                                          ,ext0_Float_3 (normalize ((z0) - (z1)))
-                                          ,vec4 (0.0,0.0,0.0,1.0)))) * (translateBefore4 (neg_VecSFloat3 (z0)));
-              }
-              mat4 orthographic(float z0,float z1,float z2,float z3) {
-                  return mat4 (vec4 ((2.0) / (((z3) * (z2)) - ((0.0) - ((z3) * (z2))))
-                                    ,0.0
-                                    ,0.0
-                                    ,0.0)
-                              ,vec4 (0.0,(2.0) / ((z2) - ((0.0) - (z2))),0.0,0.0)
-                              ,vec4 (0.0,0.0,(0.0) - ((2.0) / ((z1) - (z0))),0.0)
-                              ,vec4
-                              ((0.0) - ((((z3) * (z2)) + ((0.0) - ((z3) * (z2)))) / (((z3) * (z2)) - ((0.0) - ((z3) * (z2)))))
-                              ,(0.0) - (((z2) + ((0.0) - (z2))) / ((z2) - ((0.0) - (z2))))
-                              ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))
-                              ,1.0));
-              }
-              mat4 perspective(float z0,float z1,float z2,float z3) {
-                  return mat4 (vec4 (((2.0) * (z0)) / (((z3) * ((z0) * (tan
-                                    ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))
-                                    ,0.0
-                                    ,0.0
-                                    ,0.0)
-                              ,vec4 (0.0
-                                    ,((2.0) * (z0)) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan
-                                    ((z2) / (2.0))))))
-                                    ,0.0
-                                    ,0.0)
-                              ,vec4 ((((z3) * ((z0) * (tan ((z2) / (2.0))))) + ((0.0) - ((z3) * ((z0) * (tan
-                                    ((z2) / (2.0))))))) / (((z3) * ((z0) * (tan
-                                    ((z2) / (2.0))))) - ((0.0) - ((z3) * ((z0) * (tan ((z2) / (2.0)))))))
-                                    ,(((z0) * (tan ((z2) / (2.0)))) + ((0.0) - ((z0) * (tan
-                                    ((z2) / (2.0)))))) / (((z0) * (tan ((z2) / (2.0)))) - ((0.0) - ((z0) * (tan
-                                    ((z2) / (2.0))))))
-                                    ,(0.0) - (((z1) + (z0)) / ((z1) - (z0)))
-                                    ,-1.0)
-                              ,vec4 (0.0,0.0,(0.0) - ((((2.0) * (z1)) * (z0)) / ((z1) - (z0))),0.0));
-              }
-              mat4 cameraMat_2_Float(vec2 z0,float z1) {
-                  return (perspective (3000.0
-                                      ,350000.0
-                                      ,0.5235987755982988
-                                      ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
-                                                                              ,vec3 (0.0,0.0,10000.0)
-                                                                              ,vec3 (0.0,0.0,1.0)));
-              }
-              mat4 lightMat_4(vec4 z0) {
-                  return (orthographic (3000.0,350000.0,50000.0,2.0)) * (lookat ((z0).xyz
-                                                                                ,vec3 (0.0,0.0,0.0)
-                                                                                ,vec3 (0.0,0.0,1.0)));
-              }
-              mat4 modelMat_Float(float z0) {
-                  return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
-                              ,vec4 ((0.0) - (sin (2.356194490192345)),cos (2.356194490192345),0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 (0.0,0.0,0.0,1.0));
-              }
-              vec4 positionObject_Float_3_3_Float(float z0,vec3 z1,vec3 z2) {
-                  return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
-              }
-              mat4 rotMatrixZ(float z0) {
-                  return mat4 (vec4 (cos (z0),sin (z0),0.0,0.0)
-                              ,vec4 ((0.0) - (sin (z0)),cos (z0),0.0,0.0)
-                              ,vec4 (0.0,0.0,1.0,0.0)
-                              ,vec4 (0.0,0.0,0.0,1.0));
-              }
-              void main() {
-                  gl_Position = (cameraMat_2_Float (screenSize
-                                                   ,(time) / (10.0))) * ((modelMat_Float
-                      ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
-                                                                           ,position
-                                                                           ,vi1)));
-                  vo1 = (vi1) + (vec3 (24000.0,0.0,0.0));
-                  vo2 = normalize ((modelMat_Float ((time) / (10.0))) * (vec4 ((vi2).x
-                                                                              ,(vi2).y
-                                                                              ,(vi2).z
-                                                                              ,0.0)));
-                  vo3 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
-                      ((time) / (10.0),position,vi1));
-                  vo4 = (lightMat_4 ((rotMatrixZ (((time) / (10.0)) * (8.0))) * (vec4 (80000.0
-                                                                                      ,10000.0
-                                                                                      ,40000.0
-                                                                                      ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
-                      ((time) / (10.0),position,vi1)));
-                  vo5 = (lightMat_4 ((rotMatrixZ (((time) / (10.0)) * (2.0))) * (vec4 (80000.0
-                                                                                      ,10000.0
-                                                                                      ,40000.0
-                                                                                      ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
-                      ((time) / (10.0),position,vi1)));
-              }
-              """
-          , geometryShader = Nothing
-          , fragmentShader =
-              """
-              #version 330 core
-              vec4 texture2D(sampler2D s,vec2 uv) {
-                  return texture(s,uv);
-              }
-              smooth in vec3 vo1;
-              smooth in vec4 vo2;
-              smooth in vec4 vo3;
-              smooth in vec4 vo4;
-              smooth in vec4 vo5;
-              out vec4 f0;
-              void main() {
-                  f0 = vec4 (0.0,0.0,0.0,0.5);
+                      (diffuseTexture,((vo1).xy) * (2.5e-5)))) * (1.0);
               }
               """
           }
@@ -1095,7 +937,7 @@ Pipeline
                 , ( "time" , Float )
                 ]
           , slotPrimitive = Triangles
-          , slotPrograms = [ 0 , 2 , 2 , 0 , 5 , 6 ]
+          , slotPrograms = [ 0 , 2 , 2 , 0 , 5 ]
           }
       , Slot
           { slotName = "lights"
@@ -1271,18 +1113,6 @@ Pipeline
           , ClearImage
               { imageSemantic = Color , clearValue = VV4F (V4 0.7 0.7 0.7 1.0) }
           ]
-      , SetProgram 6
-      , SetRasterContext
-          (TriangleCtx CullNone (PolygonLine 0.0) NoOffset LastVertex)
-      , SetAccumulationContext
-          AccumulationContext
-            { accViewportName = Nothing
-            , accOperations =
-                [ DepthOp Less True
-                , ColorOp NoBlending (VV4B (V4 True True True True))
-                ]
-            }
-      , RenderSlot 0
       , SetProgram 5
       , SetSamplerUniform "diffuseTexture" 0
       , SetTexture 1 5

@@ -50,7 +50,7 @@ vec4 getLightPos1(float z0) {
     return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
 }
 mat4 lightMat_4(vec4 z0) {
-    return (orthographic (3000.0,350000.0,50000.0,2.0)) * (lookat ((z0).xyz
+    return (orthographic (3000.0,350000.0,50000.0,1.0)) * (lookat ((z0).xyz
                                                                   ,vec3 (0.0,0.0,0.0)
                                                                   ,vec3 (0.0,0.0,1.0)));
 }

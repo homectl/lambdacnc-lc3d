@@ -29,14 +29,14 @@ vec4 getLightPos2(float z0) {
 }
 vec2 texelSize;
 void main() {
-    texelSize = vec2 (1.25e-3,2.5e-3);
-    f0 = ((((vec4 (0.0,0.0,0.0,0.0)) + ((diffuseLight_4_VecScalar4Float (vo3
-                                                                        ,vo2
-                                                                        ,getLightPos1 ((time) / (10.0))
-                                                                        ,vec4 (0.7
-                                                                              ,0.7
-                                                                              ,0.2
-                                                                              ,1.0))) * (((0.0) + ((((((((vo4).xyz) / ((vo4).w)) * (0.5)) + (0.5)).z) - (max
+    texelSize = vec2 (6.25e-4,6.25e-4);
+    f0 = (((((vec4 (0.0,0.0,0.0,0.0)) + ((diffuseLight_4_VecScalar4Float (vo3
+                                                                         ,vo2
+                                                                         ,getLightPos1 ((time) / (10.0))
+                                                                         ,vec4 (0.7
+                                                                               ,0.7
+                                                                               ,0.2
+                                                                               ,1.0))) * (((0.0) + ((((((((vo4).xyz) / ((vo4).w)) * (0.5)) + (0.5)).z) - (max
         ((5.0e-4) * ((1.0) - (dot (vo2
                                   ,normalize ((getLightPos1 ((time) / (10.0))) - (vo3)))))
         ,5.0e-5))) > ((texture2D (s0
@@ -54,5 +54,5 @@ void main() {
         ,5.0e-5))) > ((texture2D (s1
                                  ,((((((vo5).xyz) / ((vo5).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
                                                                                               ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) / (1.0)))) / (1.2)) * (texture2D
-        (diffuseTexture,((vo1).xy) * (2.5e-5)));
+        (diffuseTexture,((vo1).xy) * (2.5e-5)))) * (1.0);
 }

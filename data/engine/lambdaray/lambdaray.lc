@@ -45,7 +45,10 @@ data Context = Context
     , objectColor :: Vec 4 Float
     }
 
-blendcolors ca cb = ca + cb
+blendcolors (V4 ra ga ba aa) (V4 rb gb bb ab) =
+    V4 (ra + rb * a) (ga + gb * a) (ba + bb * a) a
+  where
+    a = ba * (1 - aa)
 
 iteration ctx = nctx
   where

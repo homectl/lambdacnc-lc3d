@@ -5,7 +5,7 @@ makeFrame (time :: Float)
     = imageFrame ((emptyColorImage (V4 0 0 0.4 1)))
   `overlay`
       prims
-    & mapPrimitives (\(p,uv) -> (rotMatrixZ time *. (V4 p%x p%y (-1) 1), uv))
+    & mapPrimitives (\(p,uv) -> ((V4 p%x p%y (-1) 1), uv))
     & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
     & mapFragments (\((uv)) -> ((texture2D (Sampler PointFilter MirroredRepeat texture) uv)))
     & accumulateWith ((ColorOp NoBlending (V4 True True True True)))

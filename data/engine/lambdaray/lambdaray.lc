@@ -1,0 +1,123 @@
+quad size (x, y) = fetchArrays (quadPosition, quadUV)
+  where
+    l = x - 1
+    r = size - 1 + x
+    b = y - 1
+    t = size - 1 + y
+
+    quadPosition =
+      [ V2 l b, V2 r t, V2 l t
+      , V2 l b, V2 r b, V2 r t
+      ]
+
+    quadUV =
+      [ V2 0 0, V2 1 1, V2 0 1
+      , V2 0 0, V2 1 0, V2 1 1
+      ]
+
+----------------------------------------
+
+diskInner = 2.6
+diskOuter = 14
+
+iterations = 2
+stepsize = 0.16
+
+tanFov = 1.5
+
+cameraPos = V3 0 1 (-20.0)
+lookAt = V3 0 0 0
+upVec = V3 0.2 1 0
+
+viewMatrix = M33F leftVec nupVec frontVec
+  where
+    frontVec = normalize (lookAt - cameraPos)
+    leftVec = normalize (cross upVec frontVec)
+    nupVec = cross frontVec leftVec
+
+sqrnorm vec = pow (length vec) 2
+
+aspectRatio sz = sz%y / sz%x
+
+data Context = Context
+    { point :: Vec 3 Float
+    , velocity :: Vec 3 Float
+    , objectColor :: Vec 4 Float
+    }
+
+blendcolors ca cb = ca + cb
+
+iteration ctx = nctx
+  where
+    -- STEPPING
+    oldpoint = point ctx -- not needed for tracing. Useful for intersections
+
+    newpoint = point ctx + velocity ctx *! stepsize
+
+    pointsqr = sqrnorm newpoint
+
+    -- whether it just crossed the horizontal plane
+    maskCrossing = (oldpoint%y > 0) `xor` (newpoint%y > 0)
+    -- whether it's close enough
+    maskDistance = pointsqr < pow diskOuter 2 && pointsqr > pow diskInner 2
+
+    diskMask = maskCrossing && maskDistance
+
+    -- actual collision point by intersection
+    lambdaa = -(newpoint%y / (velocity ctx)%y)
+    colpoint = newpoint + velocity ctx *! lambdaa
+    colpointsqr = sqrnorm colpoint
+
+    phi = atan2 colpoint%x newpoint%z
+    theta = atan2 colpoint%y (length newpoint%xz)
+    diskalpha = if diskMask then 1 else 0
+    diskcolor = if phi % 0.52359 < 0.261799
+        then V4 1 1 1 diskalpha
+        else V4 0 0 1 diskalpha
+
+    nctx = Context
+      { point = newpoint
+      , velocity = velocity ctx
+      , objectColor = blendcolors (objectColor ctx) diskcolor
+      }
+
+frag (screenSize :: Vec 2 Float) (texture :: Texture) (uv :: Vec 2 Float) = result
+  where
+    x = uv%x * screenSize%x
+    y = uv%y * screenSize%y
+
+    view = normalize $ viewMatrix *. (V3 (tanFov * (uv%x - 0.5)) (tanFov * aspectRatio screenSize * (uv%y - 0.5)) 1)
+    
+    point = cameraPos
+
+    velocity = view
+
+    h2 = sqrnorm (cross point velocity)
+
+    r = iteration (Context
+          { point = point
+          , velocity = velocity
+          , objectColor = V4 0 0 0 1
+          })
+
+    result = objectColor r
+
+----------------------------------------
+
+makeFrame (time :: Float)
+          (screenSize :: Vec 2 Float)
+          (texture :: Texture)
+          (prims :: PrimitiveStream Triangle (Vec 2 Float, Vec 2 Float))
+    = imageFrame ((emptyColorImage (V4 0 0 0.4 1)))
+  `overlay`
+      prims
+    & mapPrimitives (\(p,uv) -> ((V4 p%x p%y 0 1), uv))
+    & rasterizePrimitives (TriangleCtx CullNone PolygonFill NoOffset LastVertex) ((Smooth))
+    & mapFragments (\((uv)) -> ((frag screenSize texture uv)))
+    & accumulateWith ((ColorOp NoBlending (V4 True True True True)))
+
+main = renderFrame $
+   makeFrame (Uniform "time")
+             (Uniform "screenSize")
+             (Texture2DSlot "diffuseTexture")
+             (quad 2 (0, 0))

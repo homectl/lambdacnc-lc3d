@@ -12,6 +12,7 @@
 --{-# OPTIONS_GHC -fno-warn-overlapping-patterns #-}  -- TODO: remove
 --{-# OPTIONS_GHC -fno-warn-unused-binds #-}  -- TODO: remove
 {-# OPTIONS_GHC -Wno-missing-signatures #-}
+{-# OPTIONS_GHC -Wno-missing-pattern-synonym-signatures #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 {-# OPTIONS_GHC -Wno-name-shadowing #-}
 {-# OPTIONS_GHC -Wno-unused-matches #-}

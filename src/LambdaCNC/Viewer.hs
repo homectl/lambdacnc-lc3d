@@ -46,7 +46,7 @@ import           LambdaCube.Linear         (V2F, V3F)
 ---------------------------------------------
 
 enginePrefix, shadersPrefix, lcFile, pplFile, jsonFile :: FilePath
-enginePrefix = "data" </> "engine"
+enginePrefix = "data" </> "engine" </> "lambdacnc"
 shadersPrefix = enginePrefix </> "shaders"
 lcFile = enginePrefix </> "lambdacnc.lc"
 pplFile = enginePrefix </> "lambdacnc.ppl"
@@ -224,7 +224,7 @@ uploadTexture path = do
 
 main :: IO ()
 main = do
-    win <- uncurry (initWindow "LambdaCNC") screenSize
+    win <- uncurry (initWindow "LambdaCNC (LambdaCube)") screenSize
 
     -- setup render data
     let inputSchema = LGL.makeSchema $ do
@@ -321,8 +321,8 @@ initWindow title width height = do
       , WindowHint'ContextVersionMinor 3
       , WindowHint'OpenGLProfile OpenGLProfile'Core
       , WindowHint'OpenGLForwardCompat True
-      , WindowHint'RefreshRate (Just 10)
-      , WindowHint'Samples (Just 4)
+      -- , WindowHint'RefreshRate (Just 10)
+      -- , WindowHint'Samples (Just 4)
       ]
     Just win <- GLFW.createWindow width height title Nothing Nothing
     GLFW.makeContextCurrent $ Just win

@@ -73,7 +73,7 @@ mat4 cameraMat_2_Float(vec2 z0,float z1) {
     return (perspective (3000.0
                         ,350000.0
                         ,0.5235987755982988
-                        ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
+                        ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (90000.0,40000.0,20000.0)
                                                                 ,vec3 (0.0,0.0,10000.0)
                                                                 ,vec3 (0.0,0.0,1.0)));
 }
@@ -83,8 +83,8 @@ mat4 lightMat_4(vec4 z0) {
                                                                   ,vec3 (0.0,0.0,1.0)));
 }
 mat4 modelMat_Float(float z0) {
-    return mat4 (vec4 (cos (2.356194490192345),sin (2.356194490192345),0.0,0.0)
-                ,vec4 ((0.0) - (sin (2.356194490192345)),cos (2.356194490192345),0.0,0.0)
+    return mat4 (vec4 (cos (1.5707963267948966),sin (1.5707963267948966),0.0,0.0)
+                ,vec4 ((0.0) - (sin (1.5707963267948966)),cos (1.5707963267948966),0.0,0.0)
                 ,vec4 (0.0,0.0,1.0,0.0)
                 ,vec4 (0.0,0.0,0.0,1.0));
 }
@@ -110,14 +110,14 @@ void main() {
                                                                 ,0.0)));
     vo3 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
         ((time) / (10.0),position,vi1));
-    vo4 = (lightMat_4 ((rotMatrixZ (((time) / (10.0)) * (8.0))) * (vec4 (80000.0
-                                                                        ,10000.0
-                                                                        ,40000.0
-                                                                        ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
+    vo4 = (lightMat_4 ((rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0
+                                                                 ,1000.0
+                                                                 ,30000.0
+                                                                 ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
         ((time) / (10.0),position,vi1)));
-    vo5 = (lightMat_4 ((rotMatrixZ (((time) / (10.0)) * (2.0))) * (vec4 (80000.0
-                                                                        ,10000.0
-                                                                        ,40000.0
-                                                                        ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
+    vo5 = (lightMat_4 ((rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0
+                                                                 ,1000.0
+                                                                 ,30000.0
+                                                                 ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
         ((time) / (10.0),position,vi1)));
 }

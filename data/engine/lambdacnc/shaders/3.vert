@@ -63,15 +63,15 @@ mat4 cameraMat_2_Float(vec2 z0,float z1) {
     return (perspective (3000.0
                         ,350000.0
                         ,0.5235987755982988
-                        ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (0.0,180000.0,60000.0)
+                        ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (90000.0,40000.0,20000.0)
                                                                 ,vec3 (0.0,0.0,10000.0)
                                                                 ,vec3 (0.0,0.0,1.0)));
 }
-vec4 getLightPos1(float z0) {
-    return (rotMatrixZ ((z0) * (8.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
+vec4 getLightPos1_Float(float z0) {
+    return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
 }
-vec4 getLightPos2(float z0) {
-    return (rotMatrixZ ((z0) * (2.0))) * (vec4 (80000.0,10000.0,40000.0,1.0));
+vec4 getLightPos2_Float(float z0) {
+    return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
 }
 bool not_1(bool z0) {
     return ! (z0);
@@ -89,7 +89,8 @@ void main() {
     bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
     gl_Position = (cameraMat_2_Float (screenSize,(time) / (10.0))) * ((((rotMatrixX
         (-1.5707963267948966)) * (scale (200.0
-                                        ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (not_1 ((index) != (0)) ? getLightPos1
-        ((time) / (10.0)) : getLightPos2 ((time) / (10.0)))) + (bulbOffset_Float));
+                                        ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (not_1
+        ((index) != (0)) ? getLightPos1_Float ((time) / (10.0)) : getLightPos2_Float
+        ((time) / (10.0)))) + (bulbOffset_Float));
     vo1 = vi2;
 }

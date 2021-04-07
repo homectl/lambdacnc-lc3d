@@ -119,10 +119,10 @@ startPos :: MachinePosition Int
 startPos = fmap (`div` 2) machMax
 
 fps :: Double
-fps = 24
+fps = 240
 
 screenSize :: (Int, Int)
-screenSize = (960, 540)
+screenSize = (1500, 800)
 
 ---------------------------------------------
 

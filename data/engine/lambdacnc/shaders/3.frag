@@ -6,8 +6,5 @@ uniform int index;
 smooth in vec3 vo1;
 out vec4 f0;
 void main() {
-    f0 = ((index) < (1) ? vec4 (10.0,10.0,10.0,1.0) : vec4 (0.0
-                                                           ,0.0
-                                                           ,0.0
-                                                           ,1.0)) * (1.0);
+    f0 = ((index) < (1) ? vec4 (0.7,0.3,0.3,1.0) : vec4 (0.3,0.3,0.7,1.0)) * (1.0);
 }

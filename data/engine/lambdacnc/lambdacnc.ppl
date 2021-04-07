@@ -283,8 +283,8 @@ Pipeline
                               ,vec4 (0.0,0.0,1.0,0.0)
                               ,vec4 (0.0,0.0,0.0,1.0));
               }
-              vec4 getLightPos2_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos2(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (60000.0,60000.0,30000.0,1.0));
               }
               mat4 lightMat_4(vec4 z0) {
                   return (orthographic (3000.0,350000.0,50000.0,1.0)) * (lookat ((z0).xyz
@@ -301,12 +301,11 @@ Pipeline
                   return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
               }
               void main() {
-                  gl_Position = (lightMat_4 (getLightPos2_Float
-                      ((time) / (10.0)))) * ((modelMat_Float
+                  gl_Position = (lightMat_4 (getLightPos2 ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)));
-                  vo1 = ((((lightMat_4 (getLightPos2_Float ((time) / (10.0)))) * ((modelMat_Float
+                  vo1 = ((((lightMat_4 (getLightPos2 ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)))).z) * (0.5)) + (0.5);
@@ -424,8 +423,8 @@ Pipeline
                               ,vec4 (0.0,0.0,1.0,0.0)
                               ,vec4 (0.0,0.0,0.0,1.0));
               }
-              vec4 getLightPos1_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos1(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (-60000.0,-60000.0,30000.0,1.0));
               }
               mat4 lightMat_4(vec4 z0) {
                   return (orthographic (3000.0,350000.0,50000.0,1.0)) * (lookat ((z0).xyz
@@ -442,12 +441,11 @@ Pipeline
                   return (vec4 ((z2).x,(z2).y,(z2).z,1.0)) + (vec4 ((z1).x,(z1).y,(z1).z,0.0));
               }
               void main() {
-                  gl_Position = (lightMat_4 (getLightPos1_Float
-                      ((time) / (10.0)))) * ((modelMat_Float
+                  gl_Position = (lightMat_4 (getLightPos1 ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)));
-                  vo1 = ((((lightMat_4 (getLightPos1_Float ((time) / (10.0)))) * ((modelMat_Float
+                  vo1 = ((((lightMat_4 (getLightPos1 ((time) / (10.0)))) * ((modelMat_Float
                       ((time) / (10.0))) * (positionObject_Float_3_3_Float ((time) / (10.0)
                                                                            ,position
                                                                            ,vi1)))).z) * (0.5)) + (0.5);
@@ -505,6 +503,9 @@ Pipeline
               float aspectRatio_Float_2_1(vec2 z0) {
                   return ((z0).x) / ((z0).y);
               }
+              vec4 cameraPos_Float(float z0) {
+                  return (vec4 (90000.0,40000.0,20000.0,0.0)) * (1.4);
+              }
               mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
                   return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
                                                                           ,normalize ((z0) - (z1)))))
@@ -545,15 +546,15 @@ Pipeline
                   return (perspective (3000.0
                                       ,350000.0
                                       ,0.5235987755982988
-                                      ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (90000.0,40000.0,20000.0)
+                                      ,aspectRatio_Float_2_1 (z0))) * (lookat ((cameraPos_Float (z1)).xyz
                                                                               ,vec3 (0.0,0.0,10000.0)
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
-              vec4 getLightPos1_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos1(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (-60000.0,-60000.0,30000.0,1.0));
               }
-              vec4 getLightPos2_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos2(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (60000.0,60000.0,30000.0,1.0));
               }
               bool not_1(bool z0) {
                   return ! (z0);
@@ -571,9 +572,8 @@ Pipeline
                   bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
                   gl_Position = (cameraMat_2_Float (screenSize,(time) / (10.0))) * ((((rotMatrixX
                       (-1.5707963267948966)) * (scale (200.0
-                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (not_1
-                      ((index) != (0)) ? getLightPos1_Float ((time) / (10.0)) : getLightPos2_Float
-                      ((time) / (10.0)))) + (bulbOffset_Float));
+                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (not_1 ((index) != (0)) ? getLightPos1
+                      ((time) / (10.0)) : getLightPos2 ((time) / (10.0)))) + (bulbOffset_Float));
                   vo1 = vi2;
               }
               """
@@ -588,10 +588,7 @@ Pipeline
               smooth in vec3 vo1;
               out vec4 f0;
               void main() {
-                  f0 = ((index) < (1) ? vec4 (10.0,10.0,10.0,1.0) : vec4 (0.0
-                                                                         ,0.0
-                                                                         ,0.0
-                                                                         ,1.0)) * (1.0);
+                  f0 = ((index) < (1) ? vec4 (0.7,0.3,0.3,1.0) : vec4 (0.3,0.3,0.7,1.0)) * (1.0);
               }
               """
           }
@@ -633,6 +630,9 @@ Pipeline
               float aspectRatio_Float_2_1(vec2 z0) {
                   return ((z0).x) / ((z0).y);
               }
+              vec4 cameraPos_Float(float z0) {
+                  return (vec4 (90000.0,40000.0,20000.0,0.0)) * (1.4);
+              }
               mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
                   return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
                                                                           ,normalize ((z0) - (z1)))))
@@ -673,15 +673,15 @@ Pipeline
                   return (perspective (3000.0
                                       ,350000.0
                                       ,0.5235987755982988
-                                      ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (90000.0,40000.0,20000.0)
+                                      ,aspectRatio_Float_2_1 (z0))) * (lookat ((cameraPos_Float (z1)).xyz
                                                                               ,vec3 (0.0,0.0,10000.0)
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
-              vec4 getLightPos1_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos1(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (-60000.0,-60000.0,30000.0,1.0));
               }
-              vec4 getLightPos2_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos2(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (60000.0,60000.0,30000.0,1.0));
               }
               bool not_1(bool z0) {
                   return ! (z0);
@@ -699,9 +699,8 @@ Pipeline
                   bulbOffset_Float = vec4 (0.0,0.0,4200.0,0.0);
                   gl_Position = (cameraMat_2_Float (screenSize,(time) / (10.0))) * ((((rotMatrixX
                       (-1.5707963267948966)) * (scale (200.0
-                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (not_1
-                      ((index) != (0)) ? getLightPos1_Float ((time) / (10.0)) : getLightPos2_Float
-                      ((time) / (10.0)))) + (bulbOffset_Float));
+                                                      ,vec4 ((vi1).x,(vi1).y,(vi1).z,0.0)))) + (not_1 ((index) != (0)) ? getLightPos1
+                      ((time) / (10.0)) : getLightPos2 ((time) / (10.0)))) + (bulbOffset_Float));
                   vo1 = vi2;
               }
               """
@@ -772,6 +771,9 @@ Pipeline
               float aspectRatio_Float_2_1(vec2 z0) {
                   return ((z0).x) / ((z0).y);
               }
+              vec4 cameraPos_Float(float z0) {
+                  return (vec4 (90000.0,40000.0,20000.0,0.0)) * (1.4);
+              }
               mat4 lookat(vec3 z0,vec3 z1,vec3 z2) {
                   return (transpose (mat4 (ext0_Float_3 (normalize (cross (z2
                                                                           ,normalize ((z0) - (z1)))))
@@ -818,7 +820,7 @@ Pipeline
                   return (perspective (3000.0
                                       ,350000.0
                                       ,0.5235987755982988
-                                      ,aspectRatio_Float_2_1 (z0))) * (lookat (vec3 (90000.0,40000.0,20000.0)
+                                      ,aspectRatio_Float_2_1 (z0))) * (lookat ((cameraPos_Float (z1)).xyz
                                                                               ,vec3 (0.0,0.0,10000.0)
                                                                               ,vec3 (0.0,0.0,1.0)));
               }
@@ -855,15 +857,15 @@ Pipeline
                                                                               ,0.0)));
                   vo3 = (modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
                       ((time) / (10.0),position,vi1));
-                  vo4 = (lightMat_4 ((rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0
-                                                                               ,1000.0
-                                                                               ,30000.0
-                                                                               ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
+                  vo4 = (lightMat_4 ((rotMatrixZ (((time) / (10.0)) * (5.0))) * (vec4 (-60000.0
+                                                                                      ,-60000.0
+                                                                                      ,30000.0
+                                                                                      ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
                       ((time) / (10.0),position,vi1)));
-                  vo5 = (lightMat_4 ((rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0
-                                                                               ,1000.0
-                                                                               ,30000.0
-                                                                               ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
+                  vo5 = (lightMat_4 ((rotMatrixZ (((time) / (10.0)) * (5.0))) * (vec4 (60000.0
+                                                                                      ,60000.0
+                                                                                      ,30000.0
+                                                                                      ,1.0)))) * ((modelMat_Float ((time) / (10.0))) * (positionObject_Float_3_3_Float
                       ((time) / (10.0),position,vi1)));
               }
               """
@@ -893,36 +895,36 @@ Pipeline
               vec4 diffuseLight_4_VecScalar4Float(vec4 z0,vec4 z1,vec4 z2,vec4 z3) {
                   return (z3) * (max (dot (z1,normalize ((z2) - (z0))),0.0));
               }
-              vec4 getLightPos1_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos1(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (-60000.0,-60000.0,30000.0,1.0));
               }
-              vec4 getLightPos2_Float(float z0) {
-                  return (rotMatrixZ (-2.199114857512855)) * (vec4 (100000.0,1000.0,30000.0,1.0));
+              vec4 getLightPos2(float z0) {
+                  return (rotMatrixZ ((z0) * (5.0))) * (vec4 (60000.0,60000.0,30000.0,1.0));
               }
               vec2 texelSize;
               void main() {
                   texelSize = vec2 (6.25e-4,6.25e-4);
                   f0 = (((((vec4 (0.0,0.0,0.0,0.0)) + ((diffuseLight_4_VecScalar4Float (vo3
                                                                                        ,vo2
-                                                                                       ,getLightPos1_Float ((time) / (10.0))
-                                                                                       ,vec4 (10.0
-                                                                                             ,10.0
-                                                                                             ,10.0
+                                                                                       ,getLightPos1 ((time) / (10.0))
+                                                                                       ,vec4 (0.7
+                                                                                             ,0.3
+                                                                                             ,0.3
                                                                                              ,1.0))) * (((0.0) + ((((((((vo4).xyz) / ((vo4).w)) * (0.5)) + (0.5)).z) - (max
                       ((5.0e-4) * ((1.0) - (dot (vo2
-                                                ,normalize ((getLightPos1_Float ((time) / (10.0))) - (vo3)))))
+                                                ,normalize ((getLightPos1 ((time) / (10.0))) - (vo3)))))
                       ,5.0e-5))) > ((texture2D (s0
                                                ,((((((vo4).xyz) / ((vo4).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
                                                                                                             ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) / (1.0)))) + ((diffuseLight_4_VecScalar4Float
                       (vo3
                       ,vo2
-                      ,getLightPos2_Float ((time) / (10.0))
-                      ,vec4 (0.0
-                            ,0.0
-                            ,0.0
+                      ,getLightPos2 ((time) / (10.0))
+                      ,vec4 (0.3
+                            ,0.3
+                            ,0.7
                             ,1.0))) * (((0.0) + ((((((((vo5).xyz) / ((vo5).w)) * (0.5)) + (0.5)).z) - (max
                       ((5.0e-4) * ((1.0) - (dot (vo2
-                                                ,normalize ((getLightPos2_Float ((time) / (10.0))) - (vo3)))))
+                                                ,normalize ((getLightPos2 ((time) / (10.0))) - (vo3)))))
                       ,5.0e-5))) > ((texture2D (s1
                                                ,((((((vo5).xyz) / ((vo5).w)) * (0.5)) + (0.5)).xy) + ((vec2 (0.0
                                                                                                             ,0.0)) * (texelSize)))).x) ? 0.3 : 1.0)) / (1.0)))) / (1.2)) * (texture2D

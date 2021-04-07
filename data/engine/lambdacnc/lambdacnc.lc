@@ -41,7 +41,7 @@ linearizeDepth depth =
     -- (2.0 * n * f) / (f + n - z * (f - n))
     depth / (f/7 - n)
     
-cameraPos time = V4 90000 40000 20000 0 -- *! 0.5
+cameraPos time = V4 90000 40000 20000 0 *! 1.4
 
 cameraMat screenSize time = projection .*. view
   where
@@ -272,18 +272,18 @@ makeFrame (screenSize :: Vec 2 Float)
     exposure = 1.0
 
     lightPos = [getLightPos1 time, getLightPos2 time]
-    lightColor = [V4 10 10 10 1.0, V4 0 0 0 1.0]
+    lightColor = [V4 0.7 0.3 0.3 1.0, V4 0.3 0.3 0.7 1.0]
 
     shadowMap = map (Sampler LinearFilter ClampToEdge . Texture2D depthMapSize . PrjImageColor) shadowMapFrame
     shadowMapFrame = map (makeShadowMap time position objects) lightPos
 
     -- lightPos time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
-    -- getLightPos1 time = rotMatrixZ (time*8) *. V4 (80000) (10000) (40000) 1
-    -- getLightPos2 time = rotMatrixZ (time*2) *. V4 (80000) (10000) (40000) 1
+    getLightPos1 time = rotMatrixZ (time*5) *. V4 (-60000) (-60000) (30000) 1
+    getLightPos2 time = rotMatrixZ (time*5) *. V4 (60000) (60000) (30000) 1
     -- getLightPos1 time = rotMatrixZ (pi/8*15) *. V4 (80000) (10000) (40000) 1
     -- getLightPos2 time = rotMatrixZ (pi/8*6) *. V4 (80000) (10000) (40000) 1
-    getLightPos1 time = rotMatrixZ (pi/10*(-7)) *. V4 100000 1000 30000 1
-    getLightPos2 time = rotMatrixZ (pi/10*(-7)) *. V4 100000 1000 30000 1
+    -- getLightPos1 time = rotMatrixZ (pi/10*(-7)) *. V4 100000 1000 30000 1
+    -- getLightPos2 time = rotMatrixZ (pi/10*(-7)) *. V4 100000 1000 30000 1
 
 
 main = renderFrame $ makeFrame
